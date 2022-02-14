@@ -1,1 +1,4 @@
+/build
+/src/Turbine_py*
+
 .DS_Store

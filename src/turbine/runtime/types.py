@@ -28,11 +28,9 @@ class Resource(ABC):
 
 class Runtime(ABC):
 
-    @abstractmethod
     def resources(name: str):
         ...
 
-    @abstractmethod
     def process(
             records: Records,
             fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
