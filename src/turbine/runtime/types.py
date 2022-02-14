@@ -37,3 +37,17 @@ class Runtime(ABC):
             records: Records,
             fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
         ...
+
+
+class AppConfig:
+    name = ""
+    language = "py"
+    environment = ""
+    pipeline = ""
+    resources = {}
+
+    def __init__(self, name: str, environment: str, pipline: str, resources: dict) -> None:
+        self.name = name,
+        self.environment = environment
+        self.pipeline = pipline
+        self.resources = resources

@@ -1,31 +1,14 @@
 import abc
-import string
 
+from .runtime import Runtime
+from .runtime import LocalRuntime
+from .runtime import AppConfig
 
-def hello_world():
-    return "Hello turbine!"
+class Turbine(Runtime):
+    def __init__(self, config: AppConfig, pathToApp: str, is_local: bool) -> Runtime:
 
-
-class Resource:
-    def write(records: list, collection_name: string):
-        return
-
-    def write(records: list, collection_name: string, **kwargs):
-        return
-
-    def records(collection_name: string):
-        return
-
-    def records(collection_name: string, **kwargs):
-        return
-
-
-class Turbine(abc):
-    def resources():
-        return
-
-    def process(records: list, function: function):
-        return
+        return (LocalRuntime(config=config, pathToApp=pathToApp) if is_local
+                else LocalRuntime(config=config, pathToApp=pathToApp))
 
     # How to enforce this interface
     @abc.abstractmethod
