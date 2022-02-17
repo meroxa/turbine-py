@@ -1,13 +1,13 @@
+import json
+import time
+import typing as t
+
+from pprint import pprint
+
 from .types import AppConfig
 from .types import Record, Resource
 from .types import Records
 from .types import Runtime
-
-import typing as t
-
-import time
-
-import pprint
 
 
 def readFixtures(path: str, collection: str, resourceName: str):
@@ -19,30 +19,42 @@ def readFixtures(path: str, collection: str, resourceName: str):
         for rec in fc[collection]:
             fixtures.append(
                 Record(
-                    key = rec['key'],
-                    value= rec['value'],
-                    timestamp= time.time()
+                    key=rec['key'],
+                    value=rec['value'],
+                    timestamp=time.time()
                 )
             )
-    
-    pprint("=====================from ${resourceName} resource=====================".format(resourceName))
 
-    [ pprint( fixture ) for fixture in fixtures ]
+    pprint("=====================from {} resource=====================".format(
+        resourceName))
+
+    [pprint(fixture) for fixture in fixtures]
 
     return fixtures
 
+
 class LocalResource(Resource):
     name = ""
-    fixturesPath = "" 
+    fixturesPath = ""
 
     def __init__(self, name: str, fixturesPath: str) -> None:
         self.name = name
         self.fixturesPath = fixturesPath
 
     def records(self, collection: str) -> Records:
-        return readFixtures(self.fixturesPath, collection, self.name)
+        return Records(
+            records=readFixtures(self.fixturesPath, collection, self.name),
+            stream=""
+        )
 
-    def write(records: Records, collection: str) -> None:
+    def write(self, rr: Records, collection: str) -> None:
+        pprint(
+            "=====================to {} resource=====================".format(
+                self.name))
+
+        for record in rr.records:
+            pprint(record)
+
         return None
 
 
@@ -59,19 +71,14 @@ class LocalRuntime(Runtime):
         resources = self.appConfig.resources
         fixturesPath = resources[name]
 
-        resourcedFixturePath = "{pathToApp}/{fixturesPath}".format(
+        resourcedFixturePath = "{}/{}".format(
             self.pathToApp,
             fixturesPath
         )
 
-        return LocalResource( name, resourcedFixturePath )
+        return LocalResource(name, resourcedFixturePath)
 
-    def process(
-            records: Records,
-            fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
-
-            processed = fn(records)
-
-            return Records( processed, "")
-
-
+    def process(self,
+                records: Records,
+                fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
+        return fn(records)

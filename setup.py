@@ -1,11 +1,10 @@
 
 #!/usr/bin/env python
-from ensurepip import version
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(name="Turbine-py",
-version="1.0",
-description="",
-package_dir={'': 'src'},
-packages=['turbine', 'turbine.runtime']
+setup(name="turbine-",
+      version="1.0",
+      description="",
+      package_dir={'': 'src'},
+      packages=['turbine', 'turbine.runtime']
       )

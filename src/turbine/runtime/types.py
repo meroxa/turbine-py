@@ -9,11 +9,22 @@ class Record:
         self.value = value
         self.timestamp = timestamp
 
+    def __repr__(self):
+        from pprint import pformat
+        return pformat(vars(self), indent=4, width=1)
+
 
 class Records:
+    records = []
+    stream = ""
+
     def __init__(self, records: t.List[Record], stream: str):
         self.records = records
         self.stream = stream
+
+    def __repr__(self):
+        from pprint import pformat
+        return pformat(vars(self), indent=4, width=1)
 
 
 class Resource(ABC):
@@ -44,7 +55,12 @@ class AppConfig:
     pipeline = ""
     resources = {}
 
-    def __init__(self, name: str, environment: str, pipline: str, resources: dict) -> None:
+    def __init__(
+            self,
+            name: str,
+            environment: str,
+            pipline: str,
+            resources: dict) -> None:
         self.name = name,
         self.environment = environment
         self.pipeline = pipline
