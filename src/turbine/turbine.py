@@ -6,7 +6,6 @@ from .runtime import AppConfig
 from .runtime import Record, Records
 
 
-
 class Turbine(Runtime):
 
     runtime = None
@@ -17,12 +16,17 @@ class Turbine(Runtime):
             pathToApp: str,
             is_local: bool) -> None:
 
-        self.runtime = (
-            LocalRuntime(
+        if is_local:
+            self.runtime = LocalRuntime(
                 config=config,
-                pathToApp=pathToApp) if is_local else LocalRuntime(
+                pathToApp=pathToApp)
+        else:
+            self.runtime = LocalRuntime(
                 config=config,
-                pathToApp=pathToApp))
+                pathToApp=pathToApp)
+
+    def resources(self, name: str):
+        return self.runtime.resources(name)
 
     def process(
             self,
