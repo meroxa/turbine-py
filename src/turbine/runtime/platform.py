@@ -5,8 +5,6 @@ import json
 from re import L
 import time
 import typing as t
-from wsgiref.types import InputStream
-
 
 import meroxa
 
@@ -40,53 +38,16 @@ def readFixtures(path: str, collection: str, resourceName: str):
 
     return fixtures
 
-
-class LocalResource(Resource):
-    name = ""
-    fixturesPath = ""
-
-    def __init__(self, name: str, fixturesPath: str) -> None:
-        self.name = name
-        self.fixturesPath = fixturesPath
-
-    def records(self, collection: str) -> Records:
-        return Records(
-            records=readFixtures(self.fixturesPath, collection, self.name),
-            stream=""
-        )
-
-    def write(self, rr: Records, collection: str) -> None:
-        pprint(
-            "=====================to {} resource=====================".format(
-                self.name))
-
-        for record in rr.records:
-            pprint(record)
-
-        return None
-
-
-
-
-#  resource: ResourceResponse;
-#   client: Client;
-#   appConfig: AppConfig;
-
-#   constructor(
-#     resource: ResourceResponse,
-#     client: Client,
-#     appConfig: AppConfig
-#   ) {
-#     this.resource = resource;
-#     this.client = client;
-#     this.appConfig = appConfig;
-#   }
-
 class PlatformResource(Resource):
-    def __init__(self, resource, client: meroxa.Client, appConfig: AppConfig) -> None:
+    def __init__(self, resource, clientOpts, appConfig: AppConfig) -> None:
+
+        print("entered resource")
+
         self.resource = resource
-        self.client = client
         self.appConfig = appConfig
+        self.session = meroxa.createSession(clientOpts)
+
+        print(self.session)
 
     async def records(self, collection: str) -> Records:
 
@@ -97,34 +58,47 @@ class PlatformResource(Resource):
         connectorConfig = dict( input = "public.{}".format(collection))
         connectorInput = meroxa.CreateConnectorParams(
             name =  "source",
-            config = connectorConfig,
             metadata= {
                 "mx:connectorType": "source",
             },
             resourceId = self.resource.id,
-            pipelineName = self.appConfig.name,
-            pipelineId = None
+            pipelineName = None,
+            pipelineId = "acb53bf7-8f2e-4058-8411-90418e7bb8a4"
         )
 
-        connector = await self.client.connectors.create(connectorInput)
-        return super().records()
+
+        print(vars(connectorInput))
+        async with self.session as ctx:
+            client = meroxa.Client(ctx)
+            connector = await client.connectors.create(connectorInput)
+            print(connector)
 
     async def write(records: Records, collection: str) -> None:
         pass
         
 
+class PlatResp(object):
+    def __init__(self, resp: str):
+        self.__dict__ = json.loads(resp)
+
 class PlatformRuntime(Runtime):
 
     _registeredFunctions = None
+    _session = None
 
-    def __init__(self, client: meroxa.Client, imageName: str, config: AppConfig) -> None:
-        self._client = client
+    def __init__(self, clientOptions: meroxa.ClientOptions, imageName: str, config: AppConfig) -> None:
         self._imageName = imageName
         self._appConfig = config
+        self._clientOpts = clientOptions
+
+        self._session = meroxa.createSession(clientOptions)
 
     async def resources(self, resourceName: str):
-        resource = await self._client.resources.get(resourceName)
-        return PlatformResource(resource, self._client, self._appConfig)
+        async with self._session as ctx:
+            client = meroxa.Client(ctx)
+            resource = await client.resources.get(resourceName)
+
+        return PlatformResource(PlatResp(resource), self._clientOpts, self._appConfig)
 
     async def process(self,
                 records: Records,

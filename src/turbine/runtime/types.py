@@ -59,9 +59,9 @@ class AppConfig:
             self,
             name: str,
             environment: str,
-            pipline: str,
+            pipeline: str,
             resources: dict) -> None:
-        self.name = name,
+        self.name = name
         self.environment = environment
-        self.pipeline = pipline
+        self.pipeline = pipeline
         self.resources = resources
