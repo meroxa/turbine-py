@@ -4,4 +4,4 @@ from .types import Records as Records
 from .types import Runtime as Runtime
 
 from .local import LocalRuntime as LocalRuntime
-# from .local import LocalRuntime as LocalRuntime
+from .platform import PlatformRuntime as PlatformRuntime

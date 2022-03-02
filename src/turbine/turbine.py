@@ -2,6 +2,7 @@ import typing as t
 
 from .runtime import Runtime
 from .runtime import LocalRuntime
+from .runtime import PlatformRuntime
 from .runtime import AppConfig
 from .runtime import Record, Records
 
@@ -21,7 +22,7 @@ class Turbine(Runtime):
                 config=config,
                 pathToApp=pathToApp)
         else:
-            self.runtime = LocalRuntime(
+            self.runtime = PlatformRuntime(
                 config=config,
                 pathToApp=pathToApp)
 
