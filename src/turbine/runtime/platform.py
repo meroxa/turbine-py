@@ -40,14 +40,9 @@ def readFixtures(path: str, collection: str, resourceName: str):
 
 class PlatformResource(Resource):
     def __init__(self, resource, clientOpts, appConfig: AppConfig) -> None:
-
-        print("entered resource")
-
         self.resource = resource
         self.appConfig = appConfig
         self.session = meroxa.createSession(clientOpts)
-
-        print(self.session)
 
     async def records(self, collection: str) -> Records:
 
@@ -61,15 +56,16 @@ class PlatformResource(Resource):
             metadata= {
                 "mx:connectorType": "source",
             },
+            config = connectorConfig,
             resourceId = self.resource.id,
             pipelineName = None,
-            pipelineId = "acb53bf7-8f2e-4058-8411-90418e7bb8a4"
+            pipelineId = 3806
         )
 
-
-        print(vars(connectorInput))
         async with self.session as ctx:
             client = meroxa.Client(ctx)
+
+            print(vars(connectorInput))
             connector = await client.connectors.create(connectorInput)
             print(connector)
 
@@ -97,7 +93,6 @@ class PlatformRuntime(Runtime):
         async with self._session as ctx:
             client = meroxa.Client(ctx)
             resource = await client.resources.get(resourceName)
-
         return PlatformResource(PlatResp(resource), self._clientOpts, self._appConfig)
 
     async def process(self,
