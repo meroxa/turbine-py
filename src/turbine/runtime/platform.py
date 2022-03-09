@@ -36,10 +36,14 @@ class PlatformResource(Resource):
             pipelineId=None
         )
 
+
+        # Error Handling: Duplicate connector 
+        # Check for `bad_request`
         async with self.session as ctx:
             client = meroxa.Client(ctx)
             connector = await client.connectors.create(connectorInput)
 
+        print(connector)
         resp = json.loads(connector)
         return Records(records=[], stream=resp['streams']['output'])
 
@@ -52,9 +56,9 @@ class PlatformResource(Resource):
             #=== ^ shared ^ =====  V S3 specific V ==#
             "aws_s3_prefix": '{}'.format(str.lower(collection)),
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-            "value.converter.schemas.enable" : "true",
-            "format.output.type" : "jsonl",
-            "format.output.envelope" : "true"
+            "value.converter.schemas.enable": "true",
+            "format.output.type": "jsonl",
+            "format.output.envelope": "true"
         }
 
         connectorInput = meroxa.CreateConnectorParams(
@@ -89,9 +93,15 @@ class PlatformRuntime(Runtime):
         self._session = meroxa.createSession(clientOptions)
 
     async def resources(self, resourceName: str):
+
+        # Error checking if a resource does not exist.
+        # Response is simple string. We could massage that into a structured item
+        # e.g. (Option[resp], Option[error])
         async with self._session as ctx:
             client = meroxa.Client(ctx)
             resource = await client.resources.get(resourceName)
+
+        print(resource)
         return PlatformResource(PlatformResponse(resource), self._clientOpts, self._appConfig)
 
     async def process(self,
