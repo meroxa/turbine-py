@@ -21,7 +21,7 @@ class PlatformResource(Resource):
         self.appConfig = appConfig
         self.session = meroxa.createSession(clientOpts)
 
-    async def records(self, collection: str) -> Records:
+    async def records(self, session, collection: str) -> Records:
 
         # Postgres initial funtimes
         connectorConfig = dict(input="public.{}".format(collection))
@@ -36,12 +36,9 @@ class PlatformResource(Resource):
             pipelineId=None
         )
 
-
-        # Error Handling: Duplicate connector 
+        # Error Handling: Duplicate connector
         # Check for `bad_request`
-        async with self.session as ctx:
-            client = meroxa.Client(ctx)
-            connector = await client.connectors.create(connectorInput)
+        connector = await meroxa.Client(session).connectors.create(connectorInput)
 
         print(connector)
         resp = json.loads(connector)
@@ -92,19 +89,18 @@ class PlatformRuntime(Runtime):
 
         self._session = meroxa.createSession(clientOptions)
 
-    async def resources(self, resourceName: str):
-
+    async def resources(self, session, resourceName: str):
         # Error checking if a resource does not exist.
         # Response is simple string. We could massage that into a structured item
         # e.g. (Option[resp], Option[error])
-        async with self._session as ctx:
-            client = meroxa.Client(ctx)
-            resource = await client.resources.get(resourceName)
+         
+        resource = await meroxa.Client(session).resources.get(resourceName)
 
         print(resource)
         return PlatformResource(PlatformResponse(resource), self._clientOpts, self._appConfig)
 
     async def process(self,
+                      session,
                       records: Records,
                       fn: t.Callable[[t.List[Record]], t.List[Record]],
                       envVars: dict) -> Records:
@@ -121,9 +117,9 @@ class PlatformRuntime(Runtime):
             envVars=envVars
         )
 
-        async with self._session as ctx:
-            client = meroxa.Client(ctx)
-            createdFunction = await client.functions.create(createFuncParams)
+        createdFunction = await meroxa.Client(session).functions.create(createFuncParams)
+
+        print(createdFunction)
 
         records.stream = json.loads(createdFunction)['output_stream']
 
