@@ -11,7 +11,6 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
-
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
@@ -25,6 +24,10 @@ class PlatformResource(Resource):
         self.clientOpts = clientOptions
 
     async def records(self, collection: str) -> Records:
+
+        print("Creating SOURCE connector from source: {}".format(
+            self.resource.name))
+
         # Postgres initial funtimes
         connectorConfig = dict(input="public.{}".format(collection))
         connectorInput = meroxa.CreateConnectorParams(
@@ -43,16 +46,17 @@ class PlatformResource(Resource):
             # Check for `bad_request`
             connector = await m.connectors.create(connectorInput)
 
-        print(connector)
         resp = json.loads(connector)
         return Records(records=[], stream=resp['streams']['output'])
 
     async def write(self, records: Records, collection: str) -> None:
 
+        print("Creating DESTINATION connector from stream: {}".format(records.stream))
+
         # Connector config
         # Move the non-shared logics to a separate function
         connectorConfig = {
-            input: records.stream,
+            "input": records.stream,
             #=== ^ shared ^ =====  V S3 specific V ==#
             "aws_s3_prefix": '{}'.format(str.lower(collection)),
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
@@ -62,9 +66,9 @@ class PlatformResource(Resource):
         }
 
         connectorInput = meroxa.CreateConnectorParams(
-            name="source",
+            name="destination",
             metadata={
-                "mx:connectorType": "source",
+                "mx:connectorType": "destination",
             },
             config=connectorConfig,
             resourceId=self.resource.id,
@@ -76,7 +80,7 @@ class PlatformResource(Resource):
             connector = await m.connectors.create(connectorInput)
 
         resp = json.loads(connector)
-        return Records(records=[], stream=resp['streams']['output'])
+        return Records(records=[], stream=resp['streams']['input'])
 
 
 class PlatformRuntime(Runtime):
@@ -109,7 +113,7 @@ class PlatformRuntime(Runtime):
 
         # Create function parameters
         createFuncParams = meroxa.CreateFunctionParams(
-            inputStream=records.stream,
+            inputStream=records.stream[0],
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._imageName,
@@ -118,6 +122,9 @@ class PlatformRuntime(Runtime):
             },
             envVars=envVars
         )
+
+        print("deploying function: {}".format(
+            getattr(fn, '__name__', 'Unknown')))
 
         async with Meroxa(auth=self._clientOpts.auth) as m:
             createdFunction = await m.functions.create(createFuncParams)
