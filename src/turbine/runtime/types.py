@@ -2,6 +2,7 @@ import typing as t
 
 from abc import ABC, abstractmethod
 
+
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
         self.key = key
