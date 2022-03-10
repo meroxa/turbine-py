@@ -3,6 +3,8 @@ import typing as t
 
 import meroxa
 
+from meroxa import Meroxa
+
 from .types import AppConfig
 from .types import Record
 from .types import Records
@@ -16,13 +18,13 @@ class PlatformResponse(object):
 
 
 class PlatformResource(Resource):
-    def __init__(self, resource, clientOpts, appConfig: AppConfig) -> None:
+    def __init__(self, resource, clientOptions: meroxa.ClientOptions,
+                 appConfig: AppConfig) -> None:
         self.resource = resource
         self.appConfig = appConfig
-        self.session = meroxa.createSession(clientOpts)
+        self.clientOpts = clientOptions
 
-    async def records(self, session, collection: str) -> Records:
-
+    async def records(self, collection: str) -> Records:
         # Postgres initial funtimes
         connectorConfig = dict(input="public.{}".format(collection))
         connectorInput = meroxa.CreateConnectorParams(
@@ -36,9 +38,10 @@ class PlatformResource(Resource):
             pipelineId=None
         )
 
-        # Error Handling: Duplicate connector
-        # Check for `bad_request`
-        connector = await meroxa.Client(session).connectors.create(connectorInput)
+        async with Meroxa(auth=self.clientOpts.auth) as m:
+            # Error Handling: Duplicate connector
+            # Check for `bad_request`
+            connector = await m.connectors.create(connectorInput)
 
         print(connector)
         resp = json.loads(connector)
@@ -69,9 +72,8 @@ class PlatformResource(Resource):
             pipelineId=None
         )
 
-        async with self.session as ctx:
-            client = meroxa.Client(ctx)
-            connector = await client.connectors.create(connectorInput)
+        async with Meroxa(auth=self.clientOpts.auth) as m:
+            connector = await m.connectors.create(connectorInput)
 
         resp = json.loads(connector)
         return Records(records=[], stream=resp['streams']['output'])
@@ -80,27 +82,27 @@ class PlatformResource(Resource):
 class PlatformRuntime(Runtime):
 
     _registeredFunctions = None
-    _session = None
 
-    def __init__(self, clientOptions: meroxa.ClientOptions, imageName: str, config: AppConfig) -> None:
+    def __init__(self, clientOptions: meroxa.ClientOptions,
+                 imageName: str, config: AppConfig) -> None:
         self._imageName = imageName
         self._appConfig = config
         self._clientOpts = clientOptions
 
-        self._session = meroxa.createSession(clientOptions)
+    async def resources(self, resourceName: str):
 
-    async def resources(self, session, resourceName: str):
         # Error checking if a resource does not exist.
         # Response is simple string. We could massage that into a structured item
         # e.g. (Option[resp], Option[error])
-         
-        resource = await meroxa.Client(session).resources.get(resourceName)
+        async with Meroxa(auth=self._clientOpts.auth) as m:
+            resource = await m.resources.get(resourceName)
 
-        print(resource)
-        return PlatformResource(PlatformResponse(resource), self._clientOpts, self._appConfig)
+        return PlatformResource(
+            PlatformResponse(resource),
+            self._clientOpts,
+            self._appConfig)
 
     async def process(self,
-                      session,
                       records: Records,
                       fn: t.Callable[[t.List[Record]], t.List[Record]],
                       envVars: dict) -> Records:
@@ -117,9 +119,8 @@ class PlatformRuntime(Runtime):
             envVars=envVars
         )
 
-        createdFunction = await meroxa.Client(session).functions.create(createFuncParams)
-
-        print(createdFunction)
+        async with Meroxa(auth=self._clientOpts.auth) as m:
+            createdFunction = await m.functions.create(createFuncParams)
 
         records.stream = json.loads(createdFunction)['output_stream']
 
