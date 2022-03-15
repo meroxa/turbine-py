@@ -2,6 +2,7 @@ import typing as t
 
 from .runtime import Runtime
 from .runtime import LocalRuntime
+from .runtime import PlatformRuntime
 from .runtime import AppConfig
 from .runtime import Record, Records
 
@@ -13,17 +14,17 @@ class Turbine(Runtime):
     def __init__(
             self,
             config: AppConfig,
-            pathToApp: str,
-            is_local: bool) -> None:
-
+            is_local=False,
+            **kwargs) -> None:
         if is_local:
             self.runtime = LocalRuntime(
                 config=config,
-                pathToApp=pathToApp)
+                pathToApp=kwargs['pathToApp'])
         else:
-            self.runtime = LocalRuntime(
+            self.runtime = PlatformRuntime(
                 config=config,
-                pathToApp=pathToApp)
+                clientOptions=kwargs['clientOptions'],
+                imageName=kwargs['imageName'])
 
     def resources(self, name: str):
         return self.runtime.resources(name)

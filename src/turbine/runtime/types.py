@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
-
 import typing as t
+
+from abc import ABC, abstractmethod
 
 
 class Record:
@@ -59,9 +59,9 @@ class AppConfig:
             self,
             name: str,
             environment: str,
-            pipline: str,
+            pipeline: str,
             resources: dict) -> None:
-        self.name = name,
+        self.name = name
         self.environment = environment
-        self.pipeline = pipline
+        self.pipeline = pipeline
         self.resources = resources

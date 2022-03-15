@@ -5,8 +5,6 @@
 
 ## Installation 
 
-
-Clone this repo and run the following in the directory you want to install it in
+Clone this repo and install this package using the following command
 
 `pip install /absolute/path/to/your/cloned/package`
-
