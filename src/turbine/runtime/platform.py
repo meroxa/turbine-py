@@ -11,6 +11,7 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
+
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
@@ -51,7 +52,9 @@ class PlatformResource(Resource):
 
     async def write(self, records: Records, collection: str) -> None:
 
-        print("Creating DESTINATION connector from stream: {}".format(records.stream))
+        print(
+            "Creating DESTINATION connector from stream: {}"
+            .format(records.stream))
 
         # Connector config
         # Move the non-shared logics to a separate function

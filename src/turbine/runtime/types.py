@@ -49,19 +49,21 @@ class Runtime(ABC):
 
 
 class AppConfig:
-    name = ""
-    language = "py"
-    environment = ""
-    pipeline = ""
-    resources = {}
-
     def __init__(
             self,
             name: str,
+            language: str,
             environment: str,
             pipeline: str,
             resources: dict) -> None:
         self.name = name
+        self.language = language
         self.environment = environment
         self.pipeline = pipeline
         self.resources = resources
+
+
+class ClientOptions:
+    def __init__(self, auth: str, url: str) -> None:
+        self.auth = auth
+        self.url = url
