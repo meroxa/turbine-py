@@ -1,5 +1,6 @@
 
 #!/usr/bin/env python
+from glob import glob
 from importlib.metadata import entry_points
 from setuptools import setup
 
@@ -9,7 +10,7 @@ setup(
     description="",
     package_dir={'': 'src'},
     include_package_data=True,
-    packages=['turbine', 'turbine.runtime'],
+    packages=['turbine', 'turbine.runtime', 'turbine.templates'],
     entry_points={
         'console_scripts': ['turbine=turbine.cli:main'],
     }

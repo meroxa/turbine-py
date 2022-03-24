@@ -1,28 +1,17 @@
-import pathlib
 import shutil
 import json
-import sys
 import os
 
-from pathlib import PurePath
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 def generate_app(name: str, pathname: str):
     # Determine app name and directory
     app_name = name or "my-app"
-
-    print(sys.argv[0])
-    print(os.path.split(os.path.abspath(os.path.realpath(sys.argv[0])))[0])
-
+    
     # construct templates path
-    template_directory = pathlib.Path(sys.argv[0] + "/../templates").resolve()
+    template_directory = os.path.join(_ROOT, 'templates/python')
 
-    pwd = pathlib.Path(sys.argv[0]).resolve()
-    templates = pathlib.Path('../templates').resolve()
-    template_directory = pwd / templates
-
-
-    # Copy stuff in templates to chosen location
     try:
         # Copy tree from src = template_directory to dest = chosen
         dest_directory = shutil.copytree(template_directory, pathname)
@@ -44,7 +33,7 @@ def generate_app_json(app_name: str):
     app_json = dict(name=app_name, language="python")
 
     try:
-        with open(app_name + '/app.json', 'w') as fp:
-            json.dumps(app_json, fp)
+        with open(app_name + '/app.json', 'w', encoding='utf-8') as fp:
+            json.dump(app_json, fp, ensure_ascii=False, indent=4)
     except Exception as e:
         print(e)
