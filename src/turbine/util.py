@@ -5,23 +5,27 @@ import os
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
+# Hacky work around to make sure the __pychache__ for turbine-py
+# is not incldued in the copied files.
+FILES_TO_IGNORE_ON_COPY = '__pycache__'
+
+
 def generate_app(name: str, pathname: str):
-    # Determine app name and directory
     app_name = name or "my-app"
-    
-    # construct templates path
+
+    app_location = os.path.join(pathname, app_name)
+
     template_directory = os.path.join(_ROOT, 'templates/python')
 
     try:
-        # Copy tree from src = template_directory to dest = chosen
-        dest_directory = shutil.copytree(template_directory, pathname)
+        dest_directory = shutil.copytree(
+            template_directory, app_location,
+            ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
 
-        # Write the app.json file into the directory
         generate_app_json(pathname)
     except Exception as e:
         print(e)
         raise
-        
 
     print("Application successfully initialized!")
     print("You can start interacting with Meroxa in your app located at {}"
