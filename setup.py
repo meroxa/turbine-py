@@ -1,8 +1,5 @@
-
 #!/usr/bin/env python
-from glob import glob
-from importlib.metadata import entry_points
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 
 setup(
     name="turbine",
@@ -10,8 +7,11 @@ setup(
     description="",
     package_dir={'': 'src'},
     include_package_data=True,
-    packages=['turbine', 'turbine.runtime', 'turbine.templates'],
+    packages=['turbine', 'turbine.runtime'],
     entry_points={
         'console_scripts': ['turbine=turbine.cli:main'],
-    }
+    },
+    install_requires = [
+        "aiohttp"
+    ]
 )
