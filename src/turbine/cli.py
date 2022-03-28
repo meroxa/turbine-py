@@ -21,18 +21,13 @@ def generate_app(name: str, pathname: str):
     template_directory = os.path.join(_ROOT, 'templates/python')
 
     try:
-        dest_directory = shutil.copytree(
-            template_directory, app_location,
-            ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
+        shutil.copytree(template_directory, app_location,
+                        ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
 
         generate_app_json(pathname)
     except Exception as e:
         print(e)
         raise
-
-    print("Application successfully initialized!")
-    print("You can start interacting with Meroxa in your app located at {}"
-          .format(dest_directory))
 
 
 def generate_app_json(app_name: str):
