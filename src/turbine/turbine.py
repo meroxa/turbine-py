@@ -33,9 +33,6 @@ class Turbine(Runtime):
 
             return
 
-        # We do some docker things here presumably eventually 
-        
-        print(os.getenv(MEROXA_ACCESS_TOKEN))
         self._runtime = PlatformRuntime(
             config=config,
             clientOptions=ClientOptions(
