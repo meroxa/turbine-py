@@ -21,22 +21,27 @@ def generate_app(name: str, pathname: str):
     template_directory = os.path.join(_ROOT, 'templates/python')
 
     try:
+        print("### 01\n")
         shutil.copytree(template_directory, app_location,
                         ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
+        print("### 02\n")
 
-        generate_app_json(pathname)
+        generate_app_json(name, pathname)
     except Exception as e:
         print(e)
         raise
 
 
-def generate_app_json(app_name: str):
+def generate_app_json(name: str, pathname: str):
 
-    app_json = dict(name=app_name, language="python")
+    app_json = dict(name=name, language="python", resources=dict(source_name="fixtures/none.json"))
 
+    app_location = os.path.join(pathname, name)
     try:
-        with open(app_name + '/app.json', 'w', encoding='utf-8') as fp:
+        print("### 03\n")
+        with open(app_location + '/app.json', 'w', encoding='utf-8') as fp:
             json.dump(app_json, fp, ensure_ascii=False, indent=4)
+        print("### 04\n")
     except Exception as e:
         print(e)
 

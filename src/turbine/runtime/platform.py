@@ -43,12 +43,17 @@ class PlatformResource(Resource):
         )
 
         async with Meroxa(auth=self.clientOpts.auth) as m:
+            connector: meroxa.ConnectorsResponse
             # Error Handling: Duplicate connector
             # Check for `bad_request`
-            connector = await m.connectors.create(connectorInput)
+            resp = await m.connectors.create(connectorInput)
+            if resp[0] is None:
+                print(resp[0], file=sys.stderr)
+            else :
+                connector = resp[1]
+                return Records(records=[], stream=connector.steams.output)
 
-        resp = json.loads(connector)
-        return Records(records=[], stream=resp['streams']['output'])
+
 
     async def write(self, records: Records, collection: str) -> None:
 
