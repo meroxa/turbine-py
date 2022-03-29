@@ -1,3 +1,4 @@
+import os
 import asyncio
 import hashlib
 
@@ -42,11 +43,22 @@ class App:
             # Write results out
             await destinationDb.write(anonymized, "collection_name")
 
-        asyncio.run(run_process(turbine))
+        return await run_process(turbine)
+
+"""
+Issues:
+ - local is not async, platform is. Mixing is :(
 
 
+Maybe solution(s):
+ - make the local runtime async 
+ - setting a flag that chooses b/w local or platform runtime. 
+"""
 async def main():
-    return await App.run(Turbine('local', '.'))
+
+    curr = os.path.abspath(os.path.dirname(__file__))
+
+    return await App.run(Turbine('local', curr))
 
 if __name__ == "__main__":
     asyncio.run(main())

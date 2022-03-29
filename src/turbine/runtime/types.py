@@ -53,14 +53,12 @@ class AppConfig:
             self,
             name: str,
             language: str,
-            environment: str,
-            pipeline: str,
-            resources: dict) -> None:
+            resources: dict,
+            environment = None) -> None:
         self.name = name
         self.language = language
-        self.environment = environment
-        self.pipeline = pipeline
         self.resources = resources
+        self.environment = environment
 
 
 class ClientOptions:
