@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import shutil
 import json
 import os
+import shutil
+import subprocess
+import sys
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -25,6 +27,10 @@ def generate_app(name: str, pathname: str):
                         ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
 
         generate_app_json(name, pathname)
+
+        req_file_loc = app_location +  "/requirements.txt"
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', req_file_loc])
+        
     except Exception as e:
         print(e)
         raise
