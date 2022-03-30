@@ -9,7 +9,7 @@ from turbine.runtime import Record, Records
 
 def anonymize(records: Records) -> Records:
     updated = []
-    for record in records:
+    for record in records.records:
         valueToUpdate = record.value
         hashedEmail = hashlib.sha256(
             valueToUpdate['payload']['after']['email'].encode()).hexdigest()

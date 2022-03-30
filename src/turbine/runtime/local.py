@@ -16,19 +16,23 @@ async def readFixtures(path: str, collection: str, resourceName: str):
 
     with open(path, "r") as content:
         fc = json.load(content)
-        for rec in fc[collection]:
-            fixtures.append(
-                Record(
-                    key=rec['key'],
-                    value=rec['value'],
-                    timestamp=time.time()
+
+        if collection in fc:
+            for rec in fc[collection]:
+                fixtures.append(
+                    Record(
+                        key=rec['key'],
+                        value=rec['value'],
+                        timestamp=time.time()
+                    )
                 )
-            )
 
     pprint("=====================from {} resource=====================".format(
         resourceName))
 
-    [pprint(fixture) for fixture in fixtures]
+    if fixtures:
+        [pprint(fixture) for fixture in fixtures]
+    print("0 records read")
 
     return fixtures
 
@@ -52,8 +56,9 @@ class LocalResource(Resource):
             "=====================to {} resource=====================".format(
                 self.name))
 
-        for record in rr.records:
-            pprint(record)
+        if rr.records:
+            [pprint(record) for record in rr.records]
+        print("0 records written")
 
         return None
 
@@ -68,13 +73,15 @@ class LocalRuntime(Runtime):
         self.pathToApp = pathToApp
 
     async def resources(self, name: str):
+        resourcedFixturePath = None
         resources = self.appConfig.resources
-        fixturesPath = resources[name]
 
-        resourcedFixturePath = "{}/{}".format(
-            self.pathToApp,
-            fixturesPath
-        )
+        fixturesPath = resources.get(name)
+        if fixturesPath:
+            resourcedFixturePath = "{}/{}".format(
+                self.pathToApp,
+                fixturesPath
+            )
 
         return LocalResource(name, resourcedFixturePath)
 
