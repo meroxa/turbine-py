@@ -13,27 +13,22 @@ from .types import Runtime
 async def readFixtures(path: str, collection: str, resourceName: str):
 
     fixtures = []
+    try:
+        with open(path, "r") as content:
+            fc = json.load(content)
 
-    with open(path, "r") as content:
-        fc = json.load(content)
-
-        if collection in fc:
-            for rec in fc[collection]:
-                fixtures.append(
-                    Record(
-                        key=rec['key'],
-                        value=rec['value'],
-                        timestamp=time.time()
+            if collection in fc:
+                for rec in fc[collection]:
+                    fixtures.append(
+                        Record(
+                            key=rec['key'],
+                            value=rec['value'],
+                            timestamp=time.time()
+                        )
                     )
-                )
-
-    pprint("=====================from {} resource=====================".format(
-        resourceName))
-
-    if fixtures:
-        [pprint(fixture) for fixture in fixtures]
-    print("0 records read")
-
+    except FileNotFoundError:
+        print("{} not found: must specify fixtures path to data for source resources in order to run locally".format(path))
+ 
     return fixtures
 
 
@@ -58,7 +53,7 @@ class LocalResource(Resource):
 
         if rr.records:
             [pprint(record) for record in rr.records]
-        print("0 records written")
+        print("{} records written".format(len(rr.records)))
 
         return None
 
@@ -76,6 +71,8 @@ class LocalRuntime(Runtime):
         resourcedFixturePath = None
         resources = self.appConfig.resources
 
+
+        # TODO: If this is a source, we need to die
         fixturesPath = resources.get(name)
         if fixturesPath:
             resourcedFixturePath = "{}/{}".format(

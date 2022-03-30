@@ -30,7 +30,7 @@ def generate_app(name: str, pathname: str):
 
         # req_file_loc = app_location +  "/requirements.txt"
         # subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', req_file_loc])
-        
+
     except Exception as e:
         print(e)
         raise
