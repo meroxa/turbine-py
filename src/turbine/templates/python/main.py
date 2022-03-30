@@ -55,5 +55,4 @@ async def main(environement):
     await App.run(Turbine(environement, curr))
 
 if __name__ == "__main__":
-    # sys argv[1] == environement
     asyncio.run(main(sys.argv[0]))

@@ -9,12 +9,6 @@ from .types import Record, Resource
 from .types import Records
 from .types import Runtime
 
-"""
-Members in this module need to be updated to async.
-
-"""
-
-
 async def readFixtures(path: str, collection: str, resourceName: str):
 
     fixtures = []
