@@ -14,6 +14,7 @@ Members in this module need to be updated to async.
 
 """
 
+
 async def readFixtures(path: str, collection: str, resourceName: str):
 
     fixtures = []
@@ -47,7 +48,7 @@ class LocalResource(Resource):
 
     async def records(self, collection: str) -> Records:
         return Records(
-            records= await readFixtures(self.fixturesPath, collection, self.name),
+            records=await readFixtures(self.fixturesPath, collection, self.name),
             stream=""
         )
 
@@ -83,6 +84,6 @@ class LocalRuntime(Runtime):
         return LocalResource(name, resourcedFixturePath)
 
     async def process(self,
-                records: Records,
-                fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
+                      records: Records,
+                      fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
         return fn(records)

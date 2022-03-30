@@ -54,7 +54,7 @@ class AppConfig:
             name: str,
             language: str,
             resources: dict,
-            environment = None) -> None:
+            environment=None) -> None:
         self.name = name
         self.language = language
         self.resources = resources

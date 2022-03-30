@@ -11,7 +11,7 @@ setup(
     entry_points={
         'console_scripts': ['turbine=turbine.cli:main'],
     },
-    install_requires = [
+    install_requires=[
         "aiohttp"
     ]
 )

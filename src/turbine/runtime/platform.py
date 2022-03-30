@@ -1,4 +1,5 @@
 import json
+import sys
 import typing as t
 
 import meroxa
@@ -47,13 +48,11 @@ class PlatformResource(Resource):
             # Error Handling: Duplicate connector
             # Check for `bad_request`
             resp = await m.connectors.create(connectorInput)
-            if resp[0] is None:
+            if resp[0] is not None:
                 print(resp[0], file=sys.stderr)
-            else :
+            else:
                 connector = resp[1]
                 return Records(records=[], stream=connector.steams.output)
-
-
 
     async def write(self, records: Records, collection: str) -> None:
 
@@ -85,10 +84,13 @@ class PlatformResource(Resource):
         )
 
         async with Meroxa(auth=self.clientOpts.auth) as m:
-            connector = await m.connectors.create(connectorInput)
+            resp = await m.connectors.create(connectorInput)
 
-        resp = json.loads(connector)
-        return Records(records=[], stream=resp['streams']['input'])
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            connector = resp[1]
+            return Records(records=[], stream=connector.streams.input)
 
 
 class PlatformRuntime(Runtime):
@@ -107,12 +109,15 @@ class PlatformRuntime(Runtime):
         # Response is simple string. We could massage that into a structured item
         # e.g. (Option[resp], Option[error])
         async with Meroxa(auth=self._clientOpts.auth) as m:
-            resource = await m.resources.get(resourceName)
+            resp = await m.resources.get(resourceName)
 
-        return PlatformResource(
-            PlatformResponse(resource),
-            self._clientOpts,
-            self._appConfig)
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            return PlatformResource(
+                resource=resp[1],
+                clientOptions=self._clientOpts,
+                appConfig=self._appConfig)
 
     async def process(self,
                       records: Records,
@@ -135,8 +140,11 @@ class PlatformRuntime(Runtime):
             getattr(fn, '__name__', 'Unknown')))
 
         async with Meroxa(auth=self._clientOpts.auth) as m:
-            createdFunction = await m.functions.create(createFuncParams)
+            resp = await m.functions.create(createFuncParams)
 
-        records.stream = json.loads(createdFunction)['output_stream']
-
-        return records
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            func = resp[1]
+            records.stream = func.output_stream
+            return records
