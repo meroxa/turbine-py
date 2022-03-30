@@ -13,7 +13,8 @@ from .types import Runtime
 Members in this module need to be updated to async.
 
 """
-def readFixtures(path: str, collection: str, resourceName: str):
+
+async def readFixtures(path: str, collection: str, resourceName: str):
 
     fixtures = []
 
@@ -44,13 +45,13 @@ class LocalResource(Resource):
         self.name = name
         self.fixturesPath = fixturesPath
 
-    def records(self, collection: str) -> Records:
+    async def records(self, collection: str) -> Records:
         return Records(
-            records=readFixtures(self.fixturesPath, collection, self.name),
+            records= await readFixtures(self.fixturesPath, collection, self.name),
             stream=""
         )
 
-    def write(self, rr: Records, collection: str) -> None:
+    async def write(self, rr: Records, collection: str) -> None:
         pprint(
             "=====================to {} resource=====================".format(
                 self.name))
@@ -70,7 +71,7 @@ class LocalRuntime(Runtime):
         self.appConfig = config
         self.pathToApp = pathToApp
 
-    def resources(self, name: str):
+    async def resources(self, name: str):
         resources = self.appConfig.resources
         fixturesPath = resources[name]
 
@@ -81,7 +82,7 @@ class LocalRuntime(Runtime):
 
         return LocalResource(name, resourcedFixturePath)
 
-    def process(self,
+    async def process(self,
                 records: Records,
                 fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
         return fn(records)
