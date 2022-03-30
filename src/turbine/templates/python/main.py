@@ -48,11 +48,12 @@ class App:
         return await run_process(turbine)
 
 
-async def main(environement):
+def main(environement):
 
     curr = os.path.abspath(os.path.dirname(__file__))
 
-    await App.run(Turbine(environement, curr))
+    asyncio.run(App.run(Turbine(environement, curr)))
+
 
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[0]))
+    main(sys.argv[0])

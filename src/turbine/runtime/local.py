@@ -9,6 +9,7 @@ from .types import Record, Resource
 from .types import Records
 from .types import Runtime
 
+
 async def readFixtures(path: str, collection: str, resourceName: str):
 
     fixtures = []
