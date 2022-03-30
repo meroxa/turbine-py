@@ -11,7 +11,7 @@ import sys
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # Hacky work around to make sure the __pychache__ for turbine-py
-# is not incldued in the copied files.
+# is not included in the copied files.
 FILES_TO_IGNORE_ON_COPY = '__pycache__'
 
 
