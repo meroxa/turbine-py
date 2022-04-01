@@ -10,7 +10,7 @@ from .types import Records
 from .types import Runtime
 
 
-async def readFixtures(path: str, collection: str, resourceName: str):
+async def read_fixtures(path: str, collection: str):
 
     fixtures = []
     try:
@@ -27,22 +27,22 @@ async def readFixtures(path: str, collection: str, resourceName: str):
                         )
                     )
     except FileNotFoundError:
-        print("{} not found: must specify fixtures path to data for source resources in order to run locally".format(path))
+        print(f"{path} not found: must specify fixtures path to data for source resources in order to run locally")
  
     return fixtures
 
 
 class LocalResource(Resource):
     name = ""
-    fixturesPath = ""
+    fixtures_path = ""
 
-    def __init__(self, name: str, fixturesPath: str) -> None:
+    def __init__(self, name: str, fixtures_path: str) -> None:
         self.name = name
-        self.fixturesPath = fixturesPath
+        self.fixtures_path = fixtures_path
 
     async def records(self, collection: str) -> Records:
         return Records(
-            records=await readFixtures(self.fixturesPath, collection, self.name),
+            records=await read_fixtures(self.fixtures_path, collection),
             stream=""
         )
 
@@ -63,24 +63,22 @@ class LocalRuntime(Runtime):
     appConfig = {}
     pathToApp = ""
 
-    def __init__(self, config: AppConfig, pathToApp: str) -> None:
+    def __init__(self, config: AppConfig, path_to_app: str) -> None:
         self.appConfig = config
-        self.pathToApp = pathToApp
+        self.pathToApp = path_to_app
 
     async def resources(self, name: str):
-        resourcedFixturePath = None
+        resourced_fixture_path = None
         resources = self.appConfig.resources
 
-
-        # TODO: If this is a source, we need to die
-        fixturesPath = resources.get(name)
-        if fixturesPath:
-            resourcedFixturePath = "{}/{}".format(
+        fixtures_path = resources.get(name)
+        if fixtures_path:
+            resourced_fixture_path = "{}/{}".format(
                 self.pathToApp,
-                fixturesPath
+                fixtures_path
             )
 
-        return LocalResource(name, resourcedFixturePath)
+        return LocalResource(name, resourced_fixture_path)
 
     async def process(self,
                       records: Records,

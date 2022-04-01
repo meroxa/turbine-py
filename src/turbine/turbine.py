@@ -28,7 +28,7 @@ class Turbine(Runtime):
         if runtime is not PLATFORM_RUNTIME:
             self._runtime = self.runtime = LocalRuntime(
                 config=config,
-                pathToApp=path_to_data_app
+                path_to_app=path_to_data_app
             )
 
             return

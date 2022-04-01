@@ -1,5 +1,4 @@
 import os
-import sys
 import asyncio
 import hashlib
 
@@ -10,14 +9,14 @@ from turbine.runtime import Record, Records
 def anonymize(records: Records) -> Records:
     updated = []
     for record in records.records:
-        valueToUpdate = record.value
-        hashedEmail = hashlib.sha256(
-            valueToUpdate['payload']['after']['email'].encode()).hexdigest()
-        valueToUpdate['payload']['after']['email'] = hashedEmail
+        value_to_update = record.value
+        hashed_email = hashlib.sha256(
+            value_to_update['payload']['after']['email'].encode()).hexdigest()
+        value_to_update['payload']['after']['email'] = hashed_email
         updated.append(
             Record(
                 key=record.key,
-                value=valueToUpdate,
+                value=value_to_update,
                 timestamp=record.timestamp
             )
         )
@@ -26,34 +25,36 @@ def anonymize(records: Records) -> Records:
 
 class App:
 
+    @staticmethod
     async def run(turbine: Turbine):
+        # Get remote resource
+        source = await turbine.resources("source_name")
 
-        async def run_process(turbine: Turbine):
+        # Read from remote resource
+        records = await source.records("collection_name")
 
-            # Get remote resource
-            source = await turbine.resources("source_name")
+        # Deploy function with source as input
+        anonymized = await turbine.process(records, anonymize)
 
-            # Read from remote resource
-            records = await source.records("collection_name")
+        # Get destination
+        destination_db = await turbine.resources("destination_name")
 
-            # Deploy function with source as input
-            anonymized = await turbine.process(records, anonymize)
-
-            # Get destination
-            destinationDb = await turbine.resources("destination_name")
-
-            # Write results out
-            await destinationDb.write(anonymized, "collection_name")
-
-        return await run_process(turbine)
+        # Write results out
+        await destination_db.write(anonymized, "collection_name")
 
 
-def main(environement):
-
+def main():
     curr = os.path.abspath(os.path.dirname(__file__))
 
-    asyncio.run(App.run(Turbine(environement, curr)))
+    asyncio.run(
+        App.run(
+            Turbine(
+                runtime="local",
+                path_to_data_app=curr
+            )
+        )
+    )
 
 
 if __name__ == "__main__":
-    main(sys.argv[0])
+    main()
