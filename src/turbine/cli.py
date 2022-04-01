@@ -12,7 +12,15 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 FILES_TO_IGNORE_ON_COPY = '__pycache__'
 
 
-def generate_app(name: str, pathname: str):
+def run_app_local(*args, **kwargs):
+    raise NotImplementedError
+
+
+def run_app_platform(*args, **kwargs):
+    raise NotImplementedError
+
+
+def generate_app(name: str, pathname: str, **kwargs):
     app_name = name or "my-app"
 
     app_location = os.path.join(pathname, app_name)
@@ -46,25 +54,37 @@ def generate_app_json(name: str, pathname: str):
 
 def build_parser():
     parser = argparse.ArgumentParser(
-        prog="turbine",
-        description="Command line utility for interacting with turbine-py",
+        prog="turbine-py",
+        description="Command line utility for interacting with the meroxa platform",
     )
 
-    # generate name pathname
-    parser.add_argument('--generate', nargs=2, default=None,
-                        metavar=('appName', 'appPath'),
-                        help="Generate a turbine-py application")
+    subparser = parser.add_subparsers()
+
+    # meroxa apps init
+    generate = subparser.add_parser("generate")
+    generate.add_argument("name", help="desired name of application")
+    generate.add_argument("pathname", help="desired location of application")
+    generate.set_defaults(func=generate_app)
+
+    # meroxa apps run 
+    # Run using local runtime
+    generate = subparser.add_parser("run")
+    generate.add_argument("app_path", help="path to app to run")
+    generate.set_defaults(func=run_app_local)
+
+    # meroxa apps deploy 
+    # Run using platform runtime
+    generate = subparser.add_parser("deploy")
+    generate.add_argument("app_path", help="path to app to run")
+    generate.set_defaults(func=run_app_local)
 
     return parser
 
 
 def main():
     parser = build_parser()
-    arguments = vars(parser.parse_args())
-
-    if arguments.get('generate') is not None:
-        generate_app(*arguments.get('generate'))
-        return
+    args = parser.parse_args()
+    args.func(**vars(args))
 
 
 if __name__ == "__main__":
