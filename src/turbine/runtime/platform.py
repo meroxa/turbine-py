@@ -1,9 +1,10 @@
 import json
+import sys
 import typing as t
 
 import meroxa
-
 from meroxa import Meroxa
+from meroxa.types import PipelineIdentifiers
 
 from .types import AppConfig
 from .types import Record
@@ -18,49 +19,49 @@ class PlatformResponse(object):
 
 
 class PlatformResource(Resource):
-    def __init__(self, resource, clientOptions: meroxa.ClientOptions,
-                 appConfig: AppConfig) -> None:
+    def __init__(self, resource, client_options: meroxa.ClientOptions,
+                 app_config: AppConfig) -> None:
         self.resource = resource
-        self.appConfig = appConfig
-        self.clientOpts = clientOptions
+        self.app_config = app_config
+        self.client_opts = client_options
 
     async def records(self, collection: str) -> Records:
 
-        print("Creating SOURCE connector from source: {}".format(
-            self.resource.name))
+        print(f"Creating SOURCE connector from source: {self.resource.name}")
 
         # Postgres initial funtimes
-        connectorConfig = dict(input="public.{}".format(collection))
-        connectorInput = meroxa.CreateConnectorParams(
+        connector_config = dict(input="public.{}".format(collection))
+        connector_input = meroxa.CreateConnectorParams(
             name="source",
             metadata={
                 "mx:connectorType": "source",
             },
-            config=connectorConfig,
+            config=connector_config,
             resourceId=self.resource.id,
-            pipelineName=self.appConfig.name,
+            pipelineName=self.app_config.name,
             pipelineId=None
         )
 
-        async with Meroxa(auth=self.clientOpts.auth) as m:
+        async with Meroxa(auth=self.client_opts.auth) as m:
+            connector: meroxa.ConnectorsResponse
             # Error Handling: Duplicate connector
             # Check for `bad_request`
-            connector = await m.connectors.create(connectorInput)
-
-        resp = json.loads(connector)
-        return Records(records=[], stream=resp['streams']['output'])
+            resp = await m.connectors.create(connector_input)
+            if resp[0] is not None:
+                print(resp[0], file=sys.stderr)
+            else:
+                connector = resp[1]
+                return Records(records=[], stream=connector.streams.output)
 
     async def write(self, records: Records, collection: str) -> None:
 
-        print(
-            "Creating DESTINATION connector from stream: {}"
-            .format(records.stream))
+        print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         # Connector config
         # Move the non-shared logics to a separate function
-        connectorConfig = {
+        connector_config = {
             "input": records.stream,
-            #=== ^ shared ^ =====  V S3 specific V ==#
+            # === ^ shared ^ =====  V S3 specific V ==#
             "aws_s3_prefix": '{}'.format(str.lower(collection)),
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
             "value.converter.schemas.enable": "true",
@@ -68,70 +69,77 @@ class PlatformResource(Resource):
             "format.output.envelope": "true"
         }
 
-        connectorInput = meroxa.CreateConnectorParams(
+        connector_input = meroxa.CreateConnectorParams(
             name="destination",
             metadata={
                 "mx:connectorType": "destination",
             },
-            config=connectorConfig,
+            config=connector_config,
             resourceId=self.resource.id,
-            pipelineName=self.appConfig.name,
+            pipelineName=self.app_config.name,
             pipelineId=None
         )
 
-        async with Meroxa(auth=self.clientOpts.auth) as m:
-            connector = await m.connectors.create(connectorInput)
+        async with Meroxa(auth=self.client_opts.auth) as m:
+            resp = await m.connectors.create(connector_input)
 
-        resp = json.loads(connector)
-        return Records(records=[], stream=resp['streams']['input'])
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            return None
 
 
 class PlatformRuntime(Runtime):
-
     _registeredFunctions = None
 
-    def __init__(self, clientOptions: meroxa.ClientOptions,
-                 imageName: str, config: AppConfig) -> None:
-        self._imageName = imageName
-        self._appConfig = config
-        self._clientOpts = clientOptions
+    def __init__(self, client_options: meroxa.ClientOptions,
+                 image_name: str, config: AppConfig) -> None:
+        self._image_name = image_name
+        self._app_config = config
+        self._client_opts = client_options
 
-    async def resources(self, resourceName: str):
+    async def resources(self, resource_name: str):
 
         # Error checking if a resource does not exist.
         # Response is simple string. We could massage that into a structured item
         # e.g. (Option[resp], Option[error])
-        async with Meroxa(auth=self._clientOpts.auth) as m:
-            resource = await m.resources.get(resourceName)
+        async with Meroxa(auth=self._client_opts.auth) as m:
+            resp = await m.resources.get(resource_name)
 
-        return PlatformResource(
-            PlatformResponse(resource),
-            self._clientOpts,
-            self._appConfig)
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            return PlatformResource(
+                resource=resp[1],
+                client_options=self._client_opts,
+                app_config=self._app_config)
 
     async def process(self,
                       records: Records,
                       fn: t.Callable[[t.List[Record]], t.List[Record]],
-                      envVars: dict) -> Records:
+                      env_vars: dict) -> Records:
 
         # Create function parameters
-        createFuncParams = meroxa.CreateFunctionParams(
+        create_func_params = meroxa.CreateFunctionParams(
             inputStream=records.stream[0],
             command=["python"],
             args=["main.py", fn.__name__],
-            image=self._imageName,
-            pipelineIdentifiers={
-                "name": self._appConfig.name
-            },
-            envVars=envVars
+            image=self._image_name,
+            pipelineIdentifiers=PipelineIdentifiers(
+                name=self._app_config.name
+            ),
+            envVars=env_vars
         )
 
         print("deploying function: {}".format(
             getattr(fn, '__name__', 'Unknown')))
 
-        async with Meroxa(auth=self._clientOpts.auth) as m:
-            createdFunction = await m.functions.create(createFuncParams)
+        async with Meroxa(auth=self._client_opts.auth) as m:
+            resp = await m.functions.create(create_func_params)
 
-        records.stream = json.loads(createdFunction)['output_stream']
-
-        return records
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            func = resp[1]
+            records.stream = func.output_stream
+            return records

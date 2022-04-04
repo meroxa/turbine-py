@@ -29,22 +29,24 @@ class Records:
 
 class Resource(ABC):
     @abstractmethod
-    def records(collection: str) -> Records:
+    def records(self, collection: str) -> Records:
         ...
 
     @abstractmethod
-    def write(records: Records, collection: str) -> None:
+    def write(self, records: Records, collection: str) -> None:
         ...
 
 
 class Runtime(ABC):
 
-    def resources(name: str):
+    def resources(self, name: str):
         ...
 
     def process(
+            self,
             records: Records,
-            fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
+            fn: t.Callable[[t.List[Record]], t.List[Record]],
+            env_vars: dict) -> Records:
         ...
 
 
@@ -53,14 +55,12 @@ class AppConfig:
             self,
             name: str,
             language: str,
-            environment: str,
-            pipeline: str,
-            resources: dict) -> None:
+            resources: dict,
+            environment=None) -> None:
         self.name = name
         self.language = language
-        self.environment = environment
-        self.pipeline = pipeline
         self.resources = resources
+        self.environment = environment
 
 
 class ClientOptions:
