@@ -1,7 +1,6 @@
 import json
 import time
 import typing as t
-
 from pprint import pprint
 
 from .types import AppConfig
@@ -11,7 +10,6 @@ from .types import Runtime
 
 
 async def read_fixtures(path: str, collection: str):
-
     fixtures = []
     try:
         with open(path, "r") as content:
@@ -27,8 +25,9 @@ async def read_fixtures(path: str, collection: str):
                         )
                     )
     except FileNotFoundError:
-        print(f"{path} not found: must specify fixtures path to data for source resources in order to run locally")
- 
+        print(f"{path} not found: must specify fixtures path to data for source"
+              f" resources in order to run locally")
+
     return fixtures
 
 
@@ -59,7 +58,6 @@ class LocalResource(Resource):
 
 
 class LocalRuntime(Runtime):
-
     appConfig = {}
     pathToApp = ""
 
@@ -82,5 +80,9 @@ class LocalRuntime(Runtime):
 
     async def process(self,
                       records: Records,
-                      fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
-        return fn(records)
+                      fn: t.Callable[[t.List[Record]], t.List[Record]],
+                      env_vars=None) -> Records:
+        return Records(
+            records=fn(records.records),
+            stream=""
+        )

@@ -1,14 +1,15 @@
-import os
 import asyncio
 import hashlib
+import os
+import typing as t
 
 from turbine import Turbine
-from turbine.runtime import Record, Records
+from turbine.runtime import Record
 
 
-def anonymize(records: Records) -> Records:
+def anonymize(records: t.List[Record]) -> t.List[Record]:
     updated = []
-    for record in records.records:
+    for record in records:
         value_to_update = record.value
         hashed_email = hashlib.sha256(
             value_to_update['payload']['after']['email'].encode()).hexdigest()
@@ -20,7 +21,7 @@ def anonymize(records: Records) -> Records:
                 timestamp=record.timestamp
             )
         )
-    return Records(records=updated, stream="")
+    return updated
 
 
 class App:

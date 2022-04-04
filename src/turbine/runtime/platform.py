@@ -3,8 +3,8 @@ import sys
 import typing as t
 
 import meroxa
-
 from meroxa import Meroxa
+from meroxa.types import PipelineIdentifiers
 
 from .types import AppConfig
 from .types import Record
@@ -55,15 +55,13 @@ class PlatformResource(Resource):
 
     async def write(self, records: Records, collection: str) -> None:
 
-        print(
-            "Creating DESTINATION connector from stream: {}"
-            .format(records.stream))
+        print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         # Connector config
         # Move the non-shared logics to a separate function
         connector_config = {
             "input": records.stream,
-            #=== ^ shared ^ =====  V S3 specific V ==#
+            # === ^ shared ^ =====  V S3 specific V ==#
             "aws_s3_prefix": '{}'.format(str.lower(collection)),
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
             "value.converter.schemas.enable": "true",
@@ -71,7 +69,7 @@ class PlatformResource(Resource):
             "format.output.envelope": "true"
         }
 
-        connectorInput = meroxa.CreateConnectorParams(
+        connector_input = meroxa.CreateConnectorParams(
             name="destination",
             metadata={
                 "mx:connectorType": "destination",
@@ -83,7 +81,7 @@ class PlatformResource(Resource):
         )
 
         async with Meroxa(auth=self.client_opts.auth) as m:
-            resp = await m.connectors.create(connectorInput)
+            resp = await m.connectors.create(connector_input)
 
         if resp[0] is not None:
             print(resp[0], file=sys.stderr)
@@ -92,7 +90,6 @@ class PlatformResource(Resource):
 
 
 class PlatformRuntime(Runtime):
-
     _registeredFunctions = None
 
     def __init__(self, client_options: meroxa.ClientOptions,
@@ -128,9 +125,9 @@ class PlatformRuntime(Runtime):
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipelineIdentifiers={
-                "name": self._app_config.name
-            },
+            pipelineIdentifiers=PipelineIdentifiers(
+                name=self._app_config.name
+            ),
             envVars=env_vars
         )
 

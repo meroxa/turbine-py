@@ -28,27 +28,25 @@ class Records:
 
 
 class Resource(ABC):
-    @staticmethod
     @abstractmethod
-    def records(collection: str) -> Records:
+    def records(self, collection: str) -> Records:
         ...
 
-    @staticmethod
     @abstractmethod
-    def write(records: Records, collection: str) -> None:
+    def write(self, records: Records, collection: str) -> None:
         ...
 
 
 class Runtime(ABC):
 
-    @staticmethod
-    def resources(name: str):
+    def resources(self, name: str):
         ...
 
-    @staticmethod
     def process(
+            self,
             records: Records,
-            fn: t.Callable[[t.List[Record]], t.List[Record]]) -> Records:
+            fn: t.Callable[[t.List[Record]], t.List[Record]],
+            env_vars: dict) -> Records:
         ...
 
 
