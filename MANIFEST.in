@@ -1,1 +1,3 @@
 graft src/turbine/templates
+
+include src/turbine/function-deploy/Dockerfile

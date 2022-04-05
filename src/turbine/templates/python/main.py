@@ -12,20 +12,16 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
     for record in records:
         value_to_update = record.value
         hashed_email = hashlib.sha256(
-            value_to_update['payload']['after']['email'].encode()).hexdigest()
-        value_to_update['payload']['after']['email'] = hashed_email
+            value_to_update["payload"]["after"]["email"].encode()
+        ).hexdigest()
+        value_to_update["payload"]["after"]["email"] = hashed_email
         updated.append(
-            Record(
-                key=record.key,
-                value=value_to_update,
-                timestamp=record.timestamp
-            )
+            Record(key=record.key, value=value_to_update, timestamp=record.timestamp)
         )
     return updated
 
 
 class App:
-
     @staticmethod
     async def run(turbine: Turbine):
         # Get remote resource
@@ -47,14 +43,7 @@ class App:
 def main():
     curr = os.path.abspath(os.path.dirname(__file__))
 
-    asyncio.run(
-        App.run(
-            Turbine(
-                runtime="local",
-                path_to_data_app=curr
-            )
-        )
-    )
+    asyncio.run(App.run(Turbine(runtime="local", path_to_data_app=curr)))
 
 
 if __name__ == "__main__":
