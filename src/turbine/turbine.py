@@ -34,7 +34,7 @@ class Turbine(Runtime):
             client_options=ClientOptions(
                 auth=os.getenv(MEROXA_ACCESS_TOKEN), url=os.getenv(MEROXA_API_URL)
             ),
-            image_name="{}/{}".format(os.getenv(DOCKER_HUB_USERNAME), config.name),
+            image_name=f"{os.getenv(DOCKER_HUB_USERNAME)}/{config.name}",
         )
 
     async def resources(self, name: str):
