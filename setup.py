@@ -7,7 +7,7 @@ setup(
     description="",
     package_dir={'': 'src'},
     include_package_data=True,
-    packages=['turbine', 'turbine.runtime'],
+    packages=['turbine', 'turbine.runtime', 'turbine.runner'],
     entry_points={
         'console_scripts': ['turbine-py=turbine.cli:main'],
     },

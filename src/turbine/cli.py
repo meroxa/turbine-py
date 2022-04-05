@@ -5,15 +5,13 @@ import json
 import os
 import shutil
 
+from .runner.app_runner import run_app_local
+
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # Hacky work around to make sure the __pychache__ for turbine-py
 # is not included in the copied files.
 FILES_TO_IGNORE_ON_COPY = '__pycache__'
-
-
-def run_app_local(*args, **kwargs):
-    raise NotImplementedError
 
 
 def run_app_platform(*args, **kwargs):
@@ -69,13 +67,7 @@ def build_parser():
     # meroxa apps run 
     # Run using local runtime
     generate = subparser.add_parser("run")
-    generate.add_argument("app_path", help="path to app to run")
-    generate.set_defaults(func=run_app_local)
-
-    # meroxa apps deploy 
-    # Run using platform runtime
-    generate = subparser.add_parser("deploy")
-    generate.add_argument("app_path", help="path to app to run")
+    generate.add_argument("path_to_data_app", help="path to app to run")
     generate.set_defaults(func=run_app_local)
 
     return parser
