@@ -101,10 +101,6 @@ class PlatformRuntime(Runtime):
         self._client_opts = client_options
 
     async def resources(self, resource_name: str):
-
-        # Error checking if a resource does not exist.
-        # Response is simple string. We could massage that into a structured item
-        # e.g. (Option[resp], Option[error])
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.resources.get(resource_name)
 
@@ -134,7 +130,7 @@ class PlatformRuntime(Runtime):
             envVars=env_vars,
         )
 
-        print("deploying function: {}".format(getattr(fn, "__name__", "Unknown")))
+        print(f"deploying function: { getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)

@@ -19,7 +19,7 @@ class Turbine(Runtime):
     _runtime = None
 
     def __init__(self, runtime: str, path_to_data_app: str):
-        with open(os.path.abspath("{}".format(path_to_data_app)) + "/app.json") as fd:
+        with open(os.path.abspath(f"{path_to_data_app}") + "/app.json") as fd:
             config = AppConfig(**json.load(fd))
 
         if runtime is not PLATFORM_RUNTIME:
