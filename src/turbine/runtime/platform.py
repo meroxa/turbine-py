@@ -19,8 +19,9 @@ class PlatformResponse(object):
 
 
 class PlatformResource(Resource):
-    def __init__(self, resource, client_options: meroxa.ClientOptions,
-                 app_config: AppConfig) -> None:
+    def __init__(
+        self, resource, client_options: meroxa.ClientOptions, app_config: AppConfig
+    ) -> None:
         self.resource = resource
         self.app_config = app_config
         self.client_opts = client_options
@@ -39,7 +40,7 @@ class PlatformResource(Resource):
             config=connector_config,
             resourceId=self.resource.id,
             pipelineName=self.app_config.name,
-            pipelineId=None
+            pipelineId=None,
         )
 
         async with Meroxa(auth=self.client_opts.auth) as m:
@@ -62,11 +63,11 @@ class PlatformResource(Resource):
         connector_config = {
             "input": records.stream,
             # === ^ shared ^ =====  V S3 specific V ==#
-            "aws_s3_prefix": '{}'.format(str.lower(collection)),
+            "aws_s3_prefix": "{}".format(str.lower(collection)),
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
             "value.converter.schemas.enable": "true",
             "format.output.type": "jsonl",
-            "format.output.envelope": "true"
+            "format.output.envelope": "true",
         }
 
         connector_input = meroxa.CreateConnectorParams(
@@ -77,7 +78,7 @@ class PlatformResource(Resource):
             config=connector_config,
             resourceId=self.resource.id,
             pipelineName=self.app_config.name,
-            pipelineId=None
+            pipelineId=None,
         )
 
         async with Meroxa(auth=self.client_opts.auth) as m:
@@ -92,8 +93,9 @@ class PlatformResource(Resource):
 class PlatformRuntime(Runtime):
     _registeredFunctions = None
 
-    def __init__(self, client_options: meroxa.ClientOptions,
-                 image_name: str, config: AppConfig) -> None:
+    def __init__(
+        self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
+    ) -> None:
         self._image_name = image_name
         self._app_config = config
         self._client_opts = client_options
@@ -112,12 +114,15 @@ class PlatformRuntime(Runtime):
             return PlatformResource(
                 resource=resp[1],
                 client_options=self._client_opts,
-                app_config=self._app_config)
+                app_config=self._app_config,
+            )
 
-    async def process(self,
-                      records: Records,
-                      fn: t.Callable[[t.List[Record]], t.List[Record]],
-                      env_vars: dict) -> Records:
+    async def process(
+        self,
+        records: Records,
+        fn: t.Callable[[t.List[Record]], t.List[Record]],
+        env_vars: dict,
+    ) -> Records:
 
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
@@ -125,14 +130,11 @@ class PlatformRuntime(Runtime):
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipelineIdentifiers=PipelineIdentifiers(
-                name=self._app_config.name
-            ),
-            envVars=env_vars
+            pipelineIdentifiers=PipelineIdentifiers(name=self._app_config.name),
+            envVars=env_vars,
         )
 
-        print("deploying function: {}".format(
-            getattr(fn, '__name__', 'Unknown')))
+        print("deploying function: {}".format(getattr(fn, "__name__", "Unknown")))
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
