@@ -50,7 +50,7 @@ class LocalResource(Resource):
         )
 
         if rr.records:
-            [pprint(record) for record in rr.records]
+            [print(json.dumps(record.value, indent=4)) for record in rr.records]
         print("{} records written".format(len(rr.records)))
 
         return None
