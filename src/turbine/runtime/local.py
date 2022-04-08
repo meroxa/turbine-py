@@ -4,10 +4,11 @@ import typing as t
 from pprint import pprint
 
 from .types import AppConfig
-from .types import Record, Resource
+from .types import Record, Resource , RegisteredFunctions
 from .types import Records
 from .types import Runtime
 
+import pdb
 
 async def read_fixtures(path: str, collection: str):
     fixtures = []
@@ -19,14 +20,14 @@ async def read_fixtures(path: str, collection: str):
                 for rec in fc[collection]:
                     fixtures.append(
                         Record(
-                            key=rec["key"], value=rec["value"], timestamp=time.time()
+                            key=rec['key'],
+                            value=rec['value'],
+                            timestamp=time.time()
                         )
                     )
     except FileNotFoundError:
-        print(
-            f"{path} not found: must specify fixtures path to data for source"
-            f" resources in order to run locally"
-        )
+        print(f"{path} not found: must specify fixtures path to data for source"
+              f" resources in order to run locally")
 
     return fixtures
 
@@ -41,13 +42,14 @@ class LocalResource(Resource):
 
     async def records(self, collection: str) -> Records:
         return Records(
-            records=await read_fixtures(self.fixtures_path, collection), stream=""
+            records=await read_fixtures(self.fixtures_path, collection),
+            stream=""
         )
 
     async def write(self, rr: Records, collection: str) -> None:
         pprint(
-            "=====================to {} resource=====================".format(self.name)
-        )
+            "=====================to {} resource=====================".format(
+                self.name))
 
         if rr.records:
             [pprint(record) for record in rr.records]
@@ -59,6 +61,7 @@ class LocalResource(Resource):
 class LocalRuntime(Runtime):
     appConfig = {}
     pathToApp = ""
+    registered_functions = {}
 
     def __init__(self, config: AppConfig, path_to_app: str) -> None:
         self.appConfig = config
@@ -70,14 +73,22 @@ class LocalRuntime(Runtime):
 
         fixtures_path = resources.get(name)
         if fixtures_path:
-            resourced_fixture_path = "{}/{}".format(self.pathToApp, fixtures_path)
+            resourced_fixture_path = "{}/{}".format(
+                self.pathToApp,
+                fixtures_path
+            )
 
         return LocalResource(name, resourced_fixture_path)
 
-    async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars=None,
-    ) -> Records:
-        return Records(records=fn(records.records), stream="")
+    async def process(self,
+                      records: Records,
+                      fn: t.Callable[[t.List[Record]], t.List[Record]],
+                      env_vars=None) -> Records:
+        self.registered_functions[fn.__name__] = fn
+        return Records(
+            records=fn(records.records),
+            stream=""
+        )
+
+    async def list_functions(self):
+        return print("List of application functions : \n {}".format("\n".join(self.registered_functions)))

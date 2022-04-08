@@ -4,9 +4,11 @@ import argparse
 import imp
 import json
 import os
+from posixpath import dirname
 import shutil
 import pdb 
 from .runner import *
+
 
 
 # Hacky work around to make sure the __pychache__ for turbine-py
@@ -24,7 +26,7 @@ def build_parser():
         description="Command line utility for interacting with the meroxa platform",
     )
 
-    subparser = parser.add_subparsers()
+    subparser = parser.add_subparsers(dest = "command")
 
     # meroxa apps init
     generate = subparser.add_parser("generate")
@@ -36,13 +38,15 @@ def build_parser():
     # meroxa apps run
     # Run using local runtime
     generate = subparser.add_parser("run")
+    generate.add_argument("runtime", default = "local", help=" selectlocal or platform runtime")
     generate.add_argument("path_to_data_app", help="path to app to run")
     generate.set_defaults(func=run_app_local)
 
     #meroxa functions 
     generate = subparser.add_parser("function")
-    generate.add_argument("pathname", help="path to app ")
-    generate.set_defaults(func=list_functions)
+    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
+    generate.add_argument("path_to_data_app", help="path to app ")
+    generate.set_defaults(func=run_app_local)
 
     return parser
 
@@ -50,9 +54,7 @@ def build_parser():
 def main():
     parser = build_parser()
     args = parser.parse_args()
-    pdb.set_trace()
     args.func(**vars(args))
-    pdb.set_trace()
 
 
 if __name__ == "__main__":

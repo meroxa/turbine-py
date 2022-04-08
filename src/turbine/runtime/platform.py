@@ -11,7 +11,8 @@ from .types import Record
 from .types import Records
 from .types import Resource
 from .types import Runtime
-
+from .types import RegisteredFunctions
+import pdb
 
 class PlatformResponse(object):
     def __init__(self, resp: str):
@@ -27,7 +28,6 @@ class PlatformResource(Resource):
         self.client_opts = client_options
 
     async def records(self, collection: str) -> Records:
-
         print(f"Creating SOURCE connector from source: {self.resource.name}")
 
         # Postgres initial funtimes
@@ -55,7 +55,6 @@ class PlatformResource(Resource):
                 return Records(records=[], stream=connector.streams.output)
 
     async def write(self, records: Records, collection: str) -> None:
-
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         # Connector config
@@ -91,7 +90,7 @@ class PlatformResource(Resource):
 
 
 class PlatformRuntime(Runtime):
-    _registeredFunctions = None
+    _registeredFunctions = {}
 
     def __init__(
         self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
@@ -101,7 +100,6 @@ class PlatformRuntime(Runtime):
         self._client_opts = client_options
 
     async def resources(self, resource_name: str):
-
         # Error checking if a resource does not exist.
         # Response is simple string. We could massage that into a structured item
         # e.g. (Option[resp], Option[error])
@@ -145,3 +143,9 @@ class PlatformRuntime(Runtime):
             func = resp[1]
             records.stream = func.output_stream
             return records
+
+    async def list_functions(self):
+        return print("List of application functions : \n {}".format("\n".join(self.registered_functions)))
+       
+
+

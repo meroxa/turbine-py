@@ -28,6 +28,15 @@ class Records:
 
         return pformat(vars(self), indent=4, width=1)
 
+class RegisteredFunctions:
+    def __init__(self, fn : t.Callable[[t.List[Record]], t.List[Record]]):
+        ...
+ 
+
+class RegisteredFunctions(ABC):
+    def __init__(self, fn : t.Callable[[t.List[Record]], t.List[Record]]):
+        ...
+ 
 
 class Resource(ABC):
     @abstractmethod
