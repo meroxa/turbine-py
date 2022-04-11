@@ -16,7 +16,7 @@ Process function given to GRPC server
 
 FUNCTION_NAME = sys.argv[1]
 FUNCTION_ADDRESS = os.getenv("MEROXA_FUNCTION_ADDR")
-PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../dataapp/main.py")
+PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data-app/main.py")
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []
@@ -28,7 +28,7 @@ class Funtime(service_pb2_grpc.FunctionServicer):
         request: service_pb2.ProcessRecordRequest,
         context: grpc.aio.ServicerContext,
     ) -> service_pb2.ProcessRecordResponse:
-        spec = importlib.util.spec_from_file_location("dataapp.main", PATH_TO_DATA_APP)
+        spec = importlib.util.spec_from_file_location("data-app.main", PATH_TO_DATA_APP)
         data_app = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(data_app)
 
