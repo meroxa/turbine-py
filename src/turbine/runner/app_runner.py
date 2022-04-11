@@ -12,11 +12,11 @@ def run_app_local(path_to_data_app: str,runtime: str, *args, **kwargs):
     client = turbine.Turbine(runtime, path_to_data_app)
     asyncio.run(App.run(client))
 
+    pdb.set_trace()
     if kwargs['command'] == 'functions':
-        list(path_to_data_app,runtime)
+        asyncio.run(client.list_functions())
+    elif kwargs['command'] == "hasFunctions":
+        asyncio.run(client.has_functions())
 
 
-def list_functions(pathname: str, runtime: str, **kwargs):
-    client = turbine.Turbine(runtime, pathname)
-    asyncio.run(client.list_functions())
 

@@ -50,3 +50,6 @@ class Turbine(Runtime):
 
     async def list_functions(self):
         return await self._runtime.list_functions()
+
+    async def has_functions(self):
+        return await self._runtime.has_functions()

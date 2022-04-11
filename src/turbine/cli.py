@@ -43,7 +43,15 @@ def build_parser():
     generate.set_defaults(func=run_app_local)
 
     #meroxa functions 
-    generate = subparser.add_parser("function")
+    #list  application functions 
+    generate = subparser.add_parser("functions")
+    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
+    generate.add_argument("path_to_data_app", help="path to app ")
+    generate.set_defaults(func=run_app_local)
+    
+    #meroxa functions 
+    #check if application has functions 
+    generate = subparser.add_parser("hasFunctions")
     generate.add_argument("runtime", default = "local", help="select local or platform runtime")
     generate.add_argument("path_to_data_app", help="path to app ")
     generate.set_defaults(func=run_app_local)
