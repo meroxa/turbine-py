@@ -7,4 +7,8 @@
 
 Clone this repo and install this package using the following command
 
-`pip install /absolute/path/to/your/cloned/package`
+`make setup` - install dependencies to run turbine-py
+
+`make dev` - install dev dependencies as well as dependencies required to run 
+
+`make funtime` - install dependencies for [gRPC application](src/turbine/function-deploy/function-app/)

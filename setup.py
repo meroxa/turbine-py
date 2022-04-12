@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from logging.config import fileConfig
-from setuptools import setup, find_namespace_packages
+from setuptools import setup
 
 setup(
     name="turbine-py",
@@ -18,5 +17,5 @@ setup(
     entry_points={
         "console_scripts": ["turbine-py=turbine.cli:main"],
     },
-    install_requires=["aiohttp"],
+    install_requires=["aiohttp", "grpcio"],
 )
