@@ -5,8 +5,8 @@ import sys
 import json
 from turbine import turbine
 
-_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 FILES_TO_IGNORE_ON_COPY = "__pycache__"
 
@@ -16,7 +16,7 @@ def generate_app(name: str, pathname: str, **kwargs):
 
     app_location = os.path.join(pathname, app_name)
 
-    template_directory = os.path.join(_ROOT, "templates/python")
+    template_directory = os.path.join(_ROOT, "../", "templates/python")
 
     try:
         shutil.copytree(

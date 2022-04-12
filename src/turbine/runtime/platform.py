@@ -49,15 +49,20 @@ class PlatformResource(Resource):
             # Check for `bad_request`
             resp = await m.connectors.create(connector_input)
 
-        if resp[0] is not None:
-            return ChildProcessError(
-                "Error creating source connector from resource {} : {}".format(
-                    self.resource.name, resp[0].message
+        try:
+            if resp[0] is not None:
+                raise ChildProcessError(
+                    "Error creating source connector from resource {} : {}".format(
+                        self.resource.name, resp[0].message
+                    )
                 )
-            )
-        else:
-            connector = resp[1]
-            return Records(records=[], stream=connector.streams.output)
+            else:
+                connector = resp[1]
+                return Records(records=[], stream=connector.streams.output)
+        except ChildProcessError as cpe: 
+            raise ChildProcessError(cpe)
+        except Exception as e: 
+            raise Exception(e) 
 
     async def write(self, records: Records, collection: str) -> None:
         print(f"Creating DESTINATION connector from stream: {records.stream}")
@@ -88,14 +93,20 @@ class PlatformResource(Resource):
         async with Meroxa(auth=self.client_opts.auth) as m:
             resp = await m.connectors.create(connector_input)
 
-        if resp[0] is not None:
-            return ChildProcessError(
-                "Error creating destination connector from stream {} : {}".format(
-                    records.stream, resp[0].message
+
+        try:
+            if resp[0] is not None:
+                raise ChildProcessError(
+                    "Error creating destination connector from stream {} : {}".format(
+                        records.stream, resp[0].message
+                    )
                 )
-            )
-        else:
-            return None
+            else:
+                return None
+        except ChildProcessError as cpe: 
+            raise ChildProcessError(cpe)
+        except Exception as e: 
+            raise Exception(e)
 
 
 class PlatformRuntime(Runtime):
@@ -112,16 +123,21 @@ class PlatformRuntime(Runtime):
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.resources.get(resource_name)
 
-        if resp[0] is not None:
-            return ChildProcessError(
-                "Error finding resource {} : {}".format(resource_name, resp[0].message)
-            )
-        else:
-            return PlatformResource(
-                resource=resp[1],
-                client_options=self._client_opts,
-                app_config=self._app_config,
-            )
+        try:
+            if resp[0] is not None:
+                raise ChildProcessError(
+                    "Error finding resource {} : {}".format(resource_name, resp[0].message)
+                )
+            else:
+                return PlatformResource(
+                    resource=resp[1],
+                    client_options=self._client_opts,
+                    app_config=self._app_config,
+                )
+        except ChildProcessError as cpe: 
+            raise ChildProcessError(cpe)
+        except Exception as e: 
+            raise Exception(e)
 
     async def process(
         self,
@@ -145,16 +161,21 @@ class PlatformRuntime(Runtime):
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
 
-        if resp[0] is not None:
-            return ChildProcessError(
-                "Error deploying function {} : {}".format(
-                    getattr(fn, "__name__", "Unknown"), resp[0].message
+        try:
+            if resp[0] is not None:
+                raise ChildProcessError(
+                    "Error deploying function {} : {}".format(
+                        getattr(fn, "__name__", "Unknown"), resp[0].message
+                    )
                 )
-            )
-        else:
-            func = resp[1]
-            records.stream = func.output_stream
-            return records
+            else:
+                func = resp[1]
+                records.stream = func.output_stream
+                return records
+        except ChildProcessError as cpe: 
+            raise ChildProcessError(cpe)
+        except Exception as e: 
+            raise Exception(e)
 
     async def list_functions(self):
         return print(
