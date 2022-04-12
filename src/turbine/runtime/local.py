@@ -58,6 +58,7 @@ class LocalResource(Resource):
 class LocalRuntime(Runtime):
     appConfig = {}
     pathToApp = ""
+    _registeredFunctions = {}
 
     def __init__(self, config: AppConfig, path_to_app: str) -> None:
         self.appConfig = config
@@ -79,4 +80,17 @@ class LocalRuntime(Runtime):
         fn: t.Callable[[t.List[Record]], t.List[Record]],
         env_vars=None,
     ) -> Records:
+        self._registeredFunctions[fn.__name__] = fn
         return Records(records=fn(records.records), stream="")
+
+    async def list_functions(self):
+        return print(
+            "List of application functions : \n {}".format(
+                "\n".join(self._registeredFunctions)
+            )
+        )
+
+    async def has_functions(self):
+        if self._registeredFunctions:
+            return True
+        return False
