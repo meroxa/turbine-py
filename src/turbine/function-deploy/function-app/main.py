@@ -57,7 +57,7 @@ async def serve() -> None:
     await server.start()
 
     async def shutdown():
-        logging.info("Shutting python grpc server down..")
+        logging.info("Shutting python gRPC server down..")
         await server.stop(grace=5)
 
     _cleanup_coroutines.append(shutdown())

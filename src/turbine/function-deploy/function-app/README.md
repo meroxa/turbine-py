@@ -1,5 +1,5 @@
 ## Functions App
-This application serves as an interface between `turbine-py` and `funtime`, the Meroxa Functions Runtime
+This application serves as an interface between `turbine-py` and `funtime`, the Meroxa Functions Runtime.
 
 ### Requirements 
 ```pycon
@@ -9,7 +9,7 @@ grpcio-tools       1.44.0
 
 ### Testing the gRPC Client
 #### Local Testing
-This application is an implementation of an RPC contract. Given that, we are are not only able to define the end that listens, but also the side that publishes. 
+This application is an implementation of an RPC contract. Given that, we are not only able to define the end that listens, but also the side that publishes. 
 
 The following code is an example client that uses `grpc.io` and the generated code to transmit values to the server. 
 
