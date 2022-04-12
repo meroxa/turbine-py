@@ -9,6 +9,7 @@ from .runtime import PlatformRuntime
 from .runtime import Record, Records, ClientOptions
 from .runtime import Runtime
 
+
 class Turbine(Runtime):
     _runtime = None
 
@@ -23,14 +24,14 @@ class Turbine(Runtime):
             self._runtime = PlatformRuntime(
                 config=config,
                 client_options=ClientOptions(
-                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=os.environ.get("MEROXA_API_URL")
+                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
+                    url=os.environ.get("MEROXA_API_URL"),
                 ),
                 image_name=image_name,
             )
 
     async def resources(self, name: str):
         return await self._runtime.resources(name)
-
 
     async def process(
         self,

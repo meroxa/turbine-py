@@ -13,6 +13,7 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
+
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
@@ -69,11 +70,7 @@ class PlatformResource(Resource):
                     )
             else:
                 pipeline_uuid = resp[1].uuid
-                print(
-                    'pipeline: "{}" ("{}")'.format(
-                        self._pipelineName, pipeline_uuid
-                    )
-                )
+                print('pipeline: "{}" ("{}")'.format(self._pipelineName, pipeline_uuid))
 
             print(f"Creating SOURCE connector from source: {self.resource.name}")
             connector_config = {}
@@ -124,7 +121,7 @@ class PlatformResource(Resource):
             # Move the non-shared logics to a separate function
             connector_config = {}
             connector_config["input"] = records.stream[0]
-            if self.resource.type in ("redshift", "postgres", "mysql"): # JDBC sink
+            if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
                 connector_config["pk.mode"] = "record_value"
                 connector_config["pk.fields"] = "id"
@@ -133,7 +130,9 @@ class PlatformResource(Resource):
 
             elif self.resource.type == "s3":
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
-                connector_config["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
+                connector_config[
+                    "value.converter"
+                ] = "org.apache.kafka.connect.json.JsonConverter"
                 connector_config["value.converter.schemas.enable"] = "true"
                 connector_config["format.output.type"] = "jsonl"
                 connector_config["format.output.envelope"] = "true"
