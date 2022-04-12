@@ -16,5 +16,5 @@ setup(
     entry_points={
         "console_scripts": ["turbine-py=turbine.cli:main"],
     },
-    install_requires=["aiohttp"],
+    install_requires=["aiohttp", "grpcio"],
 )
