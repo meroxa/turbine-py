@@ -31,7 +31,7 @@ class PlatformResource(Resource):
         print(f"Creating SOURCE connector from source: {self.resource.name}")
 
         # Postgres initial funtimes
-        connector_config = dict(input="public.{}".format(collection))
+        connector_config = dict(input=f"public.{collection}")
         connector_input = meroxa.CreateConnectorParams(
             name="source",
             metadata={
@@ -63,7 +63,7 @@ class PlatformResource(Resource):
         connector_config = {
             "input": records.stream,
             # === ^ shared ^ =====  V S3 specific V ==#
-            "aws_s3_prefix": "{}".format(str.lower(collection)),
+            "aws_s3_prefix": f"{str.lower(collection)}",
             "value.converter": "org.apache.kafka.connect.json.JsonConverter",
             "value.converter.schemas.enable": "true",
             "format.output.type": "jsonl",
@@ -101,10 +101,6 @@ class PlatformRuntime(Runtime):
         self._client_opts = client_options
 
     async def resources(self, resource_name: str):
-
-        # Error checking if a resource does not exist.
-        # Response is simple string. We could massage that into a structured item
-        # e.g. (Option[resp], Option[error])
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.resources.get(resource_name)
 
@@ -134,7 +130,7 @@ class PlatformRuntime(Runtime):
             envVars=env_vars,
         )
 
-        print("deploying function: {}".format(getattr(fn, "__name__", "Unknown")))
+        print(f"deploying function: {getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)

@@ -19,7 +19,7 @@ class Turbine(Runtime):
     _runtime = None
 
     def __init__(self, runtime: str, path_to_data_app: str):
-        with open(os.path.abspath("{}".format(path_to_data_app)) + "/app.json") as fd:
+        with open(os.path.abspath(f"{path_to_data_app}") + "/app.json") as fd:
             config = AppConfig(**json.load(fd))
 
         if runtime is not PLATFORM_RUNTIME:
@@ -34,7 +34,7 @@ class Turbine(Runtime):
             client_options=ClientOptions(
                 auth=os.getenv(MEROXA_ACCESS_TOKEN), url=os.getenv(MEROXA_API_URL)
             ),
-            image_name="{}/{}".format(os.getenv(DOCKER_HUB_USERNAME), config.name),
+            image_name=f"{os.getenv(DOCKER_HUB_USERNAME)}/{config.name}",
         )
 
     async def resources(self, name: str):

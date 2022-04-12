@@ -24,8 +24,8 @@ async def read_fixtures(path: str, collection: str):
                     )
     except FileNotFoundError:
         print(
-            f"{path} not found: must specify fixtures path to data for source"
-            f" resources in order to run locally"
+            f"{path} not found: must specify fixtures path to data for"
+            f" source resources in order to run locally"
         )
 
     return fixtures
@@ -45,9 +45,8 @@ class LocalResource(Resource):
         )
 
     async def write(self, rr: Records, collection: str) -> None:
-        pprint(
-            "=====================to {} resource=====================".format(self.name)
-        )
+
+        pprint(f"===================to {self.name} resource===================")
 
         if rr.records:
             [print(json.dumps(record.value, indent=4)) for record in rr.records]
@@ -70,7 +69,7 @@ class LocalRuntime(Runtime):
 
         fixtures_path = resources.get(name)
         if fixtures_path:
-            resourced_fixture_path = "{}/{}".format(self.pathToApp, fixtures_path)
+            resourced_fixture_path = f"{self.pathToApp}/{fixtures_path}"
 
         return LocalResource(name, resourced_fixture_path)
 
