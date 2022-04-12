@@ -4,7 +4,7 @@ import typing as t
 from pprint import pprint
 
 from .types import AppConfig
-from .types import Record, Resource, RegisteredFunctions
+from .types import Record, Resource
 from .types import Records
 from .types import Runtime
 

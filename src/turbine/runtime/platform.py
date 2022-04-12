@@ -1,5 +1,4 @@
 import json
-import sys
 import typing as t
 
 import meroxa
@@ -11,7 +10,6 @@ from .types import Record
 from .types import Records
 from .types import Resource
 from .types import Runtime
-from .types import RegisteredFunctions
 
 
 class PlatformResponse(object):
@@ -59,10 +57,10 @@ class PlatformResource(Resource):
             else:
                 connector = resp[1]
                 return Records(records=[], stream=connector.streams.output)
-        except ChildProcessError as cpe: 
+        except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
-        except Exception as e: 
-            raise Exception(e) 
+        except Exception as e:
+            raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
         print(f"Creating DESTINATION connector from stream: {records.stream}")
@@ -93,7 +91,6 @@ class PlatformResource(Resource):
         async with Meroxa(auth=self.client_opts.auth) as m:
             resp = await m.connectors.create(connector_input)
 
-
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
@@ -103,9 +100,9 @@ class PlatformResource(Resource):
                 )
             else:
                 return None
-        except ChildProcessError as cpe: 
+        except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
-        except Exception as e: 
+        except Exception as e:
             raise Exception(e)
 
 
@@ -126,7 +123,9 @@ class PlatformRuntime(Runtime):
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
-                    "Error finding resource {} : {}".format(resource_name, resp[0].message)
+                    "Error finding resource {} : {}".format(
+                        resource_name, resp[0].message
+                    )
                 )
             else:
                 return PlatformResource(
@@ -134,9 +133,9 @@ class PlatformRuntime(Runtime):
                     client_options=self._client_opts,
                     app_config=self._app_config,
                 )
-        except ChildProcessError as cpe: 
+        except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
-        except Exception as e: 
+        except Exception as e:
             raise Exception(e)
 
     async def process(
@@ -172,9 +171,9 @@ class PlatformRuntime(Runtime):
                 func = resp[1]
                 records.stream = func.output_stream
                 return records
-        except ChildProcessError as cpe: 
+        except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
-        except Exception as e: 
+        except Exception as e:
             raise Exception(e)
 
     async def list_functions(self):
