@@ -35,7 +35,7 @@ def build_parser():
     # meroxa apps run
     # Run using local runtime
     generate = subparser.add_parser("run")
-    generate.add_argument("runtime", default = "local", help=" select local or platform runtime")
+    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
     generate.add_argument("path_to_data_app", help="path to app to run")
     generate.set_defaults(func=run_app_local)
 
