@@ -9,7 +9,6 @@ import shutil
 from .runner import *
 
 
-
 # Hacky work around to make sure the __pychache__ for turbine-py
 # is not included in the copied files.
 
@@ -24,7 +23,7 @@ def build_parser():
         description="Command line utility for interacting with the meroxa platform",
     )
 
-    subparser = parser.add_subparsers(dest = "command")
+    subparser = parser.add_subparsers(dest="command")
 
     # meroxa apps init
     generate = subparser.add_parser("generate")
@@ -35,21 +34,27 @@ def build_parser():
     # meroxa apps run
     # Run using local runtime
     generate = subparser.add_parser("run")
-    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
+    generate.add_argument(
+        "runtime", default="local", help="select local or platform runtime"
+    )
     generate.add_argument("path_to_data_app", help="path to app to run")
     generate.set_defaults(func=run_app_local)
 
-    #meroxa functions 
-    #list  application functions 
+    # meroxa functions
+    # list  application functions
     generate = subparser.add_parser("functions")
-    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
+    generate.add_argument(
+        "runtime", default="local", help="select local or platform runtime"
+    )
     generate.add_argument("path_to_data_app", help="path to app ")
     generate.set_defaults(func=run_app_local)
-    
-    #meroxa functions 
-    #check if application has functions 
+
+    # meroxa functions
+    # check if application has functions
     generate = subparser.add_parser("hasFunctions")
-    generate.add_argument("runtime", default = "local", help="select local or platform runtime")
+    generate.add_argument(
+        "runtime", default="local", help="select local or platform runtime"
+    )
     generate.add_argument("path_to_data_app", help="path to app ")
     generate.set_defaults(func=run_app_local)
 

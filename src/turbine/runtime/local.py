@@ -4,7 +4,7 @@ import typing as t
 from pprint import pprint
 
 from .types import AppConfig
-from .types import Record, Resource , RegisteredFunctions
+from .types import Record, Resource, RegisteredFunctions
 from .types import Records
 from .types import Runtime
 
@@ -19,9 +19,7 @@ async def read_fixtures(path: str, collection: str):
                 for rec in fc[collection]:
                     fixtures.append(
                         Record(
-                            key=rec['key'],
-                            value=rec['value'],
-                            timestamp=time.time()
+                            key=rec["key"], value=rec["value"], timestamp=time.time()
                         )
                     )
     except FileNotFoundError:
@@ -43,8 +41,7 @@ class LocalResource(Resource):
 
     async def records(self, collection: str) -> Records:
         return Records(
-            records=await read_fixtures(self.fixtures_path, collection),
-            stream=""
+            records=await read_fixtures(self.fixtures_path, collection), stream=""
         )
 
     async def write(self, rr: Records, collection: str) -> None:
@@ -77,21 +74,23 @@ class LocalRuntime(Runtime):
 
         return LocalResource(name, resourced_fixture_path)
 
-    async def process(self,
-                      records: Records,
-                      fn: t.Callable[[t.List[Record]], t.List[Record]],
-                      env_vars=None) -> Records:
+    async def process(
+        self,
+        records: Records,
+        fn: t.Callable[[t.List[Record]], t.List[Record]],
+        env_vars=None,
+    ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
-        return Records(
-            records=fn(records.records),
-            stream=""
-        )
+        return Records(records=fn(records.records), stream="")
 
     async def list_functions(self):
-        return print("List of application functions : \n {}".format("\n".join(self._registeredFunctions)))
+        return print(
+            "List of application functions : \n {}".format(
+                "\n".join(self._registeredFunctions)
+            )
+        )
 
     async def has_functions(self):
         if self._registeredFunctions:
-            return True  
-        return False 
-       
+            return True
+        return False

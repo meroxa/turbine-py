@@ -13,6 +13,7 @@ from .types import Resource
 from .types import Runtime
 from .types import RegisteredFunctions
 
+
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
@@ -49,7 +50,11 @@ class PlatformResource(Resource):
             resp = await m.connectors.create(connector_input)
 
         if resp[0] is not None:
-            return ChildProcessError("Error creating source connector from resource {} : {}".format(self.resource.name, resp[0].message))
+            return ChildProcessError(
+                "Error creating source connector from resource {} : {}".format(
+                    self.resource.name, resp[0].message
+                )
+            )
         else:
             connector = resp[1]
             return Records(records=[], stream=connector.streams.output)
@@ -84,7 +89,11 @@ class PlatformResource(Resource):
             resp = await m.connectors.create(connector_input)
 
         if resp[0] is not None:
-            return ChildProcessError("Error creating destination connector from stream {} : {}".format(records.stream, resp[0].message))
+            return ChildProcessError(
+                "Error creating destination connector from stream {} : {}".format(
+                    records.stream, resp[0].message
+                )
+            )
         else:
             return None
 
@@ -104,7 +113,9 @@ class PlatformRuntime(Runtime):
             resp = await m.resources.get(resource_name)
 
         if resp[0] is not None:
-            return  ChildProcessError("Error finding resource {} : {}".format(resource_name, resp[0].message))
+            return ChildProcessError(
+                "Error finding resource {} : {}".format(resource_name, resp[0].message)
+            )
         else:
             return PlatformResource(
                 resource=resp[1],
@@ -135,19 +146,24 @@ class PlatformRuntime(Runtime):
             resp = await m.functions.create(create_func_params)
 
         if resp[0] is not None:
-            return ChildProcessError("Error deploying function {} : {}".format(getattr(fn, "__name__", "Unknown"), resp[0].message))
+            return ChildProcessError(
+                "Error deploying function {} : {}".format(
+                    getattr(fn, "__name__", "Unknown"), resp[0].message
+                )
+            )
         else:
             func = resp[1]
             records.stream = func.output_stream
             return records
 
     async def list_functions(self):
-        return print("List of application functions : \n {}".format("\n".join(self.registered_functions)))
+        return print(
+            "List of application functions : \n {}".format(
+                "\n".join(self.registered_functions)
+            )
+        )
 
     async def has_functions(self):
         if self._registeredFunctions:
-            return True 
+            return True
         return False
-       
-
-

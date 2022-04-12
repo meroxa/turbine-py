@@ -10,10 +10,9 @@ from .runtime import Record, Records, ClientOptions
 from .runtime import Runtime
 
 from dotenv import load_dotenv
-dotenv_path = join(dirname(__file__),'config.env')
+
+dotenv_path = join(dirname(__file__), "config.env")
 load_dotenv(dotenv_path)
-
-
 
 
 class Turbine(Runtime):
@@ -30,14 +29,16 @@ class Turbine(Runtime):
             self._runtime = PlatformRuntime(
                 config=config,
                 client_options=ClientOptions(
-                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=os.environ.get("MEROXA_API_URL")
+                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
+                    url=os.environ.get("MEROXA_API_URL"),
                 ),
-                image_name="{}/{}".format(os.environ.get("DOCKER_HUB_USERNAME"), config.name),
+                image_name="{}/{}".format(
+                    os.environ.get("DOCKER_HUB_USERNAME"), config.name
+                ),
             )
 
     async def resources(self, name: str):
         return await self._runtime.resources(name)
-
 
     async def process(
         self,
