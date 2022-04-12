@@ -2,7 +2,6 @@ import asyncio
 import os
 import sys
 from turbine import turbine  
-import pdb
 
 def run_app_local(path_to_data_app: str,runtime: str, *args, **kwargs):
     sys.path.append(os.path.abspath(path_to_data_app))
@@ -12,7 +11,6 @@ def run_app_local(path_to_data_app: str,runtime: str, *args, **kwargs):
     client = turbine.Turbine(runtime, path_to_data_app)
     asyncio.run(App.run(client))
 
-    pdb.set_trace()
     if kwargs['command'] == 'functions':
         asyncio.run(client.list_functions())
     elif kwargs['command'] == "hasFunctions":

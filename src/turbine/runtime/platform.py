@@ -12,7 +12,6 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 from .types import RegisteredFunctions
-import pdb
 
 class PlatformResponse(object):
     def __init__(self, resp: str):
@@ -50,7 +49,6 @@ class PlatformResource(Resource):
             # Check for `bad_request`
             resp = await m.connectors.create(connector_input)
 
-        pdb.set_trace()
         if resp[0] is not None:
             return ChildProcessError("Error creating source connector from resource {} : {}".format(self.resource.name, resp[0].message))
         else:
@@ -153,8 +151,8 @@ class PlatformRuntime(Runtime):
 
     async def has_functions(self):
         if self._registeredFunctions:
-            return print("Found functions in the application.")  
-        return print("No functions found in the application.") 
+            return True 
+        return False
        
 
 

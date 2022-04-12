@@ -8,7 +8,6 @@ from .types import Record, Resource , RegisteredFunctions
 from .types import Records
 from .types import Runtime
 
-import pdb
 
 async def read_fixtures(path: str, collection: str):
     fixtures = []
@@ -95,6 +94,6 @@ class LocalRuntime(Runtime):
 
     async def has_functions(self):
         if self._registeredFunctions:
-            return print("Found functions in the application.")  
-        return print("No functions found in the application.") 
+            return True  
+        return False 
        
