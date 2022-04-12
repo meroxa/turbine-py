@@ -8,7 +8,10 @@ from turbine import turbine
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
-def generate_app(name: str, pathname: str, ignore_files: str, **kwargs):
+FILES_TO_IGNORE_ON_COPY = "__pycache__"
+
+
+def generate_app(name: str, pathname: str, **kwargs):
     app_name = name or "my-app"
 
     app_location = os.path.join(pathname, app_name)
@@ -17,7 +20,7 @@ def generate_app(name: str, pathname: str, ignore_files: str, **kwargs):
 
     try:
         shutil.copytree(template_directory, app_location,
-                        ignore=shutil.ignore_patterns(ignore_files))
+                        ignore=shutil.ignore_patterns(FILES_TO_IGNORE_ON_COPY))
 
         generate_app_json(name, pathname)
     except Exception as e:

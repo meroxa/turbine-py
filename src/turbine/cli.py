@@ -12,7 +12,6 @@ from .runner import *
 
 # Hacky work around to make sure the __pychache__ for turbine-py
 # is not included in the copied files.
-FILES_TO_IGNORE_ON_COPY = "__pycache__"
 
 
 def run_app_platform(*args, **kwargs):
@@ -31,13 +30,12 @@ def build_parser():
     generate = subparser.add_parser("generate")
     generate.add_argument("name", help="desired name of application")
     generate.add_argument("pathname", help="desired location of application")
-    generate.add_argument("ignore_files", help="files to ignore on generate", default=FILES_TO_IGNORE_ON_COPY)
     generate.set_defaults(func=generate_app)
 
     # meroxa apps run
     # Run using local runtime
     generate = subparser.add_parser("run")
-    generate.add_argument("runtime", default = "local", help=" selectlocal or platform runtime")
+    generate.add_argument("runtime", default = "local", help=" select local or platform runtime")
     generate.add_argument("path_to_data_app", help="path to app to run")
     generate.set_defaults(func=run_app_local)
 
