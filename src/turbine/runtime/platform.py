@@ -134,6 +134,13 @@ class PlatformResource(Resource):
                 connector_config[
                     "transforms.extractInt.type"
                 ] = "org.apache.kafka.connect.transforms.ExtractField$Key"
+            elif self.resource.type == "s3":
+                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+                connector_config["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
+                connector_config["value.converter.schemas.enable"] = "true"
+                connector_config["format.output.type"] = "jsonl"
+                connector_config["format.output.envelope"] = "true"
+	
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
