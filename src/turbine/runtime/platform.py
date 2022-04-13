@@ -1,4 +1,5 @@
 import json
+import sys
 import typing as t
 
 import meroxa
@@ -26,6 +27,7 @@ class PlatformResource(Resource):
         self.client_opts = client_options
 
     async def records(self, collection: str) -> Records:
+
         print(f"Creating SOURCE connector from source: {self.resource.name}")
 
         # Postgres initial funtimes
@@ -36,7 +38,7 @@ class PlatformResource(Resource):
                 "mx:connectorType": "source",
             },
             config=connector_config,
-            resourceId=self.resource.uuid,
+            resourceId=self.resource.id,
             pipelineName=self.app_config.name,
             pipelineId=None,
         )
@@ -46,23 +48,14 @@ class PlatformResource(Resource):
             # Error Handling: Duplicate connector
             # Check for `bad_request`
             resp = await m.connectors.create(connector_input)
-
-        try:
             if resp[0] is not None:
-                raise ChildProcessError(
-                    "Error creating source connector from resource {} : {}".format(
-                        self.resource.name, resp[0].message
-                    )
-                )
+                print(resp[0], file=sys.stderr)
             else:
                 connector = resp[1]
                 return Records(records=[], stream=connector.streams.output)
-        except ChildProcessError as cpe:
-            raise ChildProcessError(cpe)
-        except Exception as e:
-            raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
+
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         # Connector config
@@ -91,23 +84,14 @@ class PlatformResource(Resource):
         async with Meroxa(auth=self.client_opts.auth) as m:
             resp = await m.connectors.create(connector_input)
 
-        try:
-            if resp[0] is not None:
-                raise ChildProcessError(
-                    "Error creating destination connector from stream {} : {}".format(
-                        records.stream, resp[0].message
-                    )
-                )
-            else:
-                return None
-        except ChildProcessError as cpe:
-            raise ChildProcessError(cpe)
-        except Exception as e:
-            raise Exception(e)
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            return None
 
 
 class PlatformRuntime(Runtime):
-    _registeredFunctions = {}
+    _registeredFunctions = None
 
     def __init__(
         self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
@@ -120,23 +104,14 @@ class PlatformRuntime(Runtime):
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.resources.get(resource_name)
 
-        try:
-            if resp[0] is not None:
-                raise ChildProcessError(
-                    "Error finding resource {} : {}".format(
-                        resource_name, resp[0].message
-                    )
-                )
-            else:
-                return PlatformResource(
-                    resource=resp[1],
-                    client_options=self._client_opts,
-                    app_config=self._app_config,
-                )
-        except ChildProcessError as cpe:
-            raise ChildProcessError(cpe)
-        except Exception as e:
-            raise Exception(e)
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            return PlatformResource(
+                resource=resp[1],
+                client_options=self._client_opts,
+                app_config=self._app_config,
+            )
 
     async def process(
         self,
@@ -160,30 +135,9 @@ class PlatformRuntime(Runtime):
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
 
-        try:
-            if resp[0] is not None:
-                raise ChildProcessError(
-                    "Error deploying function {} : {}".format(
-                        getattr(fn, "__name__", "Unknown"), resp[0].message
-                    )
-                )
-            else:
-                func = resp[1]
-                records.stream = func.output_stream
-                return records
-        except ChildProcessError as cpe:
-            raise ChildProcessError(cpe)
-        except Exception as e:
-            raise Exception(e)
-
-    async def list_functions(self):
-        return print(
-            "List of application functions : \n {}".format(
-                "\n".join(self.registered_functions)
-            )
-        )
-
-    async def has_functions(self):
-        if self._registeredFunctions:
-            return True
-        return False
+        if resp[0] is not None:
+            print(resp[0], file=sys.stderr)
+        else:
+            func = resp[1]
+            records.stream = func.output_stream
+            return records
