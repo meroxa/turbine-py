@@ -1,6 +1,5 @@
 /build
 /src/*.egg-info
-/src/turbine/config.env
 __pycache__
 
 .DS_Store

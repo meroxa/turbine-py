@@ -5,9 +5,6 @@ from .runner import generate_app, run_app
 # is not included in the copied files.
 import pdb 
 
-def run_app_platform(*args, **kwargs):
-    raise NotImplementedError
-
 
 def build_parser():
     parser = argparse.ArgumentParser(
@@ -22,13 +19,12 @@ def build_parser():
     generate.add_argument("pathname", help="desired location of application")
     generate.set_defaults(func=generate_app)
     # meroxa apps run
-    # Run using local runtime
     generate = subparser.add_parser("run")
     generate.add_argument(
         "runtime", default="local", help="select local or platform runtime"
     )
     generate.add_argument("path_to_data_app", help="path to app to run")
-    generate.add_argument("image", help="path to app to run", default="", nargs="?", const='const')
+    generate.add_argument("image_name", help="Docker image name", default="", nargs="?", const='const')
 
     generate.set_defaults(func=run_app)
     # meroxa functions
@@ -37,7 +33,7 @@ def build_parser():
     generate.add_argument(
         "runtime", default="local", help="select local or platform runtime"
     )
-    generate.add_argument("path_to_data_app", help="path to app ")
+    generate.add_argument("path_to_data_app", help="path to app")
     generate.set_defaults(func=run_app)
     # meroxa functions
     # check if application has functions
@@ -45,9 +41,8 @@ def build_parser():
     generate.add_argument(
         "runtime", default="local", help="select local or platform runtime"
     )
-    generate.add_argument("path_to_data_app", help="path to app ")
+    generate.add_argument("path_to_data_app", help="path to app")
     generate.set_defaults(func=run_app)
-    pdb.set_trace()
 
     return parser
 

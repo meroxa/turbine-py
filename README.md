@@ -12,3 +12,13 @@ Clone this repo and install this package using the following command
 `make dev` - install dev dependencies as well as dependencies required to run 
 
 `make funtime` - install dependencies for [gRPC application](src/turbine/function-deploy/function-app/)
+
+
+## Development
+
+Expected environment variables
+```
+export MEROXA_ACCESS_TOKEN=""
+export MEROXA_API_URL=""
+export PLATFORM_RUNTIME = "local|platform"
+```

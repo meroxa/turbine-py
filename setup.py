@@ -13,7 +13,6 @@ setup(
         "turbine.runner",
         "turbine.function-deploy",
     ],
-    package_data={"turbine": ["config.env"]},
     entry_points={
         "console_scripts": ["turbine-py=turbine.cli:main"],
     },

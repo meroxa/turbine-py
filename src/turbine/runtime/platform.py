@@ -32,16 +32,17 @@ class PlatformResource(Resource):
 
     async def records(self, collection: str) -> Records:
         print(f"Check if pipeline exists for application: {self.app_config.name}")
+        pipelineName = "turbine-pipeline-{}".format(self.app_config.name)
 
         try:
             async with Meroxa(auth=self.client_opts.auth) as m:
-                resp = await m.pipelines.get("turbine-pipeline-{}".format(self.app_config.name))
+                resp = await m.pipelines.get(pipelineName)
 
             if resp[0] is not None:
                 if resp[0].code == 'not_found':
-                    print(f"No pipeline found for the application, creating a new pipeline: {self.app_config.name}")
+                    print(f"No pipeline found for the application, creating a new pipeline: {pipelineName}")
                     pipeline_input = meroxa.CreatePipelineParams(
-                        name="turbine-pipeline-1{}".format(self.app_config.name),
+                        name=pipelineName,
                         metadata={
                             "turbine": True,
                             "app": self.app_config.name
@@ -202,12 +203,15 @@ class PlatformRuntime(Runtime):
             inputStream=records.stream[0],
             command=["python"],
             args=["main.py", fn.__name__],
-            image="janelletavares/simple:latest",
+            image=self._image_name,
             pipelineIdentifiers=PipelineIdentifiers(name="turbine-pipeline-{}".format(self._app_config.name)),
             envVars=env_vars,
         )
 
-        print(f"deploying function: {getattr(fn, '__name__', 'Unknown')}")
+        if self._image_name == "":
+            raise Exception("Process image name not provided")
+
+        print(f"deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
@@ -215,7 +219,7 @@ class PlatformRuntime(Runtime):
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
-                    "Error deploying function {} : {}".format(
+                    "Error deploying Process {} : {}".format(
                         getattr(fn, "__name__", "Unknown"), resp[0].message
                     )
                 )
@@ -231,7 +235,7 @@ class PlatformRuntime(Runtime):
 
     async def list_functions(self):
         return print(
-            "List of application functions : \n {}".format(
+            "List of application Processes : \n {}".format(
                 "\n".join(self.registered_functions)
             )
         )
