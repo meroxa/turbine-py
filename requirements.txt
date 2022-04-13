@@ -1,3 +1,5 @@
 # meroxa-py req goes here
 aiohttp==3.8.1
 python-dotenv
+
+-e .
