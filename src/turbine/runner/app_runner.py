@@ -2,7 +2,6 @@ import asyncio
 import os
 import sys
 from turbine import turbine
-import pdb
 
 
 def run_app(path_to_data_app: str, runtime: str, image_name: str, *args, **kwargs):

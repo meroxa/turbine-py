@@ -3,8 +3,6 @@ from .runner import generate_app, run_app
 
 # Hacky work around to make sure the __pychache__ for turbine-py
 # is not included in the copied files.
-import pdb
-
 
 def build_parser():
     parser = argparse.ArgumentParser(
