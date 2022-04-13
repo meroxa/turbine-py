@@ -118,13 +118,13 @@ class PlatformResource(Resource):
             raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream}")
+        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
             connector_config = {}
-            connector_config["input"] = collection
+            connector_config["input"] = records.stream[0]
             if self.resource.type in ("redshift", "postgres", "mysql"): # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
                 connector_config["pk.mode"] = "record_value"
@@ -133,7 +133,7 @@ class PlatformResource(Resource):
                     connector_config["insert.mode"] = "upsert"
 
             elif self.resource.type == "s3":
-                connector_config["aws_s3_prefix"] = str(collection).lower()
+                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
                 connector_config["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
                 connector_config["value.converter.schemas.enable"] = "true"
                 connector_config["format.output.type"] = "jsonl"
@@ -152,7 +152,7 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 raise ChildProcessError(
                     "Error creating destination connector from stream {} : {}".format(
-                        records.stream, resp[0].message
+                        records.stream[0], resp[0].message
                     )
                 )
             else:
