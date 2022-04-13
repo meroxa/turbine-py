@@ -60,7 +60,6 @@ class AppConfig:
         self.language = language
         self.resources = resources
         self.environment = environment
-        
 
 
 class ClientOptions:

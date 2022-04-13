@@ -3,7 +3,7 @@ from .runner import generate_app, run_app
 
 # Hacky work around to make sure the __pychache__ for turbine-py
 # is not included in the copied files.
-import pdb 
+import pdb
 
 
 def build_parser():
@@ -24,7 +24,9 @@ def build_parser():
         "runtime", default="local", help="select local or platform runtime"
     )
     generate.add_argument("path_to_data_app", help="path to app to run")
-    generate.add_argument("image_name", help="Docker image name", default="", nargs="?", const='const')
+    generate.add_argument(
+        "image_name", help="Docker image name", default="", nargs="?", const="const"
+    )
 
     generate.set_defaults(func=run_app)
     # meroxa functions

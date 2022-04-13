@@ -36,4 +36,3 @@ class App:
 
         # Write results out
         await destination_db.write(anonymized, "collection_name")
-
