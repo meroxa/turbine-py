@@ -133,7 +133,7 @@ class PlatformResource(Resource):
                     connector_config["insert.mode"] = "upsert"
 
             elif self.resource.type == "s3":
-                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+                connector_config["aws_s3_prefix"] = str(collection).lower()
                 connector_config["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
                 connector_config["value.converter.schemas.enable"] = "true"
                 connector_config["format.output.type"] = "jsonl"
@@ -141,7 +141,7 @@ class PlatformResource(Resource):
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
-                pipelineName=self._pipelineName,
+                pipelineName="turbine-pipeline-{}".format(self.app_config.name), #TODO fix me
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "destination",
@@ -149,13 +149,14 @@ class PlatformResource(Resource):
             )
             async with Meroxa(auth=self.client_opts.auth) as m:
                 resp = await m.connectors.create(connector_input)
-            if resp[0] is None:
+            if resp[0] is not None:
                 raise ChildProcessError(
-                    "Error creating destination connector from stream {}".format(
-                        records.stream
+                    "Error creating destination connector from stream {} : {}".format(
+                        records.stream, resp[0].message
                     )
                 )
             else:
+                print(f"Successfully created {resp[1].name} connector")
                 return None
 
         except ChildProcessError as cpe:
