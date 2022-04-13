@@ -20,5 +20,4 @@ Expected environment variables
 ```
 export MEROXA_ACCESS_TOKEN=""
 export MEROXA_API_URL=""
-export PLATFORM_RUNTIME = "local|platform"
 ```
