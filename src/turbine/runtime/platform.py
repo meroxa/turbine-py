@@ -41,7 +41,7 @@ class PlatformResource(Resource):
                 if resp[0].code == 'not_found':
                     print(f"No pipeline found for the application, creating a new pipeline: {self.app_config.name}")
                     pipeline_input = meroxa.CreatePipelineParams(
-                        name="turbine-pipeline-{}".format(self.app_config.name),
+                        name="turbine-pipeline-1{}".format(self.app_config.name),
                         metadata={
                             "turbine": True,
                             "app": self.app_config.name
@@ -69,25 +69,23 @@ class PlatformResource(Resource):
 
             connector_config = {}
 
-            pdb.set_trace()
+            connector_config['input'] = collection
             if self.resource.type in ("redshift", "postgres", "mysql") :
                 connector_config["transforms"] = "createKey,extractInt"
                 connector_config["transforms.createKey.fields"] = "id"
                 connector_config["transforms.createKey.type"] = "org.apache.kafka.connect.transforms.ValueToKey"
                 connector_config["transforms.extractInt.field"] = "id"
                 connector_config["transforms.extractInt.type"] = "org.apache.kafka.connect.transforms.ExtractField$Key"
-            else: 
-                connector_config['input'] = f"public.{collection}"
+            
 
             connector_input = meroxa.CreateConnectorParams(
-                name="turbine-connector-{}".format(self.app_config.name),           
-                resourceId=self.resource.uuid,
+                name="gjdgjhrkfgf",           
+                resourceName=self.resource.name,
                 pipelineName=self._pipeline.name,
-                pipelineId=self._pipeline.uuid,
-                metadata={
-                    "mx:connectorType": 'source',
-                },
                 config=connector_config,
+                metadata={
+                    "mx:connectorType": "source",
+                },
             )
 
             pdb.set_trace()
@@ -121,27 +119,27 @@ class PlatformResource(Resource):
             # Connector config
             # Move the non-shared logics to a separate function
 
-          
-            connector_config = {
-                "input": records.stream,
-                # === ^ shared ^ =====  V S3 specific V ==#
-                "aws_s3_prefix": f"{str.lower(collection)}",
-                "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-                "value.converter.schemas.enable": "true",
-                "format.output.type": "jsonl",
-                "format.output.envelope": "true",
-            }
+            connector_config = {}
+
+            connector_config['input'] = collection
+            if self.resource.type in ("redshift", "postgres", "mysql") :
+                connector_config["transforms"] = "createKey,extractInt"
+                connector_config["transforms.createKey.fields"] = "id"
+                connector_config["transforms.createKey.type"] = "org.apache.kafka.connect.transforms.ValueToKey"
+                connector_config["transforms.extractInt.field"] = "id"
+                connector_config["transforms.extractInt.type"] = "org.apache.kafka.connect.transforms.ExtractField$Key"
+            
 
             connector_input = meroxa.CreateConnectorParams(
-                name="destination",
+                name="jjfffjfsf",           
+                resourceName=self.resource.name,
+                pipelineName=self._pipeline.name,
+                config=connector_config,
                 metadata={
                     "mx:connectorType": "destination",
                 },
-                config=connector_config,
-                resourceId=self.resource.uuid,
-                pipelineName=self.app_config.name,
-                pipelineId=None,
             )
+
 
             async with Meroxa(auth=self.client_opts.auth) as m:
                 resp = await m.connectors.create(connector_input)
@@ -204,8 +202,8 @@ class PlatformRuntime(Runtime):
             inputStream=records.stream[0],
             command=["python"],
             args=["main.py", fn.__name__],
-            image=self._image_name,
-            pipelineIdentifiers=PipelineIdentifiers(name=self._app_config.name),
+            image="janelletavares/simple:latest",
+            pipelineIdentifiers=PipelineIdentifiers(name="turbine-pipeline-{}".format(self._app_config.name)),
             envVars=env_vars,
         )
 
@@ -213,7 +211,7 @@ class PlatformRuntime(Runtime):
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
-
+        pdb.set_trace()
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
@@ -223,6 +221,7 @@ class PlatformRuntime(Runtime):
                 )
             else:
                 func = resp[1]
+                pdb.set_trace()
                 records.stream = func.output_stream
                 return records
         except ChildProcessError as cpe:
