@@ -28,6 +28,8 @@ def build_parser():
         "runtime", default="local", help="select local or platform runtime"
     )
     generate.add_argument("path_to_data_app", help="path to app to run")
+    generate.add_argument("image", help="path to app to run", default="", nargs="?", const='const')
+
     generate.set_defaults(func=run_app_local)
     # meroxa functions
     # list  application functions
