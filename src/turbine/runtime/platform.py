@@ -27,11 +27,10 @@ class PlatformResource(Resource):
         self.resource = resource
         self.app_config = app_config
         self.client_opts = client_options
+        self._pipelineName = "turbine-pipeline-{}".format(app_config.name)
 
     async def records(self, collection: str) -> Records:
         print(f"Check if pipeline exists for application: {self.app_config.name}")
-        self._pipelineName = "turbine-pipeline-{}".format(self.app_config.name)
-        pipeline_uuid = ""
 
         try:
             async with Meroxa(auth=self.client_opts.auth) as m:
@@ -141,7 +140,7 @@ class PlatformResource(Resource):
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
-                pipelineName="turbine-pipeline-{}".format(self.app_config.name), #TODO fix me
+                pipelineName=self._pipelineName,
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "destination",
