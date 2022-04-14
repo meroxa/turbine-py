@@ -35,4 +35,4 @@ class App:
         destination_db = await turbine.resources("destination_name")
 
         # Write results out
-        await destination_db.write(anonymized, "collection_name")
+        await destination_db.write(anonymized, "collection_archive")
