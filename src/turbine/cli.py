@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from .runner import generate_app, Runner, run_app
+from .runner import generate_app, Runner
 
 
 def app_run_test(path_to_data_app, **kwargs):
@@ -43,10 +43,12 @@ def build_parser():
     generate.add_argument("pathname", help="desired location of application")
     generate.set_defaults(func=generate_app)
 
+    # meroxa apps ????
     test = subparser.add_parser("test")
     test.add_argument("path_to_data_app", help="path to app ")
     test.set_defaults(func=app_run_test)
 
+    # meroxa apps run
     run = subparser.add_parser("run")
     run.add_argument("path_to_data_app", help="path to app to run")
     run.add_argument(
@@ -54,7 +56,7 @@ def build_parser():
     )
     run.set_defaults(func=app_run_platform)
 
-    # list  application functions
+    # meroxa apps build
     list_functions = subparser.add_parser("functions")
     list_functions.add_argument("path_to_data_app", help="path to app ")
     list_functions.set_defaults(func=app_list_functions)

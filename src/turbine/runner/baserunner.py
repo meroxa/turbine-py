@@ -2,8 +2,7 @@ import importlib.util
 import json
 import os
 
-from ..runtime import InfoRuntime, LocalRuntime
-from ..turbine import AppConfig
+from ..runtime import InfoRuntime, LocalRuntime, AppConfig
 
 
 class BaseRunner:

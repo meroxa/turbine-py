@@ -1,8 +1,7 @@
 import hashlib
 import typing as t
 
-from turbine import Turbine
-from turbine.runtime import Record
+from turbine.runtime import Record, Runtime
 
 
 def anonymize(records: t.List[Record]) -> t.List[Record]:
@@ -21,7 +20,7 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
 
 class App:
     @staticmethod
-    async def run(turbine: Turbine):
+    async def run(turbine: Runtime):
         # Get remote resource
         source = await turbine.resources("source_name")
 

@@ -40,10 +40,10 @@ class Resource(ABC):
 
 
 class Runtime(ABC):
-    def resources(self, name: str):
+    async def resources(self, name: str):
         ...
 
-    def process(
+    async def process(
         self,
         records: Records,
         fn: t.Callable[[t.List[Record]], t.List[Record]],
