@@ -1,9 +1,9 @@
 SHELL=/bin/bash -o pipefail
 
-setup: requirements.txt
+install: requirements.txt
 	pip install -r requirements.txt
 
-setup-dev: requirements-dev.txt
+install-dev: requirements-dev.txt
 	pip install -r requirements-dev.txt
 
 funtime: ./src/turbine/function-deploy/function-app/requirements.txt
@@ -11,4 +11,4 @@ funtime: ./src/turbine/function-deploy/function-app/requirements.txt
 
 .PHONY: lint
 lint:
-	black ../.
+	black .

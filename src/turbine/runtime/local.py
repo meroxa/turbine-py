@@ -56,21 +56,21 @@ class LocalResource(Resource):
 
 
 class LocalRuntime(Runtime):
-    appConfig = {}
-    pathToApp = ""
+    app_config = {}
+    path_to_app = ""
     _registeredFunctions = {}
 
     def __init__(self, config: AppConfig, path_to_app: str) -> None:
-        self.appConfig = config
-        self.pathToApp = path_to_app
+        self.app_config = config
+        self.path_to_app = path_to_app
 
     async def resources(self, name: str):
         resourced_fixture_path = None
-        resources = self.appConfig.resources
+        resources = self.app_config.resources
 
         fixtures_path = resources.get(name)
         if fixtures_path:
-            resourced_fixture_path = f"{self.pathToApp}/{fixtures_path}"
+            resourced_fixture_path = f"{self.path_to_app}/{fixtures_path}"
 
         return LocalResource(name, resourced_fixture_path)
 

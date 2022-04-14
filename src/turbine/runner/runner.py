@@ -4,6 +4,8 @@ import tempfile
 
 from .baserunner import BaseRunner
 
+from ..turbine import PlatformRuntime, ClientOptions
+
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -33,5 +35,19 @@ class Runner(BaseRunner):
     def clean_temp_directory(tmp_dir):
         os.remove(tmp_dir)
 
-    async def run_app_platform(self):
-        ...
+    async def run_app_platform(self, image_name):
+        environment = PlatformRuntime(
+            client_options=ClientOptions(
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
+                url=os.environ.get("MEROXA_API_URL"),
+            ),
+            image_name=image_name,
+            config=self.app_config,
+        )
+
+        try:
+            await self.data_app.__getattribute__("App").run(environment)
+            return
+        except Exception as e:
+            print(f"{e}")
+            return

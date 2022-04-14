@@ -1,6 +1,4 @@
-from importlib.metadata import metadata
 import json
-from os import environ
 import typing as t
 
 import meroxa
