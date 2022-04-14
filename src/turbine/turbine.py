@@ -9,19 +9,13 @@ from .runtime import PlatformRuntime
 from .runtime import Record, Records, ClientOptions
 from .runtime import Runtime
 
-from dotenv import load_dotenv
-
-dotenv_path = join(dirname(__file__), "config.env")
-load_dotenv(dotenv_path)
-
-
 class Turbine(Runtime):
     _runtime = None
 
-    def __init__(self, runtime: str, path_to_data_app: str):
+    def __init__(self, runtime: str, path_to_data_app: str, image_name: str):
         with open(os.path.abspath(f"{path_to_data_app}") + "/app.json") as fd:
             config = AppConfig(**json.load(fd))
-        if runtime != os.environ.get("PLATFORM_RUNTIME"):
+        if runtime != "platform":
             self._runtime = self.runtime = LocalRuntime(
                 config=config, path_to_app=path_to_data_app
             )
@@ -29,16 +23,14 @@ class Turbine(Runtime):
             self._runtime = PlatformRuntime(
                 config=config,
                 client_options=ClientOptions(
-                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
-                    url=os.environ.get("MEROXA_API_URL"),
+                    auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=os.environ.get("MEROXA_API_URL")
                 ),
-                image_name="{}/{}".format(
-                    os.environ.get("DOCKER_HUB_USERNAME"), config.name
-                ),
+                image_name=image_name,
             )
 
     async def resources(self, name: str):
         return await self._runtime.resources(name)
+
 
     async def process(
         self,

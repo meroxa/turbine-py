@@ -1,4 +1,6 @@
+from importlib.metadata import metadata
 import json
+from os import environ
 import typing as t
 
 import meroxa
@@ -11,43 +13,95 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
-
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
 
 
 class PlatformResource(Resource):
+    _pipelineName = ""
+
     def __init__(
         self, resource, client_options: meroxa.ClientOptions, app_config: AppConfig
     ) -> None:
         self.resource = resource
         self.app_config = app_config
         self.client_opts = client_options
+        self._pipelineName = "turbine-pipeline-{}".format(app_config.name)
 
     async def records(self, collection: str) -> Records:
-        print(f"Creating SOURCE connector from source: {self.resource.name}")
-
-        # Postgres initial funtimes
-        connector_config = dict(input=f"public.{collection}")
-        connector_input = meroxa.CreateConnectorParams(
-            name="source",
-            metadata={
-                "mx:connectorType": "source",
-            },
-            config=connector_config,
-            resourceId=self.resource.uuid,
-            pipelineName=self.app_config.name,
-            pipelineId=None,
-        )
-
-        async with Meroxa(auth=self.client_opts.auth) as m:
-            connector: meroxa.ConnectorsResponse
-            # Error Handling: Duplicate connector
-            # Check for `bad_request`
-            resp = await m.connectors.create(connector_input)
+        print(f"Check if pipeline exists for application: {self.app_config.name}")
 
         try:
+            async with Meroxa(auth=self.client_opts.auth) as m:
+                resp = await m.pipelines.get(self._pipelineName)
+
+            if resp[0] is not None:
+                if resp[0].code == "not_found":
+                    print(
+                        f"No pipeline found, creating a new pipeline: {self._pipelineName}"
+                    )
+                    pipeline_input = meroxa.CreatePipelineParams(
+                        name=self._pipelineName,
+                        metadata={"turbine": True, "app": self.app_config.name},
+                        environment=self.app_config.environment,
+                    )
+                    async with Meroxa(auth=self.client_opts.auth) as m:
+                        resp = await m.pipelines.create(pipeline_input)
+
+                    if resp[0] is not None:
+                        raise ChildProcessError(
+                            "Error creating a pipeline for application {} : {}".format(
+                                self.resource.name, resp[0].message
+                            )
+                        )
+                    pipeline_uuid = resp[1].uuid
+                    print(
+                        'pipeline: "{}" ("{}")'.format(
+                            self._pipelineName, pipeline_uuid
+                        )
+                    )
+                else:
+                    raise ChildProcessError(
+                        "Error looking up the application - {} : {}".format(
+                            self.resource.name, resp[0].message
+                        )
+                    )
+            else:
+                pipeline_uuid = resp[1].uuid
+                print(
+                    'pipeline: "{}" ("{}")'.format(
+                        self._pipelineName, pipeline_uuid
+                    )
+                )
+
+            print(f"Creating SOURCE connector from source: {self.resource.name}")
+            connector_config = {}
+            connector_config["input"] = collection
+            if self.resource.type in ("redshift", "postgres", "mysql"):
+                connector_config["transforms"] = "createKey,extractInt"
+                connector_config["transforms.createKey.fields"] = "id"
+                connector_config[
+                    "transforms.createKey.type"
+                ] = "org.apache.kafka.connect.transforms.ValueToKey"
+                connector_config["transforms.extractInt.field"] = "id"
+                connector_config[
+                    "transforms.extractInt.type"
+                ] = "org.apache.kafka.connect.transforms.ExtractField$Key"
+
+            connector_input = meroxa.CreateConnectorParams(
+                resourceName=self.resource.name,
+                pipelineName=self._pipelineName,
+                config=connector_config,
+                metadata={
+                    "mx:connectorType": "source",
+                },
+            )
+            async with Meroxa(auth=self.client_opts.auth) as m:
+                connector: meroxa.ConnectorsResponse
+                # Error Handling: Duplicate connector
+                # Check for `bad_request`
+                resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
                 raise ChildProcessError(
                     "Error creating source connector from resource {} : {}".format(
@@ -63,43 +117,47 @@ class PlatformResource(Resource):
             raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream}")
-
-        # Connector config
-        # Move the non-shared logics to a separate function
-        connector_config = {
-            "input": records.stream,
-            # === ^ shared ^ =====  V S3 specific V ==#
-            "aws_s3_prefix": f"{str.lower(collection)}",
-            "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-            "value.converter.schemas.enable": "true",
-            "format.output.type": "jsonl",
-            "format.output.envelope": "true",
-        }
-
-        connector_input = meroxa.CreateConnectorParams(
-            name="destination",
-            metadata={
-                "mx:connectorType": "destination",
-            },
-            config=connector_config,
-            resourceId=self.resource.id,
-            pipelineName=self.app_config.name,
-            pipelineId=None,
-        )
-
-        async with Meroxa(auth=self.client_opts.auth) as m:
-            resp = await m.connectors.create(connector_input)
+        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
 
         try:
+            # Connector config
+            # Move the non-shared logics to a separate function
+            connector_config = {}
+            connector_config["input"] = records.stream[0]
+            if self.resource.type in ("redshift", "postgres", "mysql"): # JDBC sink
+                connector_config["table.name.format"] = str(collection).lower()
+                connector_config["pk.mode"] = "record_value"
+                connector_config["pk.fields"] = "id"
+                if self.resource.type != "redshift":
+                    connector_config["insert.mode"] = "upsert"
+
+            elif self.resource.type == "s3":
+                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+                connector_config["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
+                connector_config["value.converter.schemas.enable"] = "true"
+                connector_config["format.output.type"] = "jsonl"
+                connector_config["format.output.envelope"] = "true"
+
+            connector_input = meroxa.CreateConnectorParams(
+                resourceName=self.resource.name,
+                pipelineName=self._pipelineName,
+                config=connector_config,
+                metadata={
+                    "mx:connectorType": "destination",
+                },
+            )
+            async with Meroxa(auth=self.client_opts.auth) as m:
+                resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
                 raise ChildProcessError(
                     "Error creating destination connector from stream {} : {}".format(
-                        records.stream, resp[0].message
+                        records.stream[0], resp[0].message
                     )
                 )
             else:
+                print(f"Successfully created {resp[1].name} connector")
                 return None
+
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
@@ -151,19 +209,23 @@ class PlatformRuntime(Runtime):
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipelineIdentifiers=PipelineIdentifiers(name=self._app_config.name),
+            pipelineIdentifiers=PipelineIdentifiers(
+                name="turbine-pipeline-{}".format(self._app_config.name)
+            ),
             envVars=env_vars,
         )
 
-        print(f"deploying function: {getattr(fn, '__name__', 'Unknown')}")
+        if self._image_name == "":
+            raise Exception("Process image name not provided")
+
+        print(f"deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(auth=self._client_opts.auth) as m:
             resp = await m.functions.create(create_func_params)
-
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
-                    "Error deploying function {} : {}".format(
+                    "Error deploying Process {} : {}".format(
                         getattr(fn, "__name__", "Unknown"), resp[0].message
                     )
                 )
@@ -178,7 +240,7 @@ class PlatformRuntime(Runtime):
 
     async def list_functions(self):
         return print(
-            "List of application functions : \n {}".format(
+            "List of application Processes : \n {}".format(
                 "\n".join(self.registered_functions)
             )
         )
