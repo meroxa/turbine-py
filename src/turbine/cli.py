@@ -52,7 +52,7 @@ def build_parser():
     run.add_argument("path_to_data_app", help="path to app ")
     run.set_defaults(func=app_run_test)
 
-    # meroxa apps
+    # meroxa apps deploy
     clideploy = subparser.add_parser("clideploy")
     clideploy.add_argument("path_to_data_app", help="path to app to run")
     clideploy.add_argument(
