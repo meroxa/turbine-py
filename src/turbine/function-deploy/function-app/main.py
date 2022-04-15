@@ -66,7 +66,7 @@ async def serve() -> None:
     services = tuple(
         service.full_name
         for service in health_pb2.DESCRIPTOR.services_by_name.values()) + (
-            reflection.SERVICE_NAME, health.SERVICE_NAME)
+            reflection.SERVICE_NAME, "function")
 
     # Mark all services as healthy.
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
