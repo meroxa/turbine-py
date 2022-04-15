@@ -16,17 +16,17 @@ def app_run_platform(path_to_data_app, image_name, **kwargs):
 
 def app_list_functions(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(asyncio.run(r.list_functions()))
+    print(f"\nturbine-response: {asyncio.run(r.list_functions())}\n")
 
 
 def app_has_functions(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(asyncio.run(r.has_functions()))
+    print(f"\nturbine-response: {asyncio.run(r.has_functions())}\n")
 
 
 def app_build(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(asyncio.run(r.build_function()))
+    print(f"\nturbine-response: {asyncio.run(r.build_function())}\n")
 
 
 def app_clean_up(path_to_temp, **kwargs):

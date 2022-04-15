@@ -16,7 +16,6 @@ class Runner(BaseRunner):
 
         shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
         os.mkdir(os.path.join(temp_dir_turbine_path))
-
         try:
             shutil.copytree(deploy_dir, temp_dir_turbine_path, dirs_exist_ok=True)
             shutil.copytree(

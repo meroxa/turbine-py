@@ -50,6 +50,6 @@ class BaseRunner:
     async def has_functions(self):
         try:
             await self.data_app.__getattribute__("App").run(self.info_runtime)
-            return self.info_runtime.has_functions()
+            return str(self.info_runtime.has_functions()).lower()
         except Exception as e:
             print(f"something broke{e}")
