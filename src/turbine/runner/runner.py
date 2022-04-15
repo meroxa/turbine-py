@@ -23,7 +23,7 @@ class Runner(BaseRunner):
                 temp_dir_turbine_path + "/data-app",
                 dirs_exist_ok=True,
             )
-            return f"\nturbine-response: {temp_dir_turbine_path}\n"
+            return f"turbine-response: {temp_dir_turbine_path}"
         except Exception as e:
             self.clean_temp_directory(temp_dir_turbine_path)
             print(f"build failed: {e}")
