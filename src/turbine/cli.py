@@ -29,6 +29,10 @@ def app_build(path_to_data_app, **kwargs):
     print(asyncio.run(r.build_function()))
 
 
+def app_clean_up(path_to_temp, **kwargs):
+    r = Runner.clean_temp_directory(path_to_temp)
+
+
 def build_parser():
     parser = argparse.ArgumentParser(
         prog="turbine-py",
@@ -44,17 +48,17 @@ def build_parser():
     generate.set_defaults(func=generate_app)
 
     # meroxa apps ????
-    test = subparser.add_parser("test")
-    test.add_argument("path_to_data_app", help="path to app ")
-    test.set_defaults(func=app_run_test)
-
-    # meroxa apps run
     run = subparser.add_parser("run")
-    run.add_argument("path_to_data_app", help="path to app to run")
-    run.add_argument(
+    run.add_argument("path_to_data_app", help="path to app ")
+    run.set_defaults(func=app_run_test)
+
+    # meroxa apps
+    clideploy = subparser.add_parser("clideploy")
+    clideploy.add_argument("path_to_data_app", help="path to app to run")
+    clideploy.add_argument(
         "image_name", help="Docker image name", default="", nargs="?", const="const"
     )
-    run.set_defaults(func=app_run_platform)
+    clideploy.set_defaults(func=app_run_platform)
 
     # meroxa apps build
     list_functions = subparser.add_parser("functions")
@@ -67,9 +71,14 @@ def build_parser():
     has_functions.set_defaults(func=app_has_functions)
 
     # "build" the application
-    has_functions = subparser.add_parser("build")
+    has_functions = subparser.add_parser("clibuild")
     has_functions.add_argument("path_to_data_app", help="path to app ")
     has_functions.set_defaults(func=app_build)
+
+    # "clean" the application
+    has_functions = subparser.add_parser("cliclean")
+    has_functions.add_argument("path_to_temp", help="path to temp directory ")
+    has_functions.set_defaults(func=app_clean_up)
 
     return parser
 

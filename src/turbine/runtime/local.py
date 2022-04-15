@@ -82,15 +82,3 @@ class LocalRuntime(Runtime):
     ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
         return Records(records=fn(records.records), stream="")
-
-    async def list_functions(self):
-        return print(
-            "List of application functions : \n {}".format(
-                "\n".join(self._registeredFunctions)
-            )
-        )
-
-    async def has_functions(self):
-        if self._registeredFunctions:
-            return True
-        return False

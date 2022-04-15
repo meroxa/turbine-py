@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 
-import grpc
+import grpc_tools
+import grpc.aio
 
 import service_pb2
 import service_pb2_grpc

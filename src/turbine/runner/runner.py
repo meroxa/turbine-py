@@ -14,6 +14,7 @@ class Runner(BaseRunner):
         temp_dir_turbine_path = os.path.join(temp_dir + "/turbine")
         deploy_dir = os.path.join(_ROOT, "../function-deploy")
 
+        shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
         os.mkdir(os.path.join(temp_dir_turbine_path))
 
         try:
@@ -32,7 +33,7 @@ class Runner(BaseRunner):
 
     @staticmethod
     def clean_temp_directory(tmp_dir):
-        os.remove(tmp_dir)
+        shutil.rmtree(tmp_dir, ignore_errors=True)
 
     async def run_app_platform(self, image_name):
         environment = PlatformRuntime(
