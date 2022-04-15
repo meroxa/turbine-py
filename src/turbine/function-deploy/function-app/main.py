@@ -4,17 +4,15 @@ import logging
 import os
 import sys
 
-import grpc.aio
-
-import service_pb2
-import service_pb2_grpc
-
 import grpc
+import grpc.aio
 from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
 
+import service_pb2
+import service_pb2_grpc
 from record import TurbineRecord
 
 """

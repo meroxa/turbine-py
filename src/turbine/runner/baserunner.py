@@ -1,6 +1,7 @@
 import importlib.util
 import json
 import os
+import sys
 
 from ..runtime import InfoRuntime, LocalRuntime, AppConfig
 
@@ -20,12 +21,11 @@ class BaseRunner:
     @property
     def app_config(self):
         config = {}
-        # TODO: Errorz should actually error lmao
         try:
             with open(os.path.abspath(f"{self.path_to_data_app}") + "/app.json") as fd:
                 config = AppConfig(**json.load(fd))
         except OSError as e:
-            print(e)
+            print(f"Unable to locate app config: {e}", file=sys.stderr)
         return config
 
     @property
