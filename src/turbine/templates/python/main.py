@@ -1,8 +1,8 @@
 import hashlib
+import sys
 import typing as t
 
-from turbine import Turbine
-from turbine.runtime import Record
+from turbine.runtime import Record, Runtime
 
 
 def anonymize(records: t.List[Record]) -> t.List[Record]:
@@ -21,18 +21,21 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
 
 class App:
     @staticmethod
-    async def run(turbine: Turbine):
-        # Get remote resource
-        source = await turbine.resources("source_name")
+    async def run(turbine: Runtime):
+        try:
+            # Get remote resource
+            source = await turbine.resources("source_name")
 
-        # Read from remote resource
-        records = await source.records("collection_name")
+            # Read from remote resource
+            records = await source.records("collection_name")
 
-        # Deploy function with source as input
-        anonymized = await turbine.process(records, anonymize)
+            # Deploy function with source as input
+            anonymized = await turbine.process(records, anonymize, {})
 
-        # Get destination
-        destination_db = await turbine.resources("destination_name")
+            # Get destination
+            destination_db = await turbine.resources("destination_name")
 
-        # Write results out
-        await destination_db.write(anonymized, "collection_archive")
+            # Write results out
+            await destination_db.write(anonymized, "collection_archive")
+        except Exception as e:
+            print(e, file=sys.stderr)
