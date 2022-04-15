@@ -16,17 +16,17 @@ def app_run_platform(path_to_data_app, image_name, **kwargs):
 
 def app_list_functions(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(f"\nturbine-response: {asyncio.run(r.list_functions())}\n")
+    print(asyncio.run(r.list_functions()))
 
 
 def app_has_functions(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(f"\nturbine-response: {asyncio.run(r.has_functions())}\n")
+    print(asyncio.run(r.has_functions()))
 
 
 def app_build(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
-    print(f"\nturbine-response: {asyncio.run(r.build_function())}\n")
+    print(asyncio.run(r.build_function()))
 
 
 def app_clean_up(path_to_temp, **kwargs):
@@ -71,14 +71,14 @@ def build_parser():
     has_functions.set_defaults(func=app_has_functions)
 
     # "build" the application
-    has_functions = subparser.add_parser("clibuild")
-    has_functions.add_argument("path_to_data_app", help="path to app ")
-    has_functions.set_defaults(func=app_build)
+    clibuild = subparser.add_parser("clibuild")
+    clibuild.add_argument("path_to_data_app", help="path to app ")
+    clibuild.set_defaults(func=app_build)
 
     # "clean" the application
-    has_functions = subparser.add_parser("cliclean")
-    has_functions.add_argument("path_to_temp", help="path to temp directory ")
-    has_functions.set_defaults(func=app_clean_up)
+    cliclean = subparser.add_parser("cliclean")
+    cliclean.add_argument("path_to_temp", help="path to temp directory ")
+    cliclean.set_defaults(func=app_clean_up)
 
     return parser
 
