@@ -24,10 +24,10 @@ class InfoRuntime(Runtime):
         self.pathToApp = path_to_app
 
     def functions_list(self) -> str:
-        return f"turbine-response: {list(self.registeredFunctions)}"
+        return f"\nturbine-response: {list(self.registeredFunctions)}\n"
 
     def has_functions(self) -> str:
-        return f"turbine-response: {bool(self.functions_list())}"
+        return f"\nturbine-response: {bool(self.functions_list())}\n"
 
     async def resources(self, name: str):
         return InfoResource()
