@@ -16,7 +16,6 @@ class Runner(BaseRunner):
 
         shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
         os.mkdir(os.path.join(temp_dir_turbine_path))
-
         try:
             shutil.copytree(deploy_dir, temp_dir_turbine_path, dirs_exist_ok=True)
             shutil.copytree(
@@ -24,7 +23,7 @@ class Runner(BaseRunner):
                 temp_dir_turbine_path + "/data-app",
                 dirs_exist_ok=True,
             )
-            return temp_dir_turbine_path
+            return f"turbine-response: {temp_dir_turbine_path}"
         except Exception as e:
             self.clean_temp_directory(temp_dir_turbine_path)
             print(f"build failed: {e}")

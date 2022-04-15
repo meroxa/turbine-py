@@ -43,10 +43,7 @@ class PlatformResource(Resource):
                     )
                     pipeline_input = meroxa.CreatePipelineParams(
                         name=self._pipelineName,
-                        metadata={
-                            "turbine": True,
-                            "app": self.app_config.name
-                        },
+                        metadata={"turbine": True, "app": self.app_config.name},
                         environment=self.app_config.environment,
                     )
                     async with Meroxa(auth=self.client_opts.auth) as m:
@@ -82,8 +79,6 @@ class PlatformResource(Resource):
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "source",
-                    "turbine": True,
-                    "app": self.app_config.name
                 },
             )
             async with Meroxa(auth=self.client_opts.auth) as m:
@@ -123,8 +118,6 @@ class PlatformResource(Resource):
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "destination",
-                    "turbine": True,
-                    "app": self.app_config.name
                 },
             )
             async with Meroxa(auth=self.client_opts.auth) as m:
