@@ -47,7 +47,7 @@ def build_parser():
     generate.add_argument("pathname", help="desired location of application")
     generate.set_defaults(func=generate_app)
 
-    # meroxa apps ????
+    # meroxa apps run
     run = subparser.add_parser("run")
     run.add_argument("path_to_data_app", help="path to app ")
     run.set_defaults(func=app_run_test)
