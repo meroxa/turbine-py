@@ -23,11 +23,11 @@ class InfoRuntime(Runtime):
         self.appConfig = config
         self.pathToApp = path_to_app
 
-    def functions_list(self) -> list[str]:
-        return list(self.registeredFunctions)
+    def functions_list(self) -> str:
+        return f"turbine-response: {list(self.registeredFunctions)}"
 
-    def has_functions(self) -> bool:
-        return bool(self.functions_list())
+    def has_functions(self) -> str:
+        return f"turbine-response: {bool(self.functions_list())}"
 
     async def resources(self, name: str):
         return InfoResource()

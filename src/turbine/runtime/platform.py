@@ -43,7 +43,10 @@ class PlatformResource(Resource):
                     )
                     pipeline_input = meroxa.CreatePipelineParams(
                         name=self._pipelineName,
-                        metadata={"turbine": True, "app": self.app_config.name},
+                        metadata={
+                            "turbine": True,
+                            "app": self.app_config.name
+                        },
                         environment=self.app_config.environment,
                     )
                     async with Meroxa(auth=self.client_opts.auth) as m:
@@ -79,6 +82,8 @@ class PlatformResource(Resource):
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "source",
+                    "turbine": True,
+                    "app": self.app_config.name
                 },
             )
             async with Meroxa(auth=self.client_opts.auth) as m:
@@ -107,6 +112,10 @@ class PlatformResource(Resource):
             # Move the non-shared logics to a separate function
             connector_config = {}
             connector_config["input"] = records.stream
+            if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
+                connector_config["table.name.format"] = str(collection).lower()
+            elif self.resource.type == "s3":
+                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
@@ -114,6 +123,8 @@ class PlatformResource(Resource):
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "destination",
+                    "turbine": True,
+                    "app": self.app_config.name
                 },
             )
             async with Meroxa(auth=self.client_opts.auth) as m:
