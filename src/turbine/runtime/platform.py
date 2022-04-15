@@ -72,16 +72,6 @@ class PlatformResource(Resource):
             print(f"Creating SOURCE connector from source: {self.resource.name}")
             connector_config = {}
             connector_config["input"] = collection
-            # if self.resource.type in ("redshift", "postgres", "mysql"):
-            #     connector_config["transforms"] = "createKey,extractInt"
-            #     connector_config["transforms.createKey.fields"] = "id"
-            #     connector_config[
-            #         "transforms.createKey.type"
-            #     ] = "org.apache.kafka.connect.transforms.ValueToKey"
-            #     connector_config["transforms.extractInt.field"] = "id"
-            #     connector_config[
-            #         "transforms.extractInt.type"
-            #     ] = "org.apache.kafka.connect.transforms.ExtractField$Key"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
@@ -117,21 +107,6 @@ class PlatformResource(Resource):
             # Move the non-shared logics to a separate function
             connector_config = {}
             connector_config["input"] = records.stream
-            # if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
-            #     connector_config["table.name.format"] = str(collection).lower()
-            #     connector_config["pk.mode"] = "record_value"
-            #     connector_config["pk.fields"] = "id"
-            #     if self.resource.type != "redshift":
-            #         connector_config["insert.mode"] = "upsert"
-            #
-            # elif self.resource.type == "s3":
-            #     connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
-            #     connector_config[
-            #         "value.converter"
-            #     ] = "org.apache.kafka.connect.json.JsonConverter"
-            #     connector_config["value.converter.schemas.enable"] = "true"
-            #     connector_config["format.output.type"] = "jsonl"
-            #     connector_config["format.output.envelope"] = "true"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
