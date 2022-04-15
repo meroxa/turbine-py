@@ -30,7 +30,7 @@ class App:
             records = await source.records("collection_name")
 
             # Deploy function with source as input
-            anonymized = await turbine.process(records, anonymize)
+            anonymized = await turbine.process(records, anonymize, {})
 
             # Get destination
             destination_db = await turbine.resources("destination_name")
