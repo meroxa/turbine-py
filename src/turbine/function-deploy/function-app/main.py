@@ -8,6 +8,13 @@ import grpc.aio
 
 import service_pb2
 import service_pb2_grpc
+
+import grpc
+from grpc_health.v1 import health
+from grpc_health.v1 import health_pb2
+from grpc_health.v1 import health_pb2_grpc
+from grpc_reflection.v1alpha import reflection
+
 from record import TurbineRecord
 
 """
@@ -50,6 +57,23 @@ class Funtime(service_pb2_grpc.FunctionServicer):
 async def serve() -> None:
     server = grpc.aio.server()
     service_pb2_grpc.add_FunctionServicer_to_server(Funtime(), server)
+
+    # Create a health check servicer. We use the non-blocking implementation
+    # to avoid thread starvation.
+    health_servicer = health.HealthServicer(experimental_non_blocking=True)
+
+    # Create a tuple of all the services we want to export via reflection.
+    services = tuple(
+        service.full_name
+        for service in health_pb2.DESCRIPTOR.services_by_name.values()) + (
+            reflection.SERVICE_NAME, health.SERVICE_NAME)
+
+    # Mark all services as healthy.
+    health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
+    for service in services:
+        health_servicer.set(service, health_pb2.HealthCheckResponse.SERVING)
+    reflection.enable_server_reflection(services, server)
+
     server.add_insecure_port(FUNCTION_ADDRESS)
 
     logging.info(f"Starting server on {FUNCTION_ADDRESS}")
