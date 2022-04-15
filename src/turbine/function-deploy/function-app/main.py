@@ -64,16 +64,14 @@ async def serve() -> None:
 
     # Create a tuple of all the services we want to export via reflection.
     services = tuple(
-        service.full_name
-        for service in health_pb2.DESCRIPTOR.services_by_name.values()) + (
-            reflection.SERVICE_NAME, "function")
+        service.full_name for service in health_pb2.DESCRIPTOR.services_by_name.values()
+    ) + (reflection.SERVICE_NAME, "function")
 
     # Mark all services as healthy.
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
     for service in services:
         health_servicer.set(service, health_pb2.HealthCheckResponse.SERVING)
     reflection.enable_server_reflection(services, server)
-
     server.add_insecure_port(FUNCTION_ADDRESS)
 
     logging.info(f"Starting server on {FUNCTION_ADDRESS}")
@@ -90,7 +88,6 @@ async def serve() -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    logging.info(f"arguments {sys.argv}")
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

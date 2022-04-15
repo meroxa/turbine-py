@@ -1,7 +1,0 @@
-{
-    "name": "test2",
-    "language": "python",
-    "resources": {
-        "source_name": "fixtures/none.json"
-    }
-}

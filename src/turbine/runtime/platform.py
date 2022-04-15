@@ -219,7 +219,8 @@ class PlatformRuntime(Runtime):
         try:
             if resp[0] is not None:
                 raise ChildProcessError(
-                    f"Error deploying Process {getattr(fn, '__name__', 'Unknown')} : {resp[0].message}"
+                    f"Error deploying Process "
+                    f"{getattr(fn, '__name__', 'Unknown')} : {resp[0].message}"
                 )
             else:
                 func = resp[1]
@@ -229,4 +230,3 @@ class PlatformRuntime(Runtime):
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
-

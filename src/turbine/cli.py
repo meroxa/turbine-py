@@ -30,7 +30,7 @@ def app_build(path_to_data_app, **kwargs):
 
 
 def app_clean_up(path_to_temp, **kwargs):
-    r = Runner.clean_temp_directory(path_to_temp)
+    Runner.clean_temp_directory(path_to_temp)
 
 
 def build_parser():
