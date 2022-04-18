@@ -27,7 +27,7 @@ class InfoRuntime(Runtime):
         return f"turbine-response: {list(self.registeredFunctions)}"
 
     def has_functions(self) -> str:
-        return f"turbine-response: {bool(self.functions_list())}"
+        return f"turbine-response: {bool(len(list(self.registeredFunctions)))}"
 
     async def resources(self, name: str):
         return InfoResource()

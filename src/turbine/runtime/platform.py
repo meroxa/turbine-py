@@ -100,13 +100,13 @@ class PlatformResource(Resource):
             raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream}")
+        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
             connector_config = {}
-            connector_config["input"] = records.stream
+            connector_config["input"] = records.stream[0]
             if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
             elif self.resource.type == "s3":
@@ -125,7 +125,7 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 raise ChildProcessError(
                     f"Error creating destination connector "
-                    f"from stream {records.stream} : {resp[0].message}"
+                    f"from stream {records.stream[0]} : {resp[0].message}"
                 )
             else:
                 print(f"Successfully created {resp[1].name} connector")
