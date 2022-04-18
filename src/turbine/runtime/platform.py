@@ -1,5 +1,6 @@
 import json
 import typing as t
+import os
 
 import meroxa
 from meroxa import Meroxa
@@ -100,13 +101,13 @@ class PlatformResource(Resource):
             raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
+        print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
             connector_config = {}
-            connector_config["input"] = records.stream[0]
+            connector_config["input"] = records.stream
             if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
             elif self.resource.type == "s3":
@@ -139,6 +140,7 @@ class PlatformResource(Resource):
 
 class PlatformRuntime(Runtime):
     _registeredFunctions = {}
+    _secrets = {}
 
     def __init__(
         self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
@@ -209,3 +211,11 @@ class PlatformRuntime(Runtime):
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
+
+    def register_secrets(self, name: str) -> None:
+
+        sec = os.getenv(name)
+        if not sec:
+            raise Exception(f"Secret invalid or unset: {name}")
+
+        self._secrets.update({name: sec})

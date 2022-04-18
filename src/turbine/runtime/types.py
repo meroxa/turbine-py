@@ -51,6 +51,9 @@ class Runtime(ABC):
     ) -> Records:
         ...
 
+    def register_secrets(self, name: str) -> None:
+        ...
+
 
 class AppConfig:
     def __init__(

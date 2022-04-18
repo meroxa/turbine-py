@@ -5,7 +5,7 @@ class TurbineRecord:
     def __init__(self, record):
         self._raw_value = record.value
         self.key = record.key
-        self.value = json.dumps(record.value)
+        self.value = record.value
         self.timestamp = record.timestamp
 
     def deserialize(self):
