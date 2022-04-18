@@ -38,8 +38,8 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 if resp[0].code == "not_found":
                     print(
-                        f"No pipeline found, "
-                        f"creating a new pipeline: {self._pipelineName}"
+                        f"No pipeline found, creating a new pipeline: \
+                        {self._pipelineName}"
                     )
                     pipeline_input = meroxa.CreatePipelineParams(
                         name=self._pipelineName,
@@ -130,7 +130,6 @@ class PlatformResource(Resource):
             else:
                 print(f"Successfully created {resp[1].name} connector")
                 return None
-
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
