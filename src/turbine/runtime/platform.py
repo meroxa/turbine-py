@@ -67,11 +67,7 @@ class PlatformResource(Resource):
                     )
             else:
                 pipeline_uuid = resp[1].uuid
-<<<<<<< HEAD
-                print('pipeline: "{}" ("{}")'.format(self._pipelineName, pipeline_uuid))
-=======
                 print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
->>>>>>> main
 
             print(f"Creating SOURCE connector from source: {self.resource.name}")
             connector_config = {}
@@ -115,15 +111,6 @@ class PlatformResource(Resource):
                 connector_config["table.name.format"] = str(collection).lower()
             elif self.resource.type == "s3":
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
-<<<<<<< HEAD
-                connector_config[
-                    "value.converter"
-                ] = "org.apache.kafka.connect.json.JsonConverter"
-                connector_config["value.converter.schemas.enable"] = "true"
-                connector_config["format.output.type"] = "jsonl"
-                connector_config["format.output.envelope"] = "true"
-=======
->>>>>>> main
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
