@@ -1,3 +1,3 @@
-from main import App, anonymize
+from main import App
 
-__all__ = [App, anonymize]
+__all__ = [App]
