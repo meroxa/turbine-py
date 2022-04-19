@@ -71,7 +71,6 @@ class LocalRuntime(Runtime):
         resources = self.app_config.resources
 
         fixtures_path = resources.get(name)
-        print(resources)
         if fixtures_path:
             resourced_fixture_path = f"{self.path_to_app}/{fixtures_path}"
 
