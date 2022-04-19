@@ -181,7 +181,7 @@ The most comprehensive documentation for Turbine and how to work with Turbine ap
 
 [See what a sample python data app looks like using our framework](https://github.com/meroxa/turbine-py-examples)
 
-##W Installation
+### Installation
 
 Clone this repo and install this package using the following command
 
