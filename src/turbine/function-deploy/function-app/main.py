@@ -13,7 +13,7 @@ from grpc_reflection.v1alpha import reflection
 
 import service_pb2
 import service_pb2_grpc
-from record import TurbineRecord
+from record import proto_records_to_turbine_records, turbine_records_to_proto_records
 
 """
 Process function given to GRPC server
@@ -38,7 +38,7 @@ class Funtime(service_pb2_grpc.FunctionServicer):
         spec.loader.exec_module(data_app)
 
         # map from rpc => something we can work with
-        input_records = [TurbineRecord(record) for record in request.records]
+        input_records = proto_records_to_turbine_records(request.records)
 
         # Get the data app function
         data_app_function = data_app.__getattribute__(FUNCTION_NAME)
@@ -47,7 +47,8 @@ class Funtime(service_pb2_grpc.FunctionServicer):
         output_records = data_app_function(input_records)
 
         # Serialize and return
-        grpc_records = [record.serialize() for record in output_records]
+        # grpc_records = [record.serialize() for record in output_records]
+        grpc_records = turbine_records_to_proto_records(output_records)
 
         return service_pb2.ProcessRecordResponse(records=grpc_records)
 

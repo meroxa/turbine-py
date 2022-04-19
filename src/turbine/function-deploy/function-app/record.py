@@ -1,17 +1,21 @@
 import json
 
+from service_pb2 import Record as ProtoRecord
 
-class TurbineRecord:
-    def __init__(self, record):
-        self._raw_value = record.value
-        self.key = record.key
-        self.value = record.value
-        self.timestamp = record.timestamp
+from turbine.runtime import Record
 
-    def deserialize(self):
-        return self
 
-    def serialize(self):
-        return dict(
-            key=self.key, value=json.dumps(self.value), timestamp=self.timestamp
+def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
+    return [
+        Record(key=record.key, value=record.value, timestamp=record.timestamp)
+        for record in p_record
+    ]
+
+
+def turbine_records_to_proto_records(t_record: list[Record]):
+    return [
+        ProtoRecord(
+            key=record.key, value=json.dumps(record.value), timestamp=record.timestamp
         )
+        for record in t_record
+    ]
