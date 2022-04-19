@@ -71,8 +71,7 @@ class PlatformResource(Resource):
                 print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
 
             print(f"Creating SOURCE connector from source: {self.resource.name}")
-            connector_config = {}
-            connector_config["input"] = collection
+            connector_config = {"input": collection}
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
@@ -106,12 +105,15 @@ class PlatformResource(Resource):
         try:
             # Connector config
             # Move the non-shared logics to a separate function
-            connector_config = {}
-            connector_config["input"] = records.stream
+            connector_config = {"input": records.stream}
             if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
+            elif self.resource.type == "mongodb":
+                connector_config["collection"] = str(collection).lower()
             elif self.resource.type == "s3":
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+            elif self.resource.type == "snowflake.topic2table.map":
+                connector_config["aws_s3_prefix"] = f"{records.stream}:{str(collection).lower()}" + "/"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
