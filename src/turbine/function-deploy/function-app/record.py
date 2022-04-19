@@ -13,5 +13,5 @@ class TurbineRecord:
 
     def serialize(self):
         return dict(
-            key=self.key, value=json.loads(self.value), timestamp=self.timestamp
+            key=self.key, value=json.dumps(self.value), timestamp=self.timestamp
         )

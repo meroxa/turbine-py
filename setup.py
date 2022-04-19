@@ -16,5 +16,8 @@ setup(
     entry_points={
         "console_scripts": ["turbine-py=turbine.cli:main"],
     },
-    install_requires=["aiohttp", "grpcio"],
+    install_requires=[
+        "aiohttp",
+        "grpcio",
+        "meroxa-py @ git+https://git@github.com/meroxa/meroxa-py.git"],
 )
