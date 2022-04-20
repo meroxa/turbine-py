@@ -100,22 +100,20 @@ class PlatformResource(Resource):
             raise Exception(e)
 
     async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream}")
+        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
-            connector_config = {"input": records.stream}
+            connector_config = {"input": records.stream[0]}
             if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
             elif self.resource.type == "mongodb":
                 connector_config["collection"] = str(collection).lower()
             elif self.resource.type == "s3":
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
-            elif self.resource.type == "snowflake.topic2table.map":
-                connector_config["aws_s3_prefix"] = (
-                    f"{records.stream}:{str(collection).lower()}" + "/"
-                )
+            elif self.resource.type == "snowflakedb":
+                connector_config["snowflake.topic2table.map"] = f"{records.stream[0]}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,
@@ -125,6 +123,7 @@ class PlatformResource(Resource):
                     "mx:connectorType": "destination",
                 },
             )
+
             async with Meroxa(auth=self.client_opts.auth) as m:
                 resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
