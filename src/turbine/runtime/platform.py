@@ -113,7 +113,9 @@ class PlatformResource(Resource):
             elif self.resource.type == "s3":
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
             elif self.resource.type == "snowflakedb":
-                connector_config["snowflake.topic2table.map"] = f"{records.stream[0]}:{str(collection)}"
+                connector_config[
+                    "snowflake.topic2table.map"
+                ] = f"{records.stream[0]}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,

@@ -11,12 +11,14 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
     for record in records:
         record_value_from_json = json.loads(record.value)
         hashed_email = hashlib.sha256(
-            record_value_from_json["payload"]["customer_email"].encode('utf-8')
+            record_value_from_json["payload"]["customer_email"].encode("utf-8")
         ).hexdigest()
         print(f"hashed email: {hashed_email}")
         record_value_from_json["payload"]["customer_email"] = hashed_email
         updated.append(
-            Record(key=record.key, value=record_value_from_json, timestamp=record.timestamp)
+            Record(
+                key=record.key, value=record_value_from_json, timestamp=record.timestamp
+            )
         )
     return updated
 
