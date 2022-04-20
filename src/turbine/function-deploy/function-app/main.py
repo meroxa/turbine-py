@@ -47,7 +47,6 @@ class Funtime(service_pb2_grpc.FunctionServicer):
         output_records = data_app_function(input_records)
 
         # Serialize and return
-        # grpc_records = [record.serialize() for record in output_records]
         grpc_records = turbine_records_to_proto_records(output_records)
 
         return service_pb2.ProcessRecordResponse(records=grpc_records)
