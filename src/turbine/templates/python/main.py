@@ -9,17 +9,22 @@ from turbine.runtime import Record, Runtime
 def anonymize(records: t.List[Record]) -> t.List[Record]:
     updated = []
     for record in records:
-        record_value_from_json = json.loads(record.value)
-        hashed_email = hashlib.sha256(
-            record_value_from_json["payload"]["customer_email"].encode("utf-8")
-        ).hexdigest()
-        print(f"hashed email: {hashed_email}")
-        record_value_from_json["payload"]["customer_email"] = hashed_email
-        updated.append(
-            Record(
-                key=record.key, value=record_value_from_json, timestamp=record.timestamp
+        try:
+            record_value_from_json = json.loads(record.value)
+            hashed_email = hashlib.sha256(
+                record_value_from_json["payload"]["customer_email"].encode("utf-8")
+            ).hexdigest()
+            record_value_from_json["payload"]["customer_email"] = hashed_email
+            updated.append(
+                Record(
+                    key=record.key, value=record_value_from_json, timestamp=record.timestamp
+                )
             )
-        )
+        except Exception as e:
+            print("Error occurred while parsing records: " + str(e))
+            updated.append(
+                Record(key=record.key, value=record_value_from_json, timestamp=record.timestamp)
+            )
     return updated
 
 

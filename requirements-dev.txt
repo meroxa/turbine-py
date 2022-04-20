@@ -3,3 +3,5 @@
 autopep8>=1.6.0
 flake8>=4.0.1
 black==22.3.0
+
+-e .
