@@ -19,6 +19,6 @@ setup(
     install_requires=[
         "aiohttp",
         "grpcio",
-        "meroxa-py @ git+https://git@github.com/meroxa/meroxa-py.git",
+        "meroxa-py",
     ],
 )

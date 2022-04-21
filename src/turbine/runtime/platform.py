@@ -217,7 +217,7 @@ class PlatformRuntime(Runtime):
 
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
-            input_stream=records.stream[0],
+            input_stream=records.stream,
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
