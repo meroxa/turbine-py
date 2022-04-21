@@ -1,5 +1,5 @@
 # will include meroxa-py once published
 autopep8==1.6.0
 aiohttp
+meroxa-py
 git+https://github.com/meroxa/turbine-py.git
-git+https://github.com/meroxa/meroxa-py.git

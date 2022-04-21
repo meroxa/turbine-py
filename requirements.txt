@@ -1,6 +1,4 @@
 aiohttp==3.8.1
 python-dotenv==0.20.0
 grpcio>=1.44.0
-
-# To be updated once meroxa-py hits the primary PyPI index
-git+https://github.com/meroxa/meroxa-py.git
+meroxa-py
