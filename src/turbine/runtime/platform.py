@@ -6,6 +6,7 @@ import re
 import meroxa
 from meroxa import Meroxa
 from meroxa.types import PipelineIdentifiers
+from meroxa.types import ResourceType
 
 from .types import AppConfig
 from .types import Record
@@ -107,13 +108,13 @@ class PlatformResource(Resource):
             # Connector config
             # Move the non-shared logics to a separate function
             connector_config = {"input": records.stream}
-            if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
+            if self.resource.type in (ResourceType.REDSHIFT, ResourceType.POSTGRES, ResourceType.MYSQL):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
-            elif self.resource.type == "mongodb":
+            elif self.resource.type == ResourceType.MONGODB:
                 connector_config["collection"] = str(collection).lower()
-            elif self.resource.type == "s3":
+            elif self.resource.type == ResourceType.S3:
                 connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
-            elif self.resource.type == "snowflakedb":
+            elif self.resource.type == ResourceType.SNOWFLAKE:
                 result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
                 if result is None:
                     raise ChildProcessError(
