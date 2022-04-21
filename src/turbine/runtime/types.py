@@ -46,8 +46,7 @@ class Runtime(ABC):
     async def process(
         self,
         records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars: dict,
+        fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
         ...
 

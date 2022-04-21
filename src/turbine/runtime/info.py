@@ -37,7 +37,6 @@ class InfoRuntime(Runtime):
     async def process(
         self,
         records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars=None,
+        fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> None:
         self.registeredFunctions[getattr(fn, "__name__", "Unknown")] = fn

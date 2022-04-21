@@ -81,8 +81,7 @@ class LocalRuntime(Runtime):
     async def process(
         self,
         records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars=None,
+        fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
         return Records(records=fn(records.records), stream="")

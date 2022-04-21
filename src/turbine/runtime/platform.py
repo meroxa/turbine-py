@@ -83,6 +83,7 @@ class PlatformResource(Resource):
                     "mx:connectorType": "source",
                 },
             )
+
             async with Meroxa(auth=self.client_opts.auth, api_route=self.client_opts.url) as m:
                 connector: meroxa.ConnectorsResponse
                 # Error Handling: Duplicate connector
@@ -95,14 +96,20 @@ class PlatformResource(Resource):
                 )
             else:
                 connector = resp[1]
-                return Records(records=[], stream=connector.streams["output"])
+                output = connector.streams["output"]
+                if isinstance(output, dict):
+                    stream = output[0]
+                else:
+                    stream = output
+
+                return Records(records=[], stream=stream)
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
 
     async def write(
-        self, records: Records, collection: str, config: dict[str, str] = {}
+        self, records: Records, collection: str, config: dict[str, str] = None
     ) -> None:
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
@@ -113,16 +120,16 @@ class PlatformResource(Resource):
                 config = {}
             config["input"] = records.stream
             if self.resource.type in (
-                ResourceType.REDSHIFT,
-                ResourceType.POSTGRES,
-                ResourceType.MYSQL,
+                ResourceType.REDSHIFT.value,
+                ResourceType.POSTGRES.value,
+                ResourceType.MYSQL.value,
             ):  # JDBC sink
                 config["table.name.format"] = str(collection).lower()
-            elif self.resource.type == ResourceType.MONGODB:
+            elif self.resource.type == ResourceType.MONGODB.value:
                 config["collection"] = str(collection).lower()
-            elif self.resource.type == ResourceType.S3:
+            elif self.resource.type == ResourceType.S3.value:
                 config["aws_s3_prefix"] = str(collection).lower() + "/"
-            elif self.resource.type == ResourceType.SNOWFLAKE:
+            elif self.resource.type == ResourceType.SNOWFLAKE.value:
                 result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
                 if result is None:
                     raise ChildProcessError(
@@ -197,20 +204,19 @@ class PlatformRuntime(Runtime):
     async def process(
         self,
         records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars: dict = {},
+        fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
 
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
-            input_stream=records.stream,
+            input_stream=records.stream[0],
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
             pipeline=PipelineIdentifiers().name(
                 "turbine-pipeline-{}".format(self._app_config.name)
             ),
-            env_vars=env_vars,
+            env_vars=self._secrets,
         )
 
         if self._image_name == "":
