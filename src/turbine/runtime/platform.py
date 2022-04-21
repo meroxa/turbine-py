@@ -103,7 +103,7 @@ class PlatformResource(Resource):
             else:
                 connector = resp[1]
                 output = connector.streams["output"]
-                if isinstance(output, dict):
+                if isinstance(output, list):
                     stream = output[0]
                 else:
                     stream = output
