@@ -101,7 +101,9 @@ class PlatformResource(Resource):
         except Exception as e:
             raise Exception(e)
 
-    async def write(self, records: Records, collection: str, config: dict[str, str] = {}) -> None:
+    async def write(
+        self, records: Records, collection: str, config: dict[str, str] = {}
+    ) -> None:
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         try:
@@ -205,7 +207,9 @@ class PlatformRuntime(Runtime):
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipeline=PipelineIdentifiers().name("turbine-pipeline-{}".format(self._app_config.name)),
+            pipeline=PipelineIdentifiers().name(
+                "turbine-pipeline-{}".format(self._app_config.name)
+            ),
             env_vars=env_vars,
         )
 

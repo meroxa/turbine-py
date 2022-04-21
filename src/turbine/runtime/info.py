@@ -10,7 +10,9 @@ class InfoResource(Resource):
     async def records(self, collection: str) -> None:
         ...
 
-    async def write(self, rr: Records, collection: str, config: dict[str, str] = {}) -> None:
+    async def write(
+        self, rr: Records, collection: str, config: dict[str, str] = {}
+    ) -> None:
         ...
 
 
