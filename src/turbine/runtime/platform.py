@@ -35,7 +35,9 @@ class PlatformResource(Resource):
         print(f"Check if pipeline exists for application: {self.app_config.name}")
 
         try:
-            async with Meroxa(auth=self.client_opts.auth, api_route=self.client_opts.url) as m:
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 resp = await m.pipelines.get(self._pipelineName)
 
             if resp[0] is not None:
@@ -49,7 +51,9 @@ class PlatformResource(Resource):
                         metadata={"turbine": True, "app": self.app_config.name},
                         environment=self.app_config.environment,
                     )
-                    async with Meroxa(auth=self.client_opts.auth, api_route=self.client_opts.url) as m:
+                    async with Meroxa(
+                        auth=self.client_opts.auth, api_route=self.client_opts.url
+                    ) as m:
                         resp = await m.pipelines.create(pipeline_input)
 
                     if resp[0] is not None:
@@ -84,7 +88,9 @@ class PlatformResource(Resource):
                 },
             )
 
-            async with Meroxa(auth=self.client_opts.auth, api_route=self.client_opts.url) as m:
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 connector: meroxa.ConnectorsResponse
                 # Error Handling: Duplicate connector
                 # Check for `bad_request`
@@ -151,7 +157,9 @@ class PlatformResource(Resource):
                 },
             )
 
-            async with Meroxa(auth=self.client_opts.auth, api_route=self.client_opts.url) as m:
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
                 raise ChildProcessError(
@@ -181,7 +189,9 @@ class PlatformRuntime(Runtime):
 
     async def resources(self, resource_name: str):
         try:
-            async with Meroxa(auth=self._client_opts.auth, api_route=self._client_opts.url) as m:
+            async with Meroxa(
+                auth=self._client_opts.auth, api_route=self._client_opts.url
+            ) as m:
                 resp = await m.resources.get(resource_name)
 
             if resp[0] is not None:
@@ -202,9 +212,7 @@ class PlatformRuntime(Runtime):
             raise Exception(e)
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
 
         # Create function parameters
@@ -224,7 +232,9 @@ class PlatformRuntime(Runtime):
 
         print(f"deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
-        async with Meroxa(auth=self._client_opts.auth, api_route=self._client_opts.url) as m:
+        async with Meroxa(
+            auth=self._client_opts.auth, api_route=self._client_opts.url
+        ) as m:
             resp = await m.functions.create(create_func_params)
         try:
             if resp[0] is not None:

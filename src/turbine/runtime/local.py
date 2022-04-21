@@ -79,9 +79,7 @@ class LocalRuntime(Runtime):
         return LocalResource(name, resourced_fixture_path)
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
         return Records(records=fn(records.records), stream="")

@@ -44,9 +44,7 @@ class Runtime(ABC):
         ...
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
         ...
 
