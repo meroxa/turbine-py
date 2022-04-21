@@ -5,7 +5,7 @@ import re
 
 import meroxa
 from meroxa import Meroxa
-from meroxa.types import PipelineIdentifiers
+from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
 from .types import AppConfig
