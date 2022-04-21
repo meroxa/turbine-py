@@ -117,11 +117,14 @@ class PlatformResource(Resource):
                 result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
                 if result is None:
                     raise ChildProcessError(
-                        f"'{str(collection)}' is an invalid Snowflake name - must start with "
-                        f"a letter and contain only letters, numbers, and underscores"
+                        f"'{str(collection)}' is an invalid Snowflake name - "
+                        f"must start with a letter and contain only letters, "
+                        f"numbers, and underscores"
                     )
                 else:
-                    connector_config["snowflake.topic2table.map"] = f"{records.stream}:{str(collection)}"
+                    connector_config[
+                        "snowflake.topic2table.map"
+                    ] = f"{records.stream}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
                 resourceName=self.resource.name,

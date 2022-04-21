@@ -17,13 +17,19 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
             record_value_from_json["payload"]["customer_email"] = hashed_email
             updated.append(
                 Record(
-                    key=record.key, value=record_value_from_json, timestamp=record.timestamp
+                    key=record.key,
+                    value=record_value_from_json,
+                    timestamp=record.timestamp,
                 )
             )
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
             updated.append(
-                Record(key=record.key, value=record_value_from_json, timestamp=record.timestamp)
+                Record(
+                    key=record.key,
+                    value=record_value_from_json,
+                    timestamp=record.timestamp,
+                )
             )
     return updated
 
