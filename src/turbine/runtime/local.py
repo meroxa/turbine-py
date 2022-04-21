@@ -45,7 +45,7 @@ class LocalResource(Resource):
             records=await read_fixtures(self.fixtures_path, collection), stream=""
         )
 
-    async def write(self, rr: Records, collection: str) -> None:
+    async def write(self, rr: Records, collection: str, config: dict[str, str] = {}) -> None:
 
         pprint(f"===================to {self.name} resource===================")
 

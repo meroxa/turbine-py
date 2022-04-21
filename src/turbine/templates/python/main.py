@@ -74,6 +74,8 @@ class App:
             # using the `write` function.
             # Replace `collection_archive` with a table, collection,
             # or bucket name in your data store.
-            await destination_db.write(anonymized, "collection_archive")
+            # If you need additional connector configurations, replace '{}'
+            # with the key and value, i.e. {"incrementing.field.name":"id"}
+            await destination_db.write(anonymized, "collection_archive", {})
         except Exception as e:
             print(e, file=sys.stderr)

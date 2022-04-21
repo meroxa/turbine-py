@@ -76,8 +76,8 @@ class PlatformResource(Resource):
             connector_config = {"input": collection}
 
             connector_input = meroxa.CreateConnectorParams(
-                resourceName=self.resource.name,
-                pipelineName=self._pipelineName,
+                resource_name=self.resource.name,
+                pipeline_name=self._pipelineName,
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "source",
@@ -95,29 +95,31 @@ class PlatformResource(Resource):
                 )
             else:
                 connector = resp[1]
-                return Records(records=[], stream=connector.streams.output)
+                return Records(records=[], stream=connector.streams["output"])
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
 
-    async def write(self, records: Records, collection: str) -> None:
+    async def write(self, records: Records, collection: str, config: dict[str, str] = {}) -> None:
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
-            connector_config = {"input": records.stream}
+            if config is None:
+                config = {}
+            config["input"] = records.stream
             if self.resource.type in (
                 ResourceType.REDSHIFT,
                 ResourceType.POSTGRES,
                 ResourceType.MYSQL,
             ):  # JDBC sink
-                connector_config["table.name.format"] = str(collection).lower()
+                config["table.name.format"] = str(collection).lower()
             elif self.resource.type == ResourceType.MONGODB:
-                connector_config["collection"] = str(collection).lower()
+                config["collection"] = str(collection).lower()
             elif self.resource.type == ResourceType.S3:
-                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+                config["aws_s3_prefix"] = str(collection).lower() + "/"
             elif self.resource.type == ResourceType.SNOWFLAKE:
                 result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
                 if result is None:
@@ -127,14 +129,14 @@ class PlatformResource(Resource):
                         f"numbers, and underscores"
                     )
                 else:
-                    connector_config[
+                    config[
                         "snowflake.topic2table.map"
                     ] = f"{records.stream}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
-                resourceName=self.resource.name,
-                pipelineName=self._pipelineName,
-                config=connector_config,
+                resource_name=self.resource.name,
+                pipeline_name=self._pipelineName,
+                config=config,
                 metadata={
                     "mx:connectorType": "destination",
                 },
@@ -194,19 +196,17 @@ class PlatformRuntime(Runtime):
         self,
         records: Records,
         fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars: dict,
+        env_vars: dict = {},
     ) -> Records:
 
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
-            inputStream=records.stream[0],
+            input_stream=records.stream,
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipelineIdentifiers=PipelineIdentifiers(
-                name="turbine-pipeline-{}".format(self._app_config.name)
-            ),
-            envVars=env_vars,
+            pipeline=PipelineIdentifiers().name("turbine-pipeline-{}".format(self._app_config.name)),
+            env_vars=env_vars,
         )
 
         if self._image_name == "":
