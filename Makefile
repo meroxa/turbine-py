@@ -11,4 +11,5 @@ funtime: ./src/turbine/function-deploy/function-app/requirements.txt
 
 .PHONY: lint
 lint:
-	black .
+	black src
+	flake8 src

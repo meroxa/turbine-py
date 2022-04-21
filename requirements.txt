@@ -1,6 +1,4 @@
-# meroxa-py req goes here
 aiohttp==3.8.1
 python-dotenv==0.20.0
 grpcio>=1.44.0
-
--e .
+meroxa-py

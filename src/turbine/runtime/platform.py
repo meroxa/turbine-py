@@ -1,9 +1,12 @@
 import json
 import typing as t
+import os
+import re
 
 import meroxa
 from meroxa import Meroxa
-from meroxa.types import PipelineIdentifiers
+from meroxa.pipelines import PipelineIdentifiers
+from meroxa.types import ResourceType
 
 from .types import AppConfig
 from .types import Record
@@ -32,7 +35,9 @@ class PlatformResource(Resource):
         print(f"Check if pipeline exists for application: {self.app_config.name}")
 
         try:
-            async with Meroxa(auth=self.client_opts.auth) as m:
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 resp = await m.pipelines.get(self._pipelineName)
 
             if resp[0] is not None:
@@ -46,7 +51,9 @@ class PlatformResource(Resource):
                         metadata={"turbine": True, "app": self.app_config.name},
                         environment=self.app_config.environment,
                     )
-                    async with Meroxa(auth=self.client_opts.auth) as m:
+                    async with Meroxa(
+                        auth=self.client_opts.auth, api_route=self.client_opts.url
+                    ) as m:
                         resp = await m.pipelines.create(pipeline_input)
 
                     if resp[0] is not None:
@@ -70,18 +77,20 @@ class PlatformResource(Resource):
                 print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
 
             print(f"Creating SOURCE connector from source: {self.resource.name}")
-            connector_config = {}
-            connector_config["input"] = collection
+            connector_config = {"input": collection}
 
             connector_input = meroxa.CreateConnectorParams(
-                resourceName=self.resource.name,
-                pipelineName=self._pipelineName,
+                resource_name=self.resource.name,
+                pipeline_name=self._pipelineName,
                 config=connector_config,
                 metadata={
                     "mx:connectorType": "source",
                 },
             )
-            async with Meroxa(auth=self.client_opts.auth) as m:
+
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 connector: meroxa.ConnectorsResponse
                 # Error Handling: Duplicate connector
                 # Check for `bad_request`
@@ -93,39 +102,69 @@ class PlatformResource(Resource):
                 )
             else:
                 connector = resp[1]
-                return Records(records=[], stream=connector.streams.output)
+                output = connector.streams["output"]
+                if isinstance(output, dict):
+                    stream = output[0]
+                else:
+                    stream = output
+
+                return Records(records=[], stream=stream)
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
 
-    async def write(self, records: Records, collection: str) -> None:
-        print(f"Creating DESTINATION connector from stream: {records.stream[0]}")
+    async def write(
+        self, records: Records, collection: str, config: dict[str, str] = None
+    ) -> None:
+        print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         try:
             # Connector config
             # Move the non-shared logics to a separate function
-            connector_config = {}
-            connector_config["input"] = records.stream[0]
-            if self.resource.type in ("redshift", "postgres", "mysql"):  # JDBC sink
-                connector_config["table.name.format"] = str(collection).lower()
-            elif self.resource.type == "s3":
-                connector_config["aws_s3_prefix"] = str(collection).lower() + "/"
+            if config is None:
+                config = {}
+            config["input"] = records.stream
+            if self.resource.type in (
+                ResourceType.REDSHIFT.value,
+                ResourceType.POSTGRES.value,
+                ResourceType.MYSQL.value,
+            ):  # JDBC sink
+                config["table.name.format"] = str(collection).lower()
+            elif self.resource.type == ResourceType.MONGODB.value:
+                config["collection"] = str(collection).lower()
+            elif self.resource.type == ResourceType.S3.value:
+                config["aws_s3_prefix"] = str(collection).lower() + "/"
+            elif self.resource.type == ResourceType.SNOWFLAKE.value:
+                result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
+                if result is None:
+                    raise ChildProcessError(
+                        f"'{str(collection)}' is an invalid Snowflake name - "
+                        f"must start with a letter and contain only letters, "
+                        f"numbers, and underscores"
+                    )
+                else:
+                    config[
+                        "snowflake.topic2table.map"
+                    ] = f"{records.stream}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
-                resourceName=self.resource.name,
-                pipelineName=self._pipelineName,
-                config=connector_config,
+                resource_name=self.resource.name,
+                pipeline_name=self._pipelineName,
+                config=config,
                 metadata={
                     "mx:connectorType": "destination",
                 },
             )
-            async with Meroxa(auth=self.client_opts.auth) as m:
+
+            async with Meroxa(
+                auth=self.client_opts.auth, api_route=self.client_opts.url
+            ) as m:
                 resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
                 raise ChildProcessError(
                     f"Error creating destination connector "
-                    f"from stream {records.stream[0]} : {resp[0].message}"
+                    f"from stream {records.stream} : {resp[0].message}"
                 )
             else:
                 print(f"Successfully created {resp[1].name} connector")
@@ -138,6 +177,7 @@ class PlatformResource(Resource):
 
 class PlatformRuntime(Runtime):
     _registeredFunctions = {}
+    _secrets = {}
 
     def __init__(
         self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
@@ -148,7 +188,9 @@ class PlatformRuntime(Runtime):
 
     async def resources(self, resource_name: str):
         try:
-            async with Meroxa(auth=self._client_opts.auth) as m:
+            async with Meroxa(
+                auth=self._client_opts.auth, api_route=self._client_opts.url
+            ) as m:
                 resp = await m.resources.get(resource_name)
 
             if resp[0] is not None:
@@ -169,22 +211,19 @@ class PlatformRuntime(Runtime):
             raise Exception(e)
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars: dict,
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
 
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
-            inputStream=records.stream[0],
+            input_stream=records.stream,
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipelineIdentifiers=PipelineIdentifiers(
-                name="turbine-pipeline-{}".format(self._app_config.name)
+            pipeline=PipelineIdentifiers().name(
+                "turbine-pipeline-{}".format(self._app_config.name)
             ),
-            envVars=env_vars,
+            env_vars=self._secrets,
         )
 
         if self._image_name == "":
@@ -192,7 +231,9 @@ class PlatformRuntime(Runtime):
 
         print(f"deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
-        async with Meroxa(auth=self._client_opts.auth) as m:
+        async with Meroxa(
+            auth=self._client_opts.auth, api_route=self._client_opts.url
+        ) as m:
             resp = await m.functions.create(create_func_params)
         try:
             if resp[0] is not None:
@@ -208,3 +249,11 @@ class PlatformRuntime(Runtime):
             raise ChildProcessError(cpe)
         except Exception as e:
             raise Exception(e)
+
+    def register_secrets(self, name: str) -> None:
+
+        sec = os.getenv(name)
+        if not sec:
+            raise Exception(f"Secret invalid or unset: {name}")
+
+        self._secrets.update({name: sec})

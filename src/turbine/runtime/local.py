@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import typing as t
 from pprint import pprint
@@ -44,13 +45,15 @@ class LocalResource(Resource):
             records=await read_fixtures(self.fixtures_path, collection), stream=""
         )
 
-    async def write(self, rr: Records, collection: str) -> None:
+    async def write(
+        self, rr: Records, collection: str, config: dict[str, str] = {}
+    ) -> None:
 
         pprint(f"===================to {self.name} resource===================")
 
         if rr.records:
             [print(json.dumps(record.value, indent=4)) for record in rr.records]
-        print("{} records written".format(len(rr.records)))
+        print(f"{len(rr.records)} records written")
 
         return None
 
@@ -59,6 +62,7 @@ class LocalRuntime(Runtime):
     app_config = {}
     path_to_app = ""
     _registeredFunctions = {}
+    _secrets = {}
 
     def __init__(self, config: AppConfig, path_to_app: str) -> None:
         self.app_config = config
@@ -75,10 +79,15 @@ class LocalRuntime(Runtime):
         return LocalResource(name, resourced_fixture_path)
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars=None,
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
         return Records(records=fn(records.records), stream="")
+
+    def register_secrets(self, name: str) -> None:
+
+        sec = os.getenv(name)
+        if not sec:
+            raise Exception(f"Secret invalid or unset: {name}")
+
+        self._secrets.update({name: sec})

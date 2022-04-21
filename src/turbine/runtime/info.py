@@ -10,7 +10,9 @@ class InfoResource(Resource):
     async def records(self, collection: str) -> None:
         ...
 
-    async def write(self, rr: Records, collection: str) -> None:
+    async def write(
+        self, rr: Records, collection: str, config: dict[str, str] = {}
+    ) -> None:
         ...
 
 
@@ -33,9 +35,6 @@ class InfoRuntime(Runtime):
         return InfoResource()
 
     async def process(
-        self,
-        records: Records,
-        fn: t.Callable[[t.List[Record]], t.List[Record]],
-        env_vars=None,
+        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> None:
         self.registeredFunctions[getattr(fn, "__name__", "Unknown")] = fn
