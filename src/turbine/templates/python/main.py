@@ -43,36 +43,37 @@ class App:
             # For more details refer to: https://docs.meroxa.com/
 
             # Identify an upstream data store for your data app
-            # with the `Resources` function.
+            # with the `resources` function.
             # Replace `source_name` with the resource name the
             # data store was configured with on Meroxa.
             source = await turbine.resources("source_name")
 
             # Specify which upstream records to pull
-            # with the `Records` function.
+            # with the `records` function.
             # Replace `collection_name` with a table, collection,
             # or bucket name in your data store.
             records = await source.records("collection_name")
 
             # Specify which secrets in environment variables should be passed
             # into the Process.
-            secrets = turbine.register_secrets(name="PWD")
+            # Replace 'PWD' with the name of the environment variable.
+            secrets = turbine.register_secrets("PWD")
 
             # Specify what code to execute against upstream records
-            # with the `Process` function.
-            # Replace `Anonymize` with the name of your function code.
+            # with the `process` function.
+            # Replace `anonymize` with the name of your function code.
             anonymized = await turbine.process(records, anonymize, secrets)
 
             # Identify a downstream data store for your data app
-            # with the `Resources` function.
+            # with the `resources` function.
             # Replace `destination_name` with the resource name the
             # data store was configured with on Meroxa.
             destination_db = await turbine.resources("destination_name")
 
             # Specify where to write records downstream
-            # using the `Write` function
+            # using the `write` function.
             # Replace `collection_archive` with a table, collection,
-            # or bucket name in your data store
+            # or bucket name in your data store.
             await destination_db.write(anonymized, "collection_archive")
         except Exception as e:
             print(e, file=sys.stderr)
