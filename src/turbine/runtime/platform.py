@@ -108,7 +108,11 @@ class PlatformResource(Resource):
             # Connector config
             # Move the non-shared logics to a separate function
             connector_config = {"input": records.stream}
-            if self.resource.type in (ResourceType.REDSHIFT, ResourceType.POSTGRES, ResourceType.MYSQL):  # JDBC sink
+            if self.resource.type in (
+                ResourceType.REDSHIFT,
+                ResourceType.POSTGRES,
+                ResourceType.MYSQL,
+            ):  # JDBC sink
                 connector_config["table.name.format"] = str(collection).lower()
             elif self.resource.type == ResourceType.MONGODB:
                 connector_config["collection"] = str(collection).lower()
