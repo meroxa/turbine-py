@@ -214,15 +214,19 @@ class PlatformRuntime(Runtime):
         self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
     ) -> Records:
 
+        pipeline_id = PipelineIdentifiers(
+            name=f"turbine-pipeline-{self._app_config.name}"
+        )
+
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
             input_stream=records.stream,
+            output_stream="",
+            name="",
             command=["python"],
             args=["main.py", fn.__name__],
             image=self._image_name,
-            pipeline=PipelineIdentifiers().name(
-                "turbine-pipeline-{}".format(self._app_config.name)
-            ),
+            pipeline=pipeline_id,
             env_vars=self._secrets,
         )
 
