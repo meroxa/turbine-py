@@ -46,36 +46,51 @@ testapp
 
 This will be a full-fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It provides just enough to show you what you need to get started.
 
-### `index.js`
+### `main.py`
 
 This configuration file is where you begin your Turbine journey. Any time a Turbine app runs, this is the entry point for the entire application. When the project is created, the file will look like this:
 
 ```python
 # Dependencies of the example data app
 import hashlib
+import json
+import sys
 import typing as t
 
-from turbine import Turbine
-from turbine.runtime import Record
+from turbine.runtime import Record, Runtime as Turbine
 
 
 def anonymize(records: t.List[Record]) -> t.List[Record]:
     updated = []
     for record in records:
-        value_to_update = record.value
-        hashed_email = hashlib.sha256(
-            value_to_update["payload"]["after"]["email"].encode()
-        ).hexdigest()
-        value_to_update["payload"]["after"]["email"] = hashed_email
-        updated.append(
-            Record(key=record.key, value=value_to_update, timestamp=record.timestamp)
-        )
+        try:
+            record_value_from_json = json.loads(record.value)
+            hashed_email = hashlib.sha256(
+                record_value_from_json["payload"]["customer_email"].encode("utf-8")
+            ).hexdigest()
+            record_value_from_json["payload"]["customer_email"] = hashed_email
+            updated.append(
+                Record(
+                    key=record.key,
+                    value=record_value_from_json,
+                    timestamp=record.timestamp,
+                )
+            )
+        except Exception as e:
+            print("Error occurred while parsing records: " + str(e))
+            updated.append(
+                Record(
+                    key=record.key,
+                    value=record_value_from_json,
+                    timestamp=record.timestamp,
+                )
+            )
     return updated
-
 
 class App:
     @staticmethod
     async def run(turbine: Turbine):
+      try:
         source = await turbine.resources("source_name")
 
         records = await source.records("collection_name")
@@ -85,6 +100,8 @@ class App:
         destination_db = await turbine.resources("destination_name")
 
         await destination_db.write(anonymized, "collection_archive")
+      except Exception as e:
+          print(e, file=sys.stderr)
 ```
 
 Let's talk about the important parts of this code. Turbine apps have five functions that comprise the entire DSL. Outside of these functions, you can write whatever code you want to accomplish your tasks:
