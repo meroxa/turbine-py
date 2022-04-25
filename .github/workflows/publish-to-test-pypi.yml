@@ -1,5 +1,8 @@
 name: Publish Turbine-py distributions 📦 to TestPyPI
-on: push
+on:
+  pull_request:
+    paths:
+      - 'VERSION.txt'
 jobs:
   build-and-publish:
     name: Build and publish Turbine-py distributions to TestPyPI
