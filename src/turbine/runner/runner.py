@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+from urllib.parse import urlparse
 
 from .baserunner import BaseRunner
 from ..runtime import PlatformRuntime, ClientOptions
@@ -35,10 +36,12 @@ class Runner(BaseRunner):
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
     async def run_app_platform(self, image_name):
+        parsed_url = urlparse(os.environ.get("MEROXA_API_URL"))
+
         environment = PlatformRuntime(
             client_options=ClientOptions(
                 auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
-                url=os.environ.get("MEROXA_API_URL"),
+                url=f"https://{parsed_url.netloc}",
             ),
             image_name=image_name,
             config=self.app_config,
