@@ -40,7 +40,7 @@ class LocalResource(Resource):
         self.name = name
         self.fixtures_path = fixtures_path
 
-    async def records(self, collection: str) -> Records:
+    async def records(self, collection: str, config: dict[str, str] = None) -> Records:
         return Records(
             records=await read_fixtures(self.fixtures_path, collection), stream=""
         )

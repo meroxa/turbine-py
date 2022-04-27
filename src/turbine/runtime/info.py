@@ -7,7 +7,7 @@ from .types import Runtime
 
 
 class InfoResource(Resource):
-    async def records(self, collection: str) -> None:
+    async def records(self, collection: str, config: dict[str, str] = None) -> None:
         ...
 
     async def write(
