@@ -31,6 +31,7 @@ class Funtime(service_pb2_grpc.FunctionServicer):
     def _obtain_client_data_app_function(path_to_data_app: str, function_name: str):
         sys.path.append(path_to_data_app)
         import main
+
         return main.__getattribute__(function_name)
 
     def Process(

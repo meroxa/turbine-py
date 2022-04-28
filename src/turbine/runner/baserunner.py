@@ -31,6 +31,7 @@ class BaseRunner:
         # for the runners
         sys.path.append(self.path_to_data_app)
         from main import App
+
         return App
 
     async def run_app_local(self):
