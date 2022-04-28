@@ -45,14 +45,16 @@ class App:
             # Identify an upstream data store for your data app
             # with the `resources` function.
             # Replace `source_name` with the resource name the
-            # data store was configured with on Meroxa.
+            # data store was configured with on the Meroxa platform.
             source = await turbine.resources("source_name")
 
             # Specify which upstream records to pull
             # with the `records` function.
             # Replace `collection_name` with a table, collection,
             # or bucket name in your data store.
-            records = await source.records("collection_name")
+            # If you need additional connector configurations, replace '{}'
+            # with the key and value, i.e. {"incrementing.field.name": "id"}
+            records = await source.records("collection_name", {})
 
             # Specify which secrets in environment variables should be passed
             # into the Process.
@@ -67,7 +69,7 @@ class App:
             # Identify a downstream data store for your data app
             # with the `resources` function.
             # Replace `destination_name` with the resource name the
-            # data store was configured with on Meroxa.
+            # data store was configured with on the Meroxa platform.
             destination_db = await turbine.resources("destination_name")
 
             # Specify where to write records downstream
@@ -75,7 +77,7 @@ class App:
             # Replace `collection_archive` with a table, collection,
             # or bucket name in your data store.
             # If you need additional connector configurations, replace '{}'
-            # with the key and value, i.e. {"incrementing.field.name":"id"}
+            # with the key and value, i.e. {"behavior.on.null.values": "ignore"}
             await destination_db.write(anonymized, "collection_archive", {})
         except Exception as e:
             print(e, file=sys.stderr)

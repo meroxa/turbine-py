@@ -45,11 +45,11 @@ class BaseRunner:
             await self.data_app.__getattribute__("App").run(self.info_runtime)
             return self.info_runtime.functions_list()
         except Exception as e:
-            print(f"something broke{e}")
+            print(f"something broke\n{e}")
 
     async def has_functions(self):
         try:
             await self.data_app.__getattribute__("App").run(self.info_runtime)
             return str(self.info_runtime.has_functions()).lower()
         except Exception as e:
-            print(f"something broke{e}")
+            print(f"something broke\n{e}")

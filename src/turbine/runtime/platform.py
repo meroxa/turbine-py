@@ -31,8 +31,8 @@ class PlatformResource(Resource):
         self.client_opts = client_options
         self._pipelineName = f"turbine-pipeline-{app_config.name}"
 
-    async def records(self, collection: str) -> Records:
-        print(f"Check if pipeline exists for application: {self.app_config.name}")
+    async def records(self, collection: str, config: dict[str, str] = None) -> Records:
+        print(f"Checking if pipeline exists for application: {self.app_config.name}")
 
         try:
             async with Meroxa(
@@ -43,8 +43,8 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 if resp[0].code == "not_found":
                     print(
-                        f"No pipeline found, creating a new pipeline: \
-                        {self._pipelineName}"
+                        f"No pipeline found, creating a new pipeline: "
+                        f"{self._pipelineName}"
                     )
                     pipeline_input = meroxa.CreatePipelineParams(
                         name=self._pipelineName,
@@ -76,13 +76,16 @@ class PlatformResource(Resource):
                 pipeline_uuid = resp[1].uuid
                 print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
 
-            print(f"Creating SOURCE connector from source: {self.resource.name}")
-            connector_config = {"input": collection}
+            print(f"Creating SOURCE connector from resource: {self.resource.name}")
+
+            if config is None:
+                config = {}
+            config["input"] = collection
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
                 pipeline_name=self._pipelineName,
-                config=connector_config,
+                config=config,
                 metadata={
                     "mx:connectorType": "source",
                 },
@@ -107,6 +110,7 @@ class PlatformResource(Resource):
                     stream = output[0]
                 else:
                     stream = output
+                print(f"Successfully created {connector.name} connector")
 
                 return Records(records=[], stream=stream)
         except ChildProcessError as cpe:
@@ -233,7 +237,7 @@ class PlatformRuntime(Runtime):
         if self._image_name == "":
             raise Exception("Process image name not provided")
 
-        print(f"deploying Process: {getattr(fn, '__name__', 'Unknown')}")
+        print(f"Deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(
             auth=self._client_opts.auth, api_route=self._client_opts.url
