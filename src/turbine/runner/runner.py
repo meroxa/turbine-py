@@ -48,7 +48,7 @@ class Runner(BaseRunner):
         )
 
         try:
-            await self.data_app.__getattribute__("App").run(environment)
+            await self.data_app.run(environment)
             return
         except Exception as e:
             print(f"{e}")

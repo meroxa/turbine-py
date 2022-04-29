@@ -1,5 +1,4 @@
 import asyncio
-import importlib.util
 import logging
 import os
 import sys
@@ -21,27 +20,32 @@ Process function given to GRPC server
 
 FUNCTION_NAME = sys.argv[1]
 FUNCTION_ADDRESS = os.getenv("MEROXA_FUNCTION_ADDR")
-PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data-app/main.py")
+PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data-app/")
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []
 
 
 class Funtime(service_pb2_grpc.FunctionServicer):
+    @staticmethod
+    def _obtain_client_data_app_function(path_to_data_app: str, function_name: str):
+        sys.path.append(path_to_data_app)
+        import main
+
+        return main.__getattribute__(function_name)
+
     def Process(
         self,
         request: service_pb2.ProcessRecordRequest,
         context: grpc.aio.ServicerContext,
     ) -> service_pb2.ProcessRecordResponse:
-        spec = importlib.util.spec_from_file_location("data-app.main", PATH_TO_DATA_APP)
-        data_app = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(data_app)
-
         # map from rpc => something we can work with
         input_records = proto_records_to_turbine_records(request.records)
 
         # Get the data app function
-        data_app_function = data_app.__getattribute__(FUNCTION_NAME)
+        data_app_function = self._obtain_client_data_app_function(
+            path_to_data_app=PATH_TO_DATA_APP, function_name=FUNCTION_NAME
+        )
 
         # Generate output
         output_records = data_app_function(input_records)

@@ -13,4 +13,4 @@ COPY ./function-app/requirements.txt requirements.txt
 RUN pip install --requirement requirements.txt
 COPY ./function-app .
 
-CMD [ "python", "main.py" ]
+CMD [ "python", "function_server.py" ]

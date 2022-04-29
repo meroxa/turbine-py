@@ -228,7 +228,7 @@ class PlatformRuntime(Runtime):
             output_stream="",
             name="",
             command=["python"],
-            args=["main.py", fn.__name__],
+            args=["function_server.py", fn.__name__],
             image=self._image_name,
             pipeline=pipeline_id,
             env_vars=self._secrets,
