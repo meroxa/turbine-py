@@ -20,19 +20,19 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
             ).hexdigest()
             record_value_from_json["payload"]["customer_email"] = hashed_email
             new_record = Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
+                key=record.key,
+                value=record_value_from_json,
+                timestamp=record.timestamp,
+            )
             logging.info(f"output: {new_record}")
             updated.append(new_record)
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
             new_record = Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
+                key=record.key,
+                value=record_value_from_json,
+                timestamp=record.timestamp,
+            )
             updated.append(new_record)
             logging.info(f"output: {new_record}")
     return updated
