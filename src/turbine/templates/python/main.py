@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import sys
 import typing as t
 import json
@@ -8,29 +9,32 @@ from turbine.runtime import Record, Runtime
 
 def anonymize(records: t.List[Record]) -> t.List[Record]:
     updated = []
+    logging.basicConfig(level=logging.INFO)
+    logging.info(f"processing {len(records)} record(s)")
     for record in records:
+        logging.info(f"input: {record}")
         try:
             record_value_from_json = json.loads(record.value)
             hashed_email = hashlib.sha256(
                 record_value_from_json["payload"]["customer_email"].encode("utf-8")
             ).hexdigest()
             record_value_from_json["payload"]["customer_email"] = hashed_email
-            updated.append(
-                Record(
+            new_record = Record(
                     key=record.key,
                     value=record_value_from_json,
                     timestamp=record.timestamp,
                 )
-            )
+            logging.info(f"output: {new_record}")
+            updated.append(new_record)
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
-            updated.append(
-                Record(
+            new_record = Record(
                     key=record.key,
                     value=record_value_from_json,
                     timestamp=record.timestamp,
                 )
-            )
+            updated.append(new_record)
+            logging.info(f"output: {new_record}")
     return updated
 
 
