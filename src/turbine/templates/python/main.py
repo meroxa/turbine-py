@@ -6,6 +6,7 @@ import json
 
 from turbine.runtime import Record, Runtime
 
+logging.basicConfig(level=logging.INFO)
 
 def anonymize(records: t.List[Record]) -> t.List[Record]:
     updated = []
