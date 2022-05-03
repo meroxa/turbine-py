@@ -3,6 +3,8 @@ on:
   release:
     branches:
       - main
+    types:
+      - published
 jobs:
   build-and-publish:
     name: Build and publish Turbine-py distributions to PyPI
