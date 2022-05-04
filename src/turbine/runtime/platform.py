@@ -133,6 +133,7 @@ class PlatformResource(Resource):
                 ResourceType.REDSHIFT.value,
                 ResourceType.POSTGRES.value,
                 ResourceType.MYSQL.value,
+                ResourceType.SQLSERVER.value,
             ):  # JDBC sink
                 config["table.name.format"] = str(collection).lower()
             elif self.resource.type == ResourceType.MONGODB.value:
