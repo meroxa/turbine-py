@@ -64,12 +64,12 @@ class App:
             # Specify which secrets in environment variables should be passed
             # into the Process.
             # Replace 'PWD' with the name of the environment variable.
-            secrets = turbine.register_secrets("PWD")
+            turbine.register_secrets("PWD")
 
             # Specify what code to execute against upstream records
             # with the `process` function.
             # Replace `anonymize` with the name of your function code.
-            anonymized = await turbine.process(records, anonymize, secrets)
+            anonymized = await turbine.process(records, anonymize)
 
             # Identify a downstream data store for your data app
             # with the `resources` function.
