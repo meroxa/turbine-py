@@ -14,6 +14,11 @@ def app_run_platform(path_to_data_app, image_name, **kwargs):
     asyncio.run(r.run_app_platform(image_name))
 
 
+def app_list_resources(path_to_data_app, **kwargs):
+    r = Runner(path_to_data_app)
+    print(asyncio.run(r.list_resources()))
+
+
 def app_list_functions(path_to_data_app, **kwargs):
     r = Runner(path_to_data_app)
     print(asyncio.run(r.list_functions()))
@@ -69,6 +74,11 @@ def build_parser():
     has_functions = subparser.add_parser("hasFunctions")
     has_functions.add_argument("path_to_data_app", help="path to app ")
     has_functions.set_defaults(func=app_has_functions)
+
+    # list resources used by this application
+    list_resources = subparser.add_parser("listResources")
+    list_resources.add_argument("path_to_data_app", help="path to app ")
+    list_resources.set_defaults(func=app_list_resources)
 
     # "build" the application
     clibuild = subparser.add_parser("clibuild")

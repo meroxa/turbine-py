@@ -50,3 +50,10 @@ class BaseRunner:
             return str(self.info_runtime.has_functions()).lower()
         except Exception as e:
             print(f"something went wrong: {e}")
+
+    async def list_resources(self):
+        try:
+            await self.data_app.run(self.info_runtime)
+            return self.info_runtime.resources_list()
+        except Exception as e:
+            print(f"something went wrong: {e}")

@@ -20,6 +20,7 @@ class InfoRuntime(Runtime):
     appConfig = {}
     pathToApp = ""
     registeredFunctions: dict[str, t.Callable[[t.List[Record]], t.List[Record]]] = {}
+    registeredResources: list[str] = []
 
     def __init__(self, config: AppConfig, path_to_app: str) -> None:
         self.appConfig = config
@@ -31,7 +32,11 @@ class InfoRuntime(Runtime):
     def has_functions(self) -> str:
         return f"turbine-response: {bool(len(list(self.registeredFunctions)))}"
 
+    def resources_list(self) -> str:
+        return f"turbine-response: {self.registeredResources}"
+
     async def resources(self, name: str):
+        self.registeredResources.append(name)
         return InfoResource()
 
     async def process(
