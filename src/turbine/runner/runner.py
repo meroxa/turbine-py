@@ -38,14 +38,14 @@ class Runner(BaseRunner):
     async def run_app_platform(self, image_name):
         parsed_url = None
         url = os.environ.get("MEROXA_API_URL")
-        if url != None:
+        if url is not None:
             parsed_url = urlparse(url)
-            parsed_url=f"https://{parsed_url.netloc}"
+            parsed_url = f"https://{parsed_url.netloc}"
 
         environment = PlatformRuntime(
             client_options=ClientOptions(
-                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
-                url=parsed_url),
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
+            ),
             image_name=image_name,
             config=self.app_config,
         )
