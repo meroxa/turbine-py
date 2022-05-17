@@ -192,6 +192,8 @@ class PlatformRuntime(Runtime):
         self._client_opts = client_options
 
     async def resources(self, resource_name: str):
+        print(f"Fetching resource named '{resource_name}'")
+
         try:
             async with Meroxa(
                 auth=self._client_opts.auth, api_route=self._client_opts.url
