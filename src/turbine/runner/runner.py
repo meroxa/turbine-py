@@ -44,8 +44,7 @@ class Runner(BaseRunner):
 
         environment = PlatformRuntime(
             client_options=ClientOptions(
-                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
-                url=parsed_url
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
             ),
             image_name=image_name,
             config=self.app_config,
