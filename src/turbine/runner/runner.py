@@ -36,8 +36,10 @@ class Runner(BaseRunner):
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
     async def run_app_platform(self, image_name):
-        parsed_url = urlparse(os.environ.get("MEROXA_API_URL"))
-        if parsed_url != None:
+        parsed_url = ""
+        url = os.environ.get("MEROXA_API_URL")
+        if url != "":
+            parsed_url = urlparse(url)
             parsed_url=f"https://{parsed_url.netloc}"
 
         environment = PlatformRuntime(
