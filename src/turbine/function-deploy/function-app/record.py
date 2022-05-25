@@ -7,7 +7,9 @@ from turbine.runtime import Record
 
 def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
     return [
-        Record(key=record.key, value=record.value, timestamp=record.timestamp)
+        Record(
+            key=record.key, value=json.loads(record.value), timestamp=record.timestamp
+        )
         for record in p_record
     ]
 
