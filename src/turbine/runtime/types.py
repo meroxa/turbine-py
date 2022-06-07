@@ -2,6 +2,8 @@ import typing as t
 
 from abc import ABC, abstractmethod
 
+from collections import UserList
+
 
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
@@ -14,12 +16,40 @@ class Record:
 
         return pformat(vars(self), indent=4, width=1)
 
+    def is_json_schema(self):
+        return not (self.value.get("payload") and self.value.get("schema"))
+
+    def is_cdc_format(self):
+        return not (
+            self.is_json_schema() and not self.value.get("payload").get("source")
+        )
+
+    def unwrap_cdc(self) -> None:
+        if self.is_cdc_format():
+            payload = self.value.get["payload"]
+            schema_fields = self.value["schema"]["fields"]
+            try:
+                after_field = next(sf for sf in schema_fields if sf["field"] == "after")
+
+                del after_field["field"]
+                after_field["name"] = self.value["schema"]["name"]
+                self.value["schema"] = after_field
+            except StopIteration:
+                pass
+
+            self.value["payload"] = payload["after"]
+
+
+class RecordList(UserList):
+    def unwrap_cdc(self):
+        [rec.unwrap_cdc() for rec in self.data]
+
 
 class Records:
-    records = []
+    records: RecordList = None
     stream = ""
 
-    def __init__(self, records: t.List[Record], stream: str):
+    def __init__(self, records: RecordList, stream: str):
         self.records = records
         self.stream = stream
 
@@ -27,6 +57,9 @@ class Records:
         from pprint import pformat
 
         return pformat(vars(self), indent=4, width=1)
+
+    def unwrap_cdc(self):
+        self.records.data = list(map(lambda x: x.unwrap_cdc(), self.records))
 
 
 class Resource(ABC):
@@ -44,7 +77,7 @@ class Runtime(ABC):
         ...
 
     async def process(
-        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
         ...
 

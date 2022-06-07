@@ -8,6 +8,7 @@ from .types import AppConfig
 from .types import Record, Resource
 from .types import Records
 from .types import Runtime
+from .types import RecordList
 
 
 async def read_fixtures(path: str, collection: str):
@@ -42,7 +43,8 @@ class LocalResource(Resource):
 
     async def records(self, collection: str, config: dict[str, str] = None) -> Records:
         return Records(
-            records=await read_fixtures(self.fixtures_path, collection), stream=""
+            records=RecordList(await read_fixtures(self.fixtures_path, collection)),
+            stream="",
         )
 
     async def write(
@@ -79,10 +81,10 @@ class LocalRuntime(Runtime):
         return LocalResource(name, resourced_fixture_path)
 
     async def process(
-        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
         self._registeredFunctions[fn.__name__] = fn
-        return Records(records=fn(records.records), stream="")
+        return Records(records=RecordList(fn(records.records)), stream="")
 
     def register_secrets(self, name: str) -> None:
 

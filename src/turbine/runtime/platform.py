@@ -13,6 +13,7 @@ from .types import Record
 from .types import Records
 from .types import Resource
 from .types import Runtime
+from .types import RecordList
 
 
 class PlatformResponse(object):
@@ -112,7 +113,7 @@ class PlatformResource(Resource):
                     stream = output
                 print(f"Successfully created {connector.name} connector")
 
-                return Records(records=[], stream=stream)
+                return Records(records=RecordList(), stream=stream)
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
@@ -218,7 +219,7 @@ class PlatformRuntime(Runtime):
             raise Exception(e)
 
     async def process(
-        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
 
         pipeline_id = PipelineIdentifiers(
