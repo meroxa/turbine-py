@@ -1,7 +1,7 @@
 import json
-import typing as t
 import os
 import re
+import typing as t
 
 import meroxa
 from meroxa import Meroxa
@@ -9,11 +9,10 @@ from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
 from .types import AppConfig
-from .types import Record
+from .types import RecordList
 from .types import Records
 from .types import Resource
 from .types import Runtime
-from .types import RecordList
 
 
 class PlatformResponse(object):
