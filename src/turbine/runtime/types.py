@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 
 from collections import UserList
 
+import logging
+
+logging.basicConfig()
+
 
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
@@ -27,15 +31,16 @@ class Record:
     def unwrap_cdc(self) -> None:
         if self.is_cdc_format:
             payload = self.value["payload"]
-            schema_fields = self.value["schema"]["fields"]
+
             try:
+                schema_fields = self.value["schema"]["fields"]
                 after_field = next(sf for sf in schema_fields if sf["field"] == "after")
 
                 del after_field["field"]
                 after_field["name"] = self.value["schema"]["name"]
                 self.value["schema"] = after_field
-            except StopIteration:
-                pass
+            except (StopIteration or KeyError) as e:
+                logging.error(f"CDC envelope is malformed: {e}")
 
             self.value["payload"] = payload["after"]
 
