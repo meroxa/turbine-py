@@ -2,6 +2,12 @@ import typing as t
 
 from abc import ABC, abstractmethod
 
+from collections import UserList
+
+import logging
+
+logging.basicConfig()
+
 
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
@@ -14,12 +20,41 @@ class Record:
 
         return pformat(vars(self), indent=4, width=1)
 
+    @property
+    def is_json_schema(self):
+        return all(x in self.value for x in ("payload", "schema"))
+
+    @property
+    def is_cdc_format(self):
+        return self.is_json_schema and bool(self.value.get("payload").get("source"))
+
+    def unwrap_cdc(self) -> None:
+        if self.is_cdc_format:
+            payload = self.value["payload"]
+
+            try:
+                schema_fields = self.value["schema"]["fields"]
+                after_field = next(sf for sf in schema_fields if sf["field"] == "after")
+
+                del after_field["field"]
+                after_field["name"] = self.value["schema"]["name"]
+                self.value["schema"] = after_field
+            except (StopIteration or KeyError) as e:
+                logging.error(f"CDC envelope is malformed: {e}")
+
+            self.value["payload"] = payload["after"]
+
+
+class RecordList(UserList):
+    def unwrap_cdc(self):
+        [rec.unwrap_cdc() for rec in self.data]
+
 
 class Records:
-    records = []
+    records: RecordList = None
     stream = ""
 
-    def __init__(self, records: t.List[Record], stream: str):
+    def __init__(self, records: RecordList, stream: str):
         self.records = records
         self.stream = stream
 
@@ -27,6 +62,9 @@ class Records:
         from pprint import pformat
 
         return pformat(vars(self), indent=4, width=1)
+
+    def unwrap_cdc(self):
+        [rec.unwrap_cdc() for rec in self.records.data]
 
 
 class Resource(ABC):
@@ -44,7 +82,7 @@ class Runtime(ABC):
         ...
 
     async def process(
-        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
         ...
 

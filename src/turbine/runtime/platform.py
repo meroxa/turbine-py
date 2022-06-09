@@ -1,7 +1,7 @@
 import json
-import typing as t
 import os
 import re
+import typing as t
 
 import meroxa
 from meroxa import Meroxa
@@ -9,7 +9,7 @@ from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
 from .types import AppConfig
-from .types import Record
+from .types import RecordList
 from .types import Records
 from .types import Resource
 from .types import Runtime
@@ -112,7 +112,7 @@ class PlatformResource(Resource):
                     stream = output
                 print(f"Successfully created {connector.name} connector")
 
-                return Records(records=[], stream=stream)
+                return Records(records=RecordList(), stream=stream)
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
@@ -218,7 +218,7 @@ class PlatformRuntime(Runtime):
             raise Exception(e)
 
     async def process(
-        self, records: Records, fn: t.Callable[[t.List[Record]], t.List[Record]]
+        self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
 
         pipeline_id = PipelineIdentifiers(
