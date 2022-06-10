@@ -40,21 +40,21 @@ class TestRecord:
         assert cdc_record.is_cdc_format is True
         assert non_cdc_record.is_cdc_format is False
 
-    def test_unwrap_cdc_cdc_record(self, cdc_record):
-        cdc_record.unwrap_cdc()
+    def test_unwrap_cdc_record(self, cdc_record):
+        cdc_record.unwrap()
         assert "after" not in cdc_record.value["payload"]
         assert "before" not in cdc_record.value["payload"]
         assert "schema" in cdc_record.value
 
-    def test_unwrap_cdc_non_cdc_record(self, non_cdc_record):
+    def test_unwrap_non_cdc_record(self, non_cdc_record):
         before = non_cdc_record.value
-        non_cdc_record.unwrap_cdc()
+        non_cdc_record.unwrap()
         assert before == non_cdc_record.value
 
 
 class TestRecordList:
-    def test_unwrap_cdc(self, record_list):
-        record_list.unwrap_cdc()
+    def test_unwrap(self, record_list):
+        record_list.unwrap()
 
         for rec in record_list.data:
             assert "after" not in rec.value["payload"]
@@ -63,10 +63,10 @@ class TestRecordList:
 
 
 class TestRecords:
-    def test_unwrap_cdc(self, record_list):
+    def test_unwrap(self, record_list):
 
         recs = Records(records=record_list, stream="")
-        recs.unwrap_cdc()
+        recs.unwrap()
 
         for rec in recs.records:
             assert "after" not in rec.value["payload"]

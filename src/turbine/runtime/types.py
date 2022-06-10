@@ -28,7 +28,7 @@ class Record:
     def is_cdc_format(self):
         return self.is_json_schema and bool(self.value.get("payload").get("source"))
 
-    def unwrap_cdc(self) -> None:
+    def unwrap(self) -> None:
         if self.is_cdc_format:
             payload = self.value["payload"]
 
@@ -46,8 +46,8 @@ class Record:
 
 
 class RecordList(UserList):
-    def unwrap_cdc(self):
-        [rec.unwrap_cdc() for rec in self.data]
+    def unwrap(self):
+        [rec.unwrap() for rec in self.data]
 
 
 class Records:
@@ -63,8 +63,8 @@ class Records:
 
         return pformat(vars(self), indent=4, width=1)
 
-    def unwrap_cdc(self):
-        [rec.unwrap_cdc() for rec in self.records.data]
+    def unwrap(self):
+        [rec.unwrap() for rec in self.records.data]
 
 
 class Resource(ABC):
