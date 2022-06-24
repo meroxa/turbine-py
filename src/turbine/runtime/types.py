@@ -92,11 +92,12 @@ class Runtime(ABC):
 
 class AppConfig:
     def __init__(
-        self, name: str, language: str, resources: dict, environment=None
+        self, name: str, language: str, resources: dict, git_sha: str, environment=None
     ) -> None:
         self.name = name
         self.language = language
         self.resources = resources
+        self.git_sha = git_sha
         self.environment = environment
 
 

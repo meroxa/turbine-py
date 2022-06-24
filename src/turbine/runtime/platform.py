@@ -5,6 +5,7 @@ import typing as t
 
 import meroxa
 from meroxa import Meroxa
+from meroxa.applications import ApplicationCreateParams
 from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
@@ -41,7 +42,9 @@ class PlatformResource(Resource):
                 resp = await m.pipelines.get(self._pipelineName)
 
             if resp[0] is not None:
-                if resp[0].code == "not_found":
+                pipeline_uuid = ""
+                no_pipeline = resp[0].code == "not_found"
+                if no_pipeline:
                     print(
                         f"No pipeline found, creating a new pipeline: "
                         f"{self._pipelineName}"
@@ -59,22 +62,36 @@ class PlatformResource(Resource):
                     if resp[0] is not None:
                         raise ChildProcessError(
                             f"Error creating a pipeline for "
-                            f"application {self.resource.name} : {resp[0].message}"
+                            f"application {self.app_config.name} : {resp[0].message}"
                         )
                     pipeline_uuid = resp[1].uuid
-                    print(
-                        'pipeline: "{}" ("{}")'.format(
-                            self._pipelineName, pipeline_uuid
-                        )
-                    )
                 else:
                     raise ChildProcessError(
                         f"Error looking up the application - "
                         f"{self.resource.name} : {resp[0].message}"
                     )
-            else:
-                pipeline_uuid = resp[1].uuid
-                print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
+
+                if no_pipeline:
+                    print(
+                        f"Creating the Application object: "
+                        f"{self.app_config.name}"
+                    )
+                    app_input = meroxa.CreateApplicationParams(
+                        name=self.app_config.name,
+                        language="python",
+                        git_sha=self.app_config.git_sha,
+                        pipeline=meroxa.PipelineIdentifiers(uuid=pipeline_uuid)
+                    )
+                    async with Meroxa(
+                        auth=self.client_opts.auth, api_route=self.client_opts.url
+                    ) as m:
+                        resp = await m.applications.create(app_input)
+
+                    if resp[0] is not None:
+                        raise ChildProcessError(
+                            f"Error creating an Application object for "
+                            f"application {self.app_config.name} : {resp[0].message}"
+                        )
 
             print(f"Creating SOURCE connector from resource: {self.resource.name}")
 

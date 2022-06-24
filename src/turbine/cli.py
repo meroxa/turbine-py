@@ -9,9 +9,9 @@ def app_run_test(path_to_data_app, **kwargs):
     asyncio.run(r.run_app_local())
 
 
-def app_run_platform(path_to_data_app, image_name, **kwargs):
+def app_run_platform(path_to_data_app, image_name, git_sha, **kwargs):
     r = Runner(path_to_data_app)
-    asyncio.run(r.run_app_platform(image_name))
+    asyncio.run(r.run_app_platform(image_name, git_sha))
 
 
 def app_list_resources(path_to_data_app, **kwargs):
@@ -62,6 +62,9 @@ def build_parser():
     clideploy.add_argument("path_to_data_app", help="path to app to run")
     clideploy.add_argument(
         "image_name", help="Docker image name", default="", nargs="?", const="const"
+    )
+    clideploy.add_argument(
+        "git_sha", help="The SHA of the current git commit of the app", default="", nargs="?", const="const"
     )
     clideploy.set_defaults(func=app_run_platform)
 
