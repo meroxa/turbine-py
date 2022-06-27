@@ -29,7 +29,9 @@ def generate_app(name: str, pathname: str, **kwargs):
 
 def generate_app_json(name: str, pathname: str):
     app_json = dict(
-        name=name, language="python", resources=dict(source_name="fixtures/none.json")
+        name=name,
+        language="python",
+        resources=dict(source_name="fixtures/demo-cdc.json"),
     )
 
     app_location = os.path.join(pathname, name)
