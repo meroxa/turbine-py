@@ -64,7 +64,11 @@ def build_parser():
         "image_name", help="Docker image name", default="", nargs="?", const="const"
     )
     clideploy.add_argument(
-        "git_sha", help="The SHA of the current git commit of the app", default="", nargs="?", const="const"
+        "git_sha",
+        help="The SHA of the current git commit of the app",
+        default="",
+        nargs="?",
+        const="const",
     )
     clideploy.set_defaults(func=app_run_platform)
 

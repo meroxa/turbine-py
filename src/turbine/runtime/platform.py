@@ -5,7 +5,6 @@ import typing as t
 
 import meroxa
 from meroxa import Meroxa
-from meroxa.applications import ApplicationCreateParams
 from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
@@ -73,14 +72,13 @@ class PlatformResource(Resource):
 
                 if no_pipeline:
                     print(
-                        f"Creating the Application object: "
-                        f"{self.app_config.name}"
+                        f"Creating the Application object: {self.app_config.name}"
                     )
                     app_input = meroxa.CreateApplicationParams(
                         name=self.app_config.name,
                         language="python",
                         git_sha=self.app_config.git_sha,
-                        pipeline=meroxa.PipelineIdentifiers(uuid=pipeline_uuid)
+                        pipeline=meroxa.PipelineIdentifiers(uuid=pipeline_uuid),
                     )
                     async with Meroxa(
                         auth=self.client_opts.auth, api_route=self.client_opts.url
