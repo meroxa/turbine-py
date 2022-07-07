@@ -71,9 +71,7 @@ class PlatformResource(Resource):
                     )
 
                 if no_pipeline:
-                    print(
-                        f"Creating the Application object: {self.app_config.name}"
-                    )
+                    print(f"Creating the Application object: {self.app_config.name}")
                     app_input = meroxa.CreateApplicationParams(
                         name=self.app_config.name,
                         language="python",
