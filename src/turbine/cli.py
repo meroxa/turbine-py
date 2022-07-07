@@ -39,7 +39,7 @@ def app_clean_up(path_to_temp, **kwargs):
 
 
 def app_return_version(**kwargs):
-    with open("VERSION.txt", encoding='utf-8') as fp:
+    with open("VERSION.txt", encoding="utf-8") as fp:
         print(fp.readline().strip())
 
 
