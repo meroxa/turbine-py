@@ -38,6 +38,11 @@ def app_clean_up(path_to_temp, **kwargs):
     Runner.clean_temp_directory(path_to_temp)
 
 
+def app_return_version(**kwargs):
+    with open("VERSION.txt", encoding='utf-8') as fp:
+        print(fp.readline().strip())
+
+
 def build_parser():
     parser = argparse.ArgumentParser(
         prog="turbine-py",
@@ -96,6 +101,10 @@ def build_parser():
     cliclean = subparser.add_parser("cliclean")
     cliclean.add_argument("path_to_temp", help="path to temp directory ")
     cliclean.set_defaults(func=app_clean_up)
+
+    # return the current version of turbine-py
+    lib_version = subparser.add_parser("version")
+    lib_version.set_defaults(func=app_return_version)
 
     return parser
 
