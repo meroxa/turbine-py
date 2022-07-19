@@ -41,6 +41,7 @@ class PlatformResource(Resource):
             git_sha=self.app_config.git_sha,
             pipeline=meroxa.PipelineIdentifiers(uuid=pipeline_uuid),
         )
+
         async with Meroxa(
                 auth=self.client_opts.auth, api_route=self.client_opts.url
         ) as m:
@@ -48,8 +49,8 @@ class PlatformResource(Resource):
 
         if resp[0] is not None:
             raise ChildProcessError(
-                f"Error creating an Application object for "
-                f"application {self.app_config.name} : {resp[0].message}"
+                f"Error creating an Application z"
+                f"{self.app_config.name} : {resp[0].message}"
             )
 
     async def create_pipeline(self):
@@ -130,8 +131,9 @@ class PlatformResource(Resource):
                 print(f"Successfully created {connector.name} connector")
 
             if self.no_pipeline:
-                print(f"Creating the Application object: {self.app_config.name}")
+                print(f"Creating application: {self.app_config.name}")
                 await self.create_application(self.pipeline_uuid)
+                print(f"Successfully created application: {self.app_config.name}")
 
                 return Records(records=RecordList(), stream=stream)
         except ChildProcessError as cpe:
