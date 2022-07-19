@@ -42,7 +42,7 @@ class PlatformResource(Resource):
         )
 
         async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+            auth=self.client_opts.auth, api_route=self.client_opts.url
         ) as m:
             resp = await m.applications.create(app_input)
 
@@ -59,7 +59,7 @@ class PlatformResource(Resource):
             environment=self.app_config.environment,
         )
         async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+            auth=self.client_opts.auth, api_route=self.client_opts.url
         ) as m:
             resp = await m.pipelines.create(pipeline_input)
 
@@ -205,7 +205,11 @@ class PlatformRuntime(Runtime):
     _secrets = {}
 
     def __init__(
-        self, client_options: meroxa.ClientOptions, image_name: str, git_sha: str, config: AppConfig
+        self,
+        client_options: meroxa.ClientOptions,
+        image_name: str,
+        git_sha: str,
+        config: AppConfig,
     ) -> None:
         self._client_opts = client_options
         self._image_name = image_name
