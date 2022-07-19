@@ -31,7 +31,6 @@ class PlatformResource(Resource):
         self.client_opts = client_options
         self._pipelineName = f"turbine-pipeline-{app_config.name}"
 
-        self.no_pipeline = False
         self.pipeline_uuid = None
 
     async def create_application(self, pipeline_uuid: str):
@@ -81,8 +80,7 @@ class PlatformResource(Resource):
                 resp = await m.pipelines.get(self._pipelineName)
 
             if resp[0] is not None:
-                self.no_pipeline = resp[0].code == "not_found"
-                if self.no_pipeline:
+                if resp[0].code == "not_found":
                     print(
                         f"No pipeline found, creating a new pipeline: "
                         f"{self._pipelineName}"
@@ -130,7 +128,6 @@ class PlatformResource(Resource):
                     stream = output
                 print(f"Successfully created {connector.name} connector")
 
-            if self.no_pipeline:
                 print(f"Creating application: {self.app_config.name}")
                 await self.create_application(self.pipeline_uuid)
                 print(f"Successfully created application: {self.app_config.name}")
