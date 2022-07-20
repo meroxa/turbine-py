@@ -31,6 +31,43 @@ class PlatformResource(Resource):
         self.client_opts = client_options
         self._pipelineName = f"turbine-pipeline-{app_config.name}"
 
+    async def _create_application(self, pipeline_name: str):
+        app_input = meroxa.CreateApplicationParams(
+            name=self.app_config.name,
+            language="python",
+            git_sha=self.app_config.git_sha,
+            pipeline=meroxa.PipelineIdentifiers(name=pipeline_name),
+        )
+
+        async with Meroxa(
+            auth=self.client_opts.auth, api_route=self.client_opts.url
+        ) as m:
+            resp = await m.applications.create(app_input)
+
+        if resp[0] is not None:
+            raise ChildProcessError(
+                f"Error creating Application "
+                f"{self.app_config.name} : {resp[0].message}"
+            )
+
+    async def _create_pipeline(self):
+        pipeline_input = meroxa.CreatePipelineParams(
+            name=self._pipelineName,
+            metadata={"turbine": True, "app": self.app_config.name},
+            environment=self.app_config.environment,
+        )
+        async with Meroxa(
+            auth=self.client_opts.auth, api_route=self.client_opts.url
+        ) as m:
+            resp = await m.pipelines.create(pipeline_input)
+
+        if resp[0] is not None:
+            raise ChildProcessError(
+                f"Error creating a pipeline for "
+                f"application {self.app_config.name} : {resp[0].message}"
+            )
+        return resp[1].uuid
+
     async def records(self, collection: str, config: dict[str, str] = None) -> Records:
         print(f"Checking if pipeline exists for application: {self.app_config.name}")
 
@@ -46,35 +83,13 @@ class PlatformResource(Resource):
                         f"No pipeline found, creating a new pipeline: "
                         f"{self._pipelineName}"
                     )
-                    pipeline_input = meroxa.CreatePipelineParams(
-                        name=self._pipelineName,
-                        metadata={"turbine": True, "app": self.app_config.name},
-                        environment=self.app_config.environment,
-                    )
-                    async with Meroxa(
-                        auth=self.client_opts.auth, api_route=self.client_opts.url
-                    ) as m:
-                        resp = await m.pipelines.create(pipeline_input)
+                    await self._create_pipeline()
 
-                    if resp[0] is not None:
-                        raise ChildProcessError(
-                            f"Error creating a pipeline for "
-                            f"application {self.resource.name} : {resp[0].message}"
-                        )
-                    pipeline_uuid = resp[1].uuid
-                    print(
-                        'pipeline: "{}" ("{}")'.format(
-                            self._pipelineName, pipeline_uuid
-                        )
-                    )
                 else:
                     raise ChildProcessError(
                         f"Error looking up the application - "
                         f"{self.resource.name} : {resp[0].message}"
                     )
-            else:
-                pipeline_uuid = resp[1].uuid
-                print(f'pipeline: "{self._pipelineName}" ("{pipeline_uuid}")')
 
             print(f"Creating SOURCE connector from resource: {self.resource.name}")
 
@@ -173,7 +188,11 @@ class PlatformResource(Resource):
                 )
             else:
                 print(f"Successfully created {resp[1].name} connector")
-                return None
+
+            print(f"Creating application: {self.app_config.name}")
+            await self._create_application(self._pipelineName)
+            print(f"Successfully created application: {self.app_config.name}")
+
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
@@ -185,11 +204,16 @@ class PlatformRuntime(Runtime):
     _secrets = {}
 
     def __init__(
-        self, client_options: meroxa.ClientOptions, image_name: str, config: AppConfig
+        self,
+        client_options: meroxa.ClientOptions,
+        image_name: str,
+        git_sha: str,
+        config: AppConfig,
     ) -> None:
-        self._image_name = image_name
-        self._app_config = config
         self._client_opts = client_options
+        self._image_name = image_name
+        self._git_sha = git_sha
+        self._app_config = config
 
     async def resources(self, resource_name: str):
         print(f"Fetching resource named '{resource_name}'")

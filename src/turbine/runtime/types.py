@@ -98,6 +98,7 @@ class AppConfig:
         self.language = language
         self.resources = resources
         self.environment = environment
+        self.git_sha = None
 
 
 class ClientOptions:

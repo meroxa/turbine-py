@@ -35,19 +35,22 @@ class Runner(BaseRunner):
     def clean_temp_directory(tmp_dir):
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
-    async def run_app_platform(self, image_name):
+    async def run_app_platform(self, image_name, git_sha):
         parsed_url = None
         url = os.environ.get("MEROXA_API_URL")
         if url is not None:
             parsed_url = urlparse(url)
             parsed_url = f"https://{parsed_url.netloc}"
 
+        app_config = self.app_config
+        app_config.git_sha = git_sha
         environment = PlatformRuntime(
             client_options=ClientOptions(
                 auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
             ),
             image_name=image_name,
-            config=self.app_config,
+            git_sha=git_sha,
+            config=app_config,
         )
 
         try:

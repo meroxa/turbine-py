@@ -9,9 +9,9 @@ def app_run_test(path_to_data_app, **kwargs):
     asyncio.run(r.run_app_local())
 
 
-def app_run_platform(path_to_data_app, image_name, **kwargs):
+def app_run_platform(path_to_data_app, image_name, git_sha, **kwargs):
     r = Runner(path_to_data_app)
-    asyncio.run(r.run_app_platform(image_name))
+    asyncio.run(r.run_app_platform(image_name, git_sha))
 
 
 def app_list_resources(path_to_data_app, **kwargs):
@@ -36,6 +36,11 @@ def app_build(path_to_data_app, **kwargs):
 
 def app_clean_up(path_to_temp, **kwargs):
     Runner.clean_temp_directory(path_to_temp)
+
+
+def app_return_version(**kwargs):
+    with open("VERSION.txt", encoding="utf-8") as fp:
+        print(fp.readline().strip())
 
 
 def build_parser():
@@ -63,6 +68,13 @@ def build_parser():
     clideploy.add_argument(
         "image_name", help="Docker image name", default="", nargs="?", const="const"
     )
+    clideploy.add_argument(
+        "git_sha",
+        help="The SHA of the current git commit of the app",
+        default="",
+        nargs="?",
+        const="const",
+    )
     clideploy.set_defaults(func=app_run_platform)
 
     # meroxa apps build
@@ -89,6 +101,10 @@ def build_parser():
     cliclean = subparser.add_parser("cliclean")
     cliclean.add_argument("path_to_temp", help="path to temp directory ")
     cliclean.set_defaults(func=app_clean_up)
+
+    # return the current version of turbine-py
+    lib_version = subparser.add_parser("version")
+    lib_version.set_defaults(func=app_return_version)
 
     return parser
 
