@@ -31,14 +31,12 @@ class PlatformResource(Resource):
         self.client_opts = client_options
         self._pipelineName = f"turbine-pipeline-{app_config.name}"
 
-        self.pipeline_uuid = None
-
-    async def create_application(self, pipeline_uuid: str):
+    async def _create_application(self, pipeline_name: str):
         app_input = meroxa.CreateApplicationParams(
             name=self.app_config.name,
             language="python",
             git_sha=self.app_config.git_sha,
-            pipeline=meroxa.PipelineIdentifiers(uuid=pipeline_uuid),
+            pipeline=meroxa.PipelineIdentifiers(name=pipeline_name),
         )
 
         async with Meroxa(
@@ -48,11 +46,11 @@ class PlatformResource(Resource):
 
         if resp[0] is not None:
             raise ChildProcessError(
-                f"Error creating an Application z"
+                f"Error creating an Application "
                 f"{self.app_config.name} : {resp[0].message}"
             )
 
-    async def create_pipeline(self):
+    async def _create_pipeline(self):
         pipeline_input = meroxa.CreatePipelineParams(
             name=self._pipelineName,
             metadata={"turbine": True, "app": self.app_config.name},
@@ -85,7 +83,8 @@ class PlatformResource(Resource):
                         f"No pipeline found, creating a new pipeline: "
                         f"{self._pipelineName}"
                     )
-                    self.pipeline_uuid = await self.create_pipeline()
+                    await self._create_pipeline()
+
                 else:
                     raise ChildProcessError(
                         f"Error looking up the application - "
@@ -127,10 +126,6 @@ class PlatformResource(Resource):
                 else:
                     stream = output
                 print(f"Successfully created {connector.name} connector")
-
-                print(f"Creating application: {self.app_config.name}")
-                await self.create_application(self.pipeline_uuid)
-                print(f"Successfully created application: {self.app_config.name}")
 
                 return Records(records=RecordList(), stream=stream)
         except ChildProcessError as cpe:
@@ -193,7 +188,11 @@ class PlatformResource(Resource):
                 )
             else:
                 print(f"Successfully created {resp[1].name} connector")
-                return None
+
+            print(f"Creating application: {self.app_config.name}")
+            await self._create_application(self._pipelineName)
+            print(f"Successfully created application: {self.app_config.name}")
+
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
         except Exception as e:
