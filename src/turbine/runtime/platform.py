@@ -46,7 +46,7 @@ class PlatformResource(Resource):
 
         if resp[0] is not None:
             raise ChildProcessError(
-                f"Error creating an Application "
+                f"Error creating Application "
                 f"{self.app_config.name} : {resp[0].message}"
             )
 
