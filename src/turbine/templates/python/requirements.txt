@@ -1,2 +1,1 @@
-meroxa-py
-turbine-py
+turbine-py>=1.1.0
