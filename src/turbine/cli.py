@@ -1,16 +1,15 @@
 import argparse
 import asyncio
-
 from .runner import generate_app, Runner
 
 
-def app_run_test(path_to_data_app, **kwargs):
-    r = Runner(path_to_data_app)
+def app_run_test(app_name, path_to_data_app, **kwargs):
+    r = Runner(path_to_data_app, app_name)
     asyncio.run(r.run_app_local())
 
 
-def app_run_platform(path_to_data_app, image_name, git_sha, **kwargs):
-    r = Runner(path_to_data_app)
+def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
+    r = Runner(path_to_data_app, app_name)
     asyncio.run(r.run_app_platform(image_name, git_sha))
 
 
@@ -50,7 +49,6 @@ def build_parser():
     )
 
     subparser = parser.add_subparsers(dest="command")
-
     # meroxa apps init
     generate = subparser.add_parser("generate")
     generate.add_argument("name", help="desired name of application")
@@ -60,11 +58,25 @@ def build_parser():
     # meroxa apps run
     run = subparser.add_parser("run")
     run.add_argument("path_to_data_app", help="path to app ")
+    run.add_argument(
+        "app_name",
+        default="",
+        nargs="?",
+        const="const",
+        help="desired name of application",
+    )
     run.set_defaults(func=app_run_test)
 
     # meroxa apps deploy
     clideploy = subparser.add_parser("clideploy")
     clideploy.add_argument("path_to_data_app", help="path to app to run")
+    clideploy.add_argument(
+        "app_name",
+        default="",
+        nargs="?",
+        const="const",
+        help="desired name of application",
+    )
     clideploy.add_argument(
         "image_name", help="Docker image name", default="", nargs="?", const="const"
     )

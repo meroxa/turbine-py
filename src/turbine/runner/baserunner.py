@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-
 from ..runtime import InfoRuntime, LocalRuntime, AppConfig
 
 
@@ -9,9 +8,11 @@ class BaseRunner:
     path_to_data_app: str
     info_runtime = None
     local_runtime = None
+    app_name = None
 
-    def __init__(self, path_to_data_app: str):
+    def __init__(self, path_to_data_app: str, name: str = None):
         self.path_to_data_app = path_to_data_app
+        self.app_name = name
         self.info_runtime = InfoRuntime(self.app_config, self.path_to_data_app)
         self.local_runtime = LocalRuntime(self.app_config, self.path_to_data_app)
 
@@ -21,6 +22,8 @@ class BaseRunner:
         try:
             with open(os.path.abspath(f"{self.path_to_data_app}") + "/app.json") as fd:
                 config = AppConfig(**json.load(fd))
+                if self.app_name != "":
+                    config.name = self.app_name
         except OSError as e:
             print(f"Unable to locate app config: {e}", file=sys.stderr)
         return config
