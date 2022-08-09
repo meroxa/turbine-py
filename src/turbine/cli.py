@@ -71,14 +71,14 @@ def build_parser():
     clideploy = subparser.add_parser("clideploy")
     clideploy.add_argument("path_to_data_app", help="path to app to run")
     clideploy.add_argument(
+        "image_name", help="Docker image name", default="", nargs="?", const="const"
+    )
+    clideploy.add_argument(
         "app_name",
         default="",
         nargs="?",
         const="const",
         help="desired name of application",
-    )
-    clideploy.add_argument(
-        "image_name", help="Docker image name", default="", nargs="?", const="const"
     )
     clideploy.add_argument(
         "git_sha",

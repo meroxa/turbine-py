@@ -1,6 +1,6 @@
-from pydoc import describe
 import typing as t
 import json
+
 from .types import AppConfig
 from .types import Record, Resource
 from .types import Records
@@ -43,7 +43,10 @@ class InfoRuntime(Runtime):
         return f"turbine-response: {bool(len(list(self.registeredFunctions)))}"
 
     def resources_list(self) -> str:
-        return f"turbine-response: {list(resource.__dict__ for resource in self.registeredResources)}"
+
+        return json.dumps(
+            list(resource.__dict__ for resource in self.registeredResources)
+        )
 
     async def resources(self, name: str):
         resource = InfoResource(name)
