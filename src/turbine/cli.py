@@ -9,6 +9,7 @@ def app_run_test(app_name, path_to_data_app, **kwargs):
 
 
 def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
+    print(kwargs)
     r = Runner(path_to_data_app, app_name)
     asyncio.run(r.run_app_platform(image_name, git_sha))
 
@@ -84,6 +85,13 @@ def build_parser():
         "git_sha",
         help="The SHA of the current git commit of the app",
         default="",
+        nargs="?",
+        const="const",
+    )
+    clideploy.add_argument(
+        "spec",
+        default="",
+        help="Spec version to use during deploy",
         nargs="?",
         const="const",
     )
