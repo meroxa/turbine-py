@@ -4,7 +4,9 @@ import tempfile
 from urllib.parse import urlparse
 
 from .baserunner import BaseRunner
-from ..runtime import PlatformRuntime, ClientOptions
+from ..runtime import ClientOptions
+from ..runtime import IntermediateRuntime
+from ..runtime import PlatformRuntime
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -59,3 +61,33 @@ class Runner(BaseRunner):
         except Exception as e:
             print(f"{e}")
             return
+
+    async def run_app_platform_V2(self, image_name, git_sha, version, spec):
+        parsed_url = None
+        url = os.environ.get("MEROXA_API_URL")
+        if url is not None:
+            parsed_url = urlparse(url)
+            parsed_url = f"https://{parsed_url.netloc}"
+
+        app_config = self.app_config
+        app_config.git_sha = git_sha
+
+        environment = IntermediateRuntime(
+            client_options=ClientOptions(
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
+            ),
+            image_name=image_name,
+            git_sha=git_sha,
+            version=version,
+            spec=spec,
+            config=app_config
+        )
+
+        try:
+            await self.data_app.run(environment)
+            print(environment.serialize())
+            return
+        except Exception as e:
+            print(f"{e}")
+            return
+

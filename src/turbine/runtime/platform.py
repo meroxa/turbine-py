@@ -254,7 +254,7 @@ class PlatformRuntime(Runtime):
         pipeline_id = PipelineIdentifiers(
             name=f"turbine-pipeline-{self._app_config.name}"
         )
-        func_name_git_sha = "{}-{}".format(fn.__name__, self._git_sha[:8])
+        func_name_git_sha = f"{fn.__name__}-{self._git_sha[:8]}"
         # Create function parameters
         create_func_params = meroxa.CreateFunctionParams(
             input_stream=records.stream,
