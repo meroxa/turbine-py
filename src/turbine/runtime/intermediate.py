@@ -24,16 +24,20 @@ class IntermediateResource:
         self.config: dict = {}
 
     def _persist(
-        self, resource_type: str, collection: str, config: dict[str, str] = None
+        self, resource_type: str, collection: str, config: dict[str, str] = {}
     ):
         self.resource_type = resource_type
         self.collection = collection
         self.config.update(config)
 
     def records(self, collection: str, config: dict[str, str] = None) -> None:
+        if config is None:
+            config = {}
         self._persist("source", collection, config)
 
-    def write(self, collection: str, config: dict[str, str] = None) -> None:
+    def write(self, records, collection: str, config: dict[str, str] = None) -> None:
+        if config is None:
+            config = {}
         self._persist("destination", collection, config)
 
     def __repr__(self):
@@ -51,6 +55,12 @@ class IntermediateFunction:
     def __init__(self, name: str, commit_hash: str, image: str):
         self.name = f"{name}-{commit_hash[:8]}"
         self.image = image
+
+    def __repr__(self):
+        return json.dumps({
+            "name": self.name,
+            "image": self.image,
+        })
 
 
 class IntermediateRuntime(Runtime):

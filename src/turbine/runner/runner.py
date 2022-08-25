@@ -1,3 +1,4 @@
+import pprint
 import os
 import shutil
 import tempfile
@@ -62,7 +63,7 @@ class Runner(BaseRunner):
             print(f"{e}")
             return
 
-    async def run_app_platform_V2(self, image_name, git_sha, version, spec):
+    async def run_app_platform_v2(self, image_name, git_sha, version, spec):
         parsed_url = None
         url = os.environ.get("MEROXA_API_URL")
         if url is not None:
@@ -85,7 +86,7 @@ class Runner(BaseRunner):
 
         try:
             await self.data_app.run(environment)
-            print(environment.serialize())
+            pprint.pprint(environment.serialize())
             return
         except Exception as e:
             print(f"{e}")

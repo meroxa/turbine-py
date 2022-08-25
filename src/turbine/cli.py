@@ -13,7 +13,7 @@ def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
     r = Runner(path_to_data_app, app_name)
     spec = kwargs.get('spec')
     if spec:
-        asyncio.run(r.run_app_platform_V2(image_name, git_sha, "version", spec))
+        asyncio.run(r.run_app_platform_v2(image_name, git_sha, "version", spec))
     else:
         asyncio.run(r.run_app_platform(image_name, git_sha))
 
