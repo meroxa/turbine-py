@@ -29,7 +29,9 @@ class IntermediateResource:
             config = {}
         self._persist("source", collection, config)
 
-    async def write(self, records, collection: str, config: dict[str, str] = None) -> None:
+    async def write(
+        self, records, collection: str, config: dict[str, str] = None
+    ) -> None:
         if config is None:
             config = {}
         self._persist("destination", collection, config)
