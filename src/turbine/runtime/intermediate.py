@@ -24,12 +24,12 @@ class IntermediateResource:
         self.collection = collection
         self.config.update(config)
 
-    def records(self, collection: str, config: dict[str, str] = None) -> None:
+    async def records(self, collection: str, config: dict[str, str] = None) -> None:
         if config is None:
             config = {}
         self._persist("source", collection, config)
 
-    def write(self, records, collection: str, config: dict[str, str] = None) -> None:
+    async def write(self, records, collection: str, config: dict[str, str] = None) -> None:
         if config is None:
             config = {}
         self._persist("destination", collection, config)
@@ -95,12 +95,12 @@ class IntermediateRuntime(Runtime):
             },
         }
 
-    def resources(self, resource_name: str) -> IntermediateResource:
+    async def resources(self, resource_name: str) -> IntermediateResource:
         resource = IntermediateResource(resource_name)
         self._registered_resources.append(resource)
         return resource
 
-    def process(
+    async def process(
         self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> None:  # Create new function
         function = IntermediateFunction(fn.__name__, self._git_sha, self._image_name)
