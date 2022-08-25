@@ -1,4 +1,4 @@
-from.intermediate import IntermediateRuntime as IntermediateRuntime
+from .intermediate import IntermediateRuntime as IntermediateRuntime
 from .local import LocalRuntime as LocalRuntime
 from .platform import PlatformRuntime as PlatformRuntime
 from .info import InfoRuntime as InfoRuntime

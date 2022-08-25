@@ -10,13 +10,7 @@ from .types import Records
 from .types import Runtime
 
 
-class PlatformResponse(object):
-    def __init__(self, resp: str):
-        self.__dict__ = json.loads(resp)
-
-
 class IntermediateResource:
-
     def __init__(self, resource_name: str):
         self._resource = resource_name
         self.resource_type: str = ""
@@ -24,7 +18,7 @@ class IntermediateResource:
         self.config: dict = {}
 
     def _persist(
-        self, resource_type: str, collection: str, config: dict[str, str] = {}
+        self, resource_type: str, collection: str, config: dict[str, str] = None
     ):
         self.resource_type = resource_type
         self.collection = collection
@@ -41,11 +35,13 @@ class IntermediateResource:
         self._persist("destination", collection, config)
 
     def __repr__(self):
-        return json.dumps({
-            "type": self.resource_type,
-            "resource": self._resource,
-            "collection": self.collection
-        })
+        return json.dumps(
+            {
+                "type": self.resource_type,
+                "resource": self._resource,
+                "collection": self.collection,
+            }
+        )
 
 
 class IntermediateFunction:
@@ -57,10 +53,12 @@ class IntermediateFunction:
         self.image = image
 
     def __repr__(self):
-        return json.dumps({
-            "name": self.name,
-            "image": self.image,
-        })
+        return json.dumps(
+            {
+                "name": self.name,
+                "image": self.image,
+            }
+        )
 
 
 class IntermediateRuntime(Runtime):
@@ -109,7 +107,6 @@ class IntermediateRuntime(Runtime):
         self._registered_functions.append(function)
 
     def register_secrets(self, name: str) -> None:
-
         sec = os.getenv(name)
         if not sec:
             raise Exception(f"Secret invalid or unset: {name}")

@@ -81,7 +81,7 @@ class Runner(BaseRunner):
             git_sha=git_sha,
             version=version,
             spec=spec,
-            config=app_config
+            config=app_config,
         )
 
         try:
@@ -91,4 +91,3 @@ class Runner(BaseRunner):
         except Exception as e:
             print(f"{e}")
             return
-
