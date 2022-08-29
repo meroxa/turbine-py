@@ -1,6 +1,8 @@
 import argparse
 import asyncio
 
+from importlib.metadata import distribution
+
 from .runner import generate_app, Runner
 
 
@@ -13,7 +15,8 @@ def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
     r = Runner(path_to_data_app, app_name)
     spec = kwargs.get("spec")
     if spec:
-        asyncio.run(r.run_app_platform_v2(image_name, git_sha, "version", spec))
+        dist = distribution("turbine-py")
+        asyncio.run(r.run_app_platform_v2(image_name, git_sha, dist.version, spec))
     else:
         asyncio.run(r.run_app_platform(image_name, git_sha))
 
@@ -43,8 +46,8 @@ def app_clean_up(path_to_temp, **kwargs):
 
 
 def app_return_version(**kwargs):
-    with open("VERSION.txt", encoding="utf-8") as fp:
-        print(fp.readline().strip())
+    dist = distribution("turbine-py")
+    print(dist.version)
 
 
 def build_parser():

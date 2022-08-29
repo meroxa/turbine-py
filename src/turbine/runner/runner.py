@@ -89,5 +89,5 @@ class Runner(BaseRunner):
             pprint.pprint(environment.serialize())
             return
         except Exception as e:
-            print(f"{e}")
+            pprint.pprint(f"{e}")
             return
