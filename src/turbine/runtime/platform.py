@@ -33,7 +33,7 @@ class PlatformResource(Resource):
 
     async def _check_for_application(self, name_or_uuid: str) -> bool:
         async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+            auth=self.client_opts.auth, api_route=self.client_opts.url
         ) as m:
             resp = await m.applications.get(name_or_uuid)
 
