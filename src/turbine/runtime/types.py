@@ -79,6 +79,7 @@ class Resource(ABC):
     def write(self, records: Records, collection: str) -> None:
         ...
 
+
 class Runtime(ABC):
     async def resources(self, name: str):
         ...

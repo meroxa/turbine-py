@@ -14,7 +14,7 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
-global __application_id
+global __application_uuid
 
 
 class PlatformResponse(object):
@@ -193,10 +193,10 @@ class PlatformResource(Resource):
             else:
                 print(f"Successfully created {resp[1].name} connector")
 
-            if not globals().get("__application_id"):
+            if not globals().get("__application_uuid"):
                 print(f"Creating application: {self.app_config.name}")
                 res = await self._create_application(self._pipeline_name)
-                globals().update({"__application_id": res})
+                globals().update({"__application_uuid": res})
                 print(f"Successfully created application: {self.app_config.name}")
 
         except ChildProcessError as cpe:
