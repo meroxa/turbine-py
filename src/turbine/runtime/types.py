@@ -79,6 +79,14 @@ class Resource(ABC):
     def write(self, records: Records, collection: str) -> None:
         ...
 
+    @property
+    def application_id(self):
+        return self.__application_id
+
+    @application_id.setter
+    def application_id(self, value):
+        self.__application_id = value
+
 
 class Runtime(ABC):
     async def resources(self, name: str):

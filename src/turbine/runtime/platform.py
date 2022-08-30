@@ -14,6 +14,8 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
+global __application_id
+
 
 class PlatformResponse(object):
     def __init__(self, resp: str):
@@ -26,7 +28,6 @@ class PlatformResource(Resource):
     def __init__(
         self, resource, client_options: meroxa.ClientOptions, app_config: AppConfig
     ) -> None:
-        Resource.__init__(self)
         self.resource = resource
         self.app_config = app_config
         self.client_opts = client_options
@@ -192,10 +193,10 @@ class PlatformResource(Resource):
             else:
                 print(f"Successfully created {resp[1].name} connector")
 
-            if not self.__class__._pipeline_name:
+            if not globals().get("__application_id"):
                 print(f"Creating application: {self.app_config.name}")
                 res = await self._create_application(self._pipeline_name)
-                self.__class__._pipeline_name = res
+                globals().update({"__application_id": res})
                 print(f"Successfully created application: {self.app_config.name}")
 
         except ChildProcessError as cpe:
