@@ -1,5 +1,8 @@
 import argparse
 import asyncio
+
+from importlib.metadata import distribution
+
 from .runner import generate_app, Runner
 
 
@@ -10,7 +13,12 @@ def app_run_test(app_name, path_to_data_app, **kwargs):
 
 def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
     r = Runner(path_to_data_app, app_name)
-    asyncio.run(r.run_app_platform(image_name, git_sha))
+    spec = kwargs.get("spec")
+    if spec:
+        dist = distribution("turbine-py")
+        asyncio.run(r.run_app_platform_v2(image_name, git_sha, dist.version, spec))
+    else:
+        asyncio.run(r.run_app_platform(image_name, git_sha))
 
 
 def app_list_resources(path_to_data_app, **kwargs):
@@ -38,8 +46,8 @@ def app_clean_up(path_to_temp, **kwargs):
 
 
 def app_return_version(**kwargs):
-    with open("VERSION.txt", encoding="utf-8") as fp:
-        print(fp.readline().strip())
+    dist = distribution("turbine-py")
+    print(dist.version)
 
 
 def build_parser():
@@ -57,12 +65,9 @@ def build_parser():
 
     # meroxa apps run
     run = subparser.add_parser("run")
-    run.add_argument("path_to_data_app", help="path to app ")
+    run.add_argument("path_to_data_app", help="path to app")
     run.add_argument(
         "app_name",
-        default="",
-        nargs="?",
-        const="const",
         help="desired name of application",
     )
     run.set_defaults(func=app_run_test)
@@ -71,21 +76,21 @@ def build_parser():
     clideploy = subparser.add_parser("clideploy")
     clideploy.add_argument("path_to_data_app", help="path to app to run")
     clideploy.add_argument(
-        "image_name", help="Docker image name", default="", nargs="?", const="const"
+        "image_name",
+        help="Docker image name",
     )
     clideploy.add_argument(
         "app_name",
-        default="",
-        nargs="?",
-        const="const",
         help="desired name of application",
     )
     clideploy.add_argument(
         "git_sha",
         help="The SHA of the current git commit of the app",
-        default="",
+    )
+    clideploy.add_argument(
+        "spec",
+        help="Spec version to use during deploy",
         nargs="?",
-        const="const",
     )
     clideploy.set_defaults(func=app_run_platform)
 
