@@ -47,7 +47,7 @@ class Runner(BaseRunner):
 
         app_config = self.app_config
         app_config.git_sha = git_sha
-        environment = PlatformRuntime(
+        deployment_spec = PlatformRuntime(
             client_options=ClientOptions(
                 auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
             ),
@@ -57,7 +57,7 @@ class Runner(BaseRunner):
         )
 
         try:
-            await self.data_app.run(environment)
+            await self.data_app.run(deployment_spec)
             return
         except Exception as e:
             print(f"{e}")
@@ -73,7 +73,7 @@ class Runner(BaseRunner):
         app_config = self.app_config
         app_config.git_sha = git_sha
 
-        environment = IntermediateRuntime(
+        deployment_spec = IntermediateRuntime(
             client_options=ClientOptions(
                 auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
             ),
@@ -85,8 +85,8 @@ class Runner(BaseRunner):
         )
 
         try:
-            await self.data_app.run(environment)
-            pprint.pprint(environment.serialize())
+            await self.data_app.run(deployment_spec)
+            pprint.pprint(deployment_spec.serialize())
             return
         except Exception as e:
             pprint.pprint(f"{e}")

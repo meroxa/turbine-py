@@ -42,6 +42,7 @@ class IntermediateResource:
                 "type": self.resource_type,
                 "resource": self._resource,
                 "collection": self.collection,
+                "config": self.config,
             }
         )
 
