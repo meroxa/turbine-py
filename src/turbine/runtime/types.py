@@ -68,6 +68,9 @@ class Records:
 
 
 class Resource(ABC):
+
+    __application_id = None
+
     @abstractmethod
     def records(self, collection: str, config: dict[str, str] = None) -> Records:
         ...

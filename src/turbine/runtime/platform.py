@@ -14,6 +14,8 @@ from .types import Records
 from .types import Resource
 from .types import Runtime
 
+global __application_uuid
+
 
 class PlatformResponse(object):
     def __init__(self, resp: str):
@@ -21,7 +23,7 @@ class PlatformResponse(object):
 
 
 class PlatformResource(Resource):
-    _pipelineName = ""
+    _pipeline_name = ""
 
     def __init__(
         self, resource, client_options: meroxa.ClientOptions, app_config: AppConfig
@@ -29,7 +31,7 @@ class PlatformResource(Resource):
         self.resource = resource
         self.app_config = app_config
         self.client_opts = client_options
-        self._pipelineName = f"turbine-pipeline-{app_config.name}"
+        self._pipeline_name = f"turbine-pipeline-{app_config.name}"
 
     async def _create_application(self, pipeline_name: str):
         app_input = meroxa.CreateApplicationParams(
@@ -50,9 +52,11 @@ class PlatformResource(Resource):
                 f"{self.app_config.name} : {resp[0].message}"
             )
 
+        return resp[1].uuid
+
     async def _create_pipeline(self):
         pipeline_input = meroxa.CreatePipelineParams(
-            name=self._pipelineName,
+            name=self._pipeline_name,
             metadata={"turbine": True, "app": self.app_config.name},
             environment=self.app_config.environment,
         )
@@ -75,13 +79,13 @@ class PlatformResource(Resource):
             async with Meroxa(
                 auth=self.client_opts.auth, api_route=self.client_opts.url
             ) as m:
-                resp = await m.pipelines.get(self._pipelineName)
+                resp = await m.pipelines.get(self._pipeline_name)
 
             if resp[0] is not None:
                 if resp[0].code == "not_found":
                     print(
                         f"No pipeline found, creating a new pipeline: "
-                        f"{self._pipelineName}"
+                        f"{self._pipeline_name}"
                     )
                     await self._create_pipeline()
 
@@ -99,7 +103,7 @@ class PlatformResource(Resource):
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
-                pipeline_name=self._pipelineName,
+                pipeline_name=self._pipeline_name,
                 config=config,
                 metadata={
                     "mx:connectorType": "source",
@@ -170,7 +174,7 @@ class PlatformResource(Resource):
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
-                pipeline_name=self._pipelineName,
+                pipeline_name=self._pipeline_name,
                 config=config,
                 metadata={
                     "mx:connectorType": "destination",
@@ -189,9 +193,11 @@ class PlatformResource(Resource):
             else:
                 print(f"Successfully created {resp[1].name} connector")
 
-            print(f"Creating application: {self.app_config.name}")
-            await self._create_application(self._pipelineName)
-            print(f"Successfully created application: {self.app_config.name}")
+            if not globals().get("__application_uuid"):
+                print(f"Creating application: {self.app_config.name}")
+                res = await self._create_application(self._pipeline_name)
+                globals().update({"__application_uuid": res})
+                print(f"Successfully created application: {self.app_config.name}")
 
         except ChildProcessError as cpe:
             raise ChildProcessError(cpe)
