@@ -88,11 +88,9 @@ def build_parser():
         help="The SHA of the current git commit of the app",
     )
     clideploy.add_argument(
-        "--spec",
+        "spec",
         help="Spec version to use during deploy",
         nargs="?",
-        const="latest",
-        required=False,
     )
     clideploy.set_defaults(func=app_run_platform)
 
