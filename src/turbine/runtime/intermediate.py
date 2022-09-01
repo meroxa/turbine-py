@@ -16,6 +16,7 @@ class IntermediateResource:
         self.resource_type: str = ""
         self.collection: str = ""
         self.config: dict = {}
+        self.has_source = False
 
     def _persist(
         self, resource_type: str, collection: str, config: dict[str, str] = None
@@ -27,13 +28,27 @@ class IntermediateResource:
     async def records(self, collection: str, config: dict[str, str] = None) -> None:
         if config is None:
             config = {}
+
+        if not collection:
+            raise Exception(f"A collection name is required for all resources")
+
+        if self.has_source:
+            raise Exception(
+                f"Only one call to Records() is allowed per Meroxa Data Application"
+            )
+
         self._persist("source", collection, config)
+        self.has_source = True
 
     async def write(
         self, records, collection: str, config: dict[str, str] = None
     ) -> None:
         if config is None:
             config = {}
+
+        if not collection:
+            raise Exception(f"A collection name is required for all resources")
+
         self._persist("destination", collection, config)
 
     def __repr__(self):
