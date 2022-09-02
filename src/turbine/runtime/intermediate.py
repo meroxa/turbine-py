@@ -30,11 +30,11 @@ class IntermediateResource:
             config = {}
 
         if not collection:
-            raise Exception("A collection name is required for all resources")
+            raise Exception("A collection name is required when calling records()")
 
         if self.has_source:
             raise Exception(
-                "Only one call to Records() is allowed per Meroxa Data Application"
+                "Only one call to records() is allowed per Meroxa Data Application"
             )
 
         self._persist("source", collection, config)
@@ -47,7 +47,7 @@ class IntermediateResource:
             config = {}
 
         if not collection:
-            raise Exception("A collection name is required for all resources")
+            raise Exception("A collection name is required when calling write()")
 
         self._persist("destination", collection, config)
 
