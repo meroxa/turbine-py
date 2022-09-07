@@ -86,7 +86,7 @@ class Runner(BaseRunner):
 
         try:
             await self.data_app.run(deployment_spec)
-            print(f"turbine: {deployment_spec.serialize()}\n")
+            print(f"turbine-response: {deployment_spec.serialize()}\n")
             return
         except Exception as e:
             pprint.pprint(f"{e}")
