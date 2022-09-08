@@ -76,6 +76,11 @@ class PlatformResource(Resource):
         print(f"Checking if pipeline exists for application: {self.app_config.name}")
 
         try:
+            if config is None:
+                config = {}
+            if self.resource.type == ResourceType.KAFKA.value:
+                config["conduit"] = "true"
+
             async with Meroxa(
                 auth=self.client_opts.auth, api_route=self.client_opts.url
             ) as m:
@@ -157,6 +162,9 @@ class PlatformResource(Resource):
                 config["table.name.format"] = str(collection).lower()
             elif self.resource.type == ResourceType.MONGODB.value:
                 config["collection"] = str(collection).lower()
+            elif self.resource.type == ResourceType.KAFKA.value:
+                config["conduit"] = "true"
+                config["topic"] = str(collection).lower()
             elif self.resource.type == ResourceType.S3.value:
                 config["aws_s3_prefix"] = str(collection).lower() + "/"
             elif self.resource.type == ResourceType.SNOWFLAKE.value:
