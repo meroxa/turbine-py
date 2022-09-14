@@ -69,6 +69,7 @@ def build_parser():
     run.add_argument(
         "app_name",
         help="desired name of application",
+        nargs="?",
     )
     run.set_defaults(func=app_run_test)
 
