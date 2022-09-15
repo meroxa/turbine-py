@@ -7,7 +7,8 @@ from turbine.runtime import Record
 from turbine.runtime import read_fixtures
 from turbine.runtime.types import RecordList
 
-pytestmark = pytest.mark.asyncio
+
+
 
 @pytest.fixture()
 def local_runtime():
