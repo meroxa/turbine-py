@@ -1,23 +1,27 @@
-from .intermediate import IntermediateRuntime as IntermediateRuntime
-from .local import LocalRuntime as LocalRuntime
-from .platform import PlatformRuntime as PlatformRuntime
-from .info import InfoRuntime as InfoRuntime
-from .types import AppConfig as AppConfig
-from .types import ClientOptions as ClientOptions
-from .types import Record as Record
-from .types import Records as Records
-from .types import Runtime as Runtime
-from .types import RecordList as RecordList
+from .info import InfoRuntime
+from .intermediate import IntermediateResource
+from .intermediate import IntermediateFunction
+from .intermediate import IntermediateRuntime
+from .local import LocalRuntime
+from .platform import PlatformRuntime
+from .types import AppConfig
+from .types import ClientOptions
+from .types import Record
+from .types import RecordList
+from .types import Records
+from .types import Runtime
 
 __all__ = [
-    AppConfig,
-    ClientOptions,
-    InfoRuntime,
-    IntermediateRuntime,
-    LocalRuntime,
-    PlatformRuntime,
-    Record,
-    RecordList,
-    Records,
-    Runtime,
+    "AppConfig",
+    "ClientOptions",
+    "InfoRuntime",
+    "IntermediateResource",
+    "IntermediateRuntime",
+    "IntermediateFunction",
+    "LocalRuntime",
+    "PlatformRuntime",
+    "Record",
+    "RecordList",
+    "Records",
+    "Runtime",
 ]
