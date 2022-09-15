@@ -1,8 +1,18 @@
-name: Acceptance Tests
+name: CI
+
 on:
   pull_request:
 jobs:
+  lint:
+    name: Run Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable
+        with:
+          options: "--color --check --verbose"
   tests:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

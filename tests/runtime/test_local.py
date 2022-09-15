@@ -8,8 +8,6 @@ from turbine.runtime import read_fixtures
 from turbine.runtime.types import RecordList
 
 
-
-
 @pytest.fixture()
 def local_runtime():
     return LocalRuntime(
