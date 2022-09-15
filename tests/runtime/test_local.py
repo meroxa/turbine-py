@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from turbine.runtime import AppConfig
@@ -9,6 +7,7 @@ from turbine.runtime import Record
 from turbine.runtime import read_fixtures
 from turbine.runtime.types import RecordList
 
+pytestmark = pytest.mark.asyncio
 
 @pytest.fixture()
 def local_runtime():
@@ -62,7 +61,7 @@ class TestLocalResource:
         capture = capsys.readouterr()
 
         assert capture.out is not None
-        assert capture.err is ""
+        assert capture.err == ""
 
 
 class TestLocalRuntime:
@@ -92,8 +91,8 @@ class TestLocalRuntime:
 
         results = await local_runtime.process(records, test_func)
 
-        assert len(results.records) is 3
-        assert len(local_runtime._registeredFunctions) is 1
+        assert len(results.records) == 3
+        assert len(local_runtime._registeredFunctions) == 1
         assert local_runtime._registeredFunctions.get(test_func.__name__) == test_func
 
     def test_register_secrets(self, local_runtime, monkeypatch):
