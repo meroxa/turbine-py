@@ -2,6 +2,8 @@ from .info import InfoRuntime
 from .intermediate import IntermediateResource
 from .intermediate import IntermediateFunction
 from .intermediate import IntermediateRuntime
+from .local import read_fixtures
+from .local import LocalResource
 from .local import LocalRuntime
 from .platform import PlatformRuntime
 from .types import AppConfig
@@ -18,10 +20,12 @@ __all__ = [
     "IntermediateResource",
     "IntermediateRuntime",
     "IntermediateFunction",
+    "LocalResource",
     "LocalRuntime",
     "PlatformRuntime",
     "Record",
     "RecordList",
     "Records",
+    "read_fixtures",
     "Runtime",
 ]

@@ -64,8 +64,8 @@ class TestIntermediateResource:
         assert resource.has_source is True
         assert isinstance(resource.config, dict)
         assert resource.config.items() <= test_config.items()
-        assert resource.resource_type is "source"
-        assert resource.collection is "collection"
+        assert resource.resource_type == "source"
+        assert resource.collection == "collection"
 
     @pytest.mark.asyncio
     async def test_write_errors_without_collection(self):
@@ -82,8 +82,8 @@ class TestIntermediateResource:
         assert resource.has_source is False
         assert isinstance(resource.config, dict)
         assert resource.config.items() <= test_config.items()
-        assert resource.resource_type is "destination"
-        assert resource.collection is "collection"
+        assert resource.resource_type == "destination"
+        assert resource.collection == "collection"
 
     @pytest.mark.asyncio
     async def test_write_repr(self):

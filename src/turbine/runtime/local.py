@@ -25,7 +25,7 @@ async def read_fixtures(path: str, collection: str):
                         )
                     )
     except FileNotFoundError:
-        print(
+        raise Exception(
             f"{path} not found: must specify fixtures path to data for"
             f" source resources in order to run locally"
         )
@@ -48,7 +48,7 @@ class LocalResource(Resource):
         )
 
     async def write(
-        self, rr: Records, collection: str, config: dict[str, str] = {}
+        self, rr: Records, collection: str, config: dict[str, str] = None
     ) -> None:
 
         pprint(f"===================to {self.name} resource===================")
