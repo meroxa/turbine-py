@@ -78,7 +78,10 @@ class PlatformResource(Resource):
         try:
             if config is None:
                 config = {}
-            if self.resource.type in (ResourceType.KAFKA.value, ResourceType.CONFLUENTCLOUD.value):
+            if self.resource.type in (
+                ResourceType.KAFKA.value,
+                ResourceType.CONFLUENTCLOUD.value,
+            ):
                 config["conduit"] = "true"
 
             async with Meroxa(
@@ -162,7 +165,10 @@ class PlatformResource(Resource):
                 config["table.name.format"] = str(collection).lower()
             elif self.resource.type == ResourceType.MONGODB.value:
                 config["collection"] = str(collection).lower()
-            elif self.resource.type in (ResourceType.KAFKA.value, ResourceType.CONFLUENTCLOUD.value):
+            elif self.resource.type in (
+                ResourceType.KAFKA.value,
+                ResourceType.CONFLUENTCLOUD.value,
+            ):
                 config["conduit"] = "true"
                 config["topic"] = str(collection).lower()
             elif self.resource.type == ResourceType.S3.value:
