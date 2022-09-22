@@ -3,8 +3,8 @@ import pytest
 from turbine.runtime import AppConfig
 from turbine.runtime import LocalResource
 from turbine.runtime import LocalRuntime
-from turbine.runtime import Record
 from turbine.runtime import read_fixtures
+from turbine.runtime import Record
 from turbine.runtime.types import RecordList
 
 

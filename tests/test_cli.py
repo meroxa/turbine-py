@@ -1,8 +1,4 @@
-
-import pytest
-
 from importlib.metadata import distribution
-
 from unittest.mock import patch
 
 from turbine.cli import build_parser
@@ -27,26 +23,33 @@ class TestCli:
         mock_runner.assert_called_with(PATH_TO_APP, APP_NAME)
         mock_async.run.assert_called_with(mock_runner().run_app_local())
 
-
     @patch("turbine.cli.Runner")
     @patch("turbine.cli.asyncio")
     def test_app_run_platform(self, mock_async, mock_runner):
         parser = build_parser()
-        args = parser.parse_args(["clideploy", PATH_TO_APP, IMAGE_NAME, APP_NAME, GIT_SHA])
+        args = parser.parse_args(
+            ["clideploy", PATH_TO_APP, IMAGE_NAME, APP_NAME, GIT_SHA]
+        )
         args.func(**vars(args))
 
         mock_runner.assert_called_with(PATH_TO_APP, APP_NAME)
-        mock_async.run.assert_called_with(mock_runner().run_app_platform(IMAGE_NAME, GIT_SHA))
+        mock_async.run.assert_called_with(
+            mock_runner().run_app_platform(IMAGE_NAME, GIT_SHA)
+        )
 
     @patch("turbine.cli.Runner")
     @patch("turbine.cli.asyncio")
     def test_app_run_platform_v2(self, mock_async, mock_runner):
         parser = build_parser()
-        args = parser.parse_args(["clideploy", PATH_TO_APP, IMAGE_NAME, APP_NAME, GIT_SHA, SPEC])
+        args = parser.parse_args(
+            ["clideploy", PATH_TO_APP, IMAGE_NAME, APP_NAME, GIT_SHA, SPEC]
+        )
         args.func(**vars(args))
 
         mock_runner.assert_called_with(PATH_TO_APP, APP_NAME)
-        mock_async.run.assert_called_with(mock_runner().run_app_platform_v2(IMAGE_NAME, GIT_SHA, VERSION, SPEC))
+        mock_async.run.assert_called_with(
+            mock_runner().run_app_platform_v2(IMAGE_NAME, GIT_SHA, VERSION, SPEC)
+        )
 
     @patch("turbine.cli.Runner")
     @patch("turbine.cli.asyncio")
@@ -102,5 +105,4 @@ class TestCli:
         args.func(**vars(args))
 
         output = capsys.readouterr()
-        assert output.out.strip('\n') == VERSION
-
+        assert output.out.strip("\n") == VERSION

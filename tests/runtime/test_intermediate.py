@@ -7,9 +7,8 @@ from turbine.runtime import ClientOptions
 from turbine.runtime import IntermediateFunction
 from turbine.runtime import IntermediateResource
 from turbine.runtime import IntermediateRuntime
-
-from turbine.runtime.types import Records
 from turbine.runtime.types import RecordList
+from turbine.runtime.types import Records
 
 
 @pytest.fixture(scope="function")

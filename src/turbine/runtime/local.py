@@ -5,10 +5,11 @@ import typing as t
 from pprint import pprint
 
 from .types import AppConfig
-from .types import Record, Resource
-from .types import Records
-from .types import Runtime
+from .types import Record
 from .types import RecordList
+from .types import Records
+from .types import Resource
+from .types import Runtime
 
 
 async def read_fixtures(path: str, collection: str):

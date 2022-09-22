@@ -3,16 +3,15 @@ import logging
 import os
 import sys
 
-import grpc
 import grpc.aio
+import service_pb2
+import service_pb2_grpc
 from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
-
-import service_pb2
-import service_pb2_grpc
-from record import proto_records_to_turbine_records, turbine_records_to_proto_records
+from record import proto_records_to_turbine_records
+from record import turbine_records_to_proto_records
 
 """
 Process function given to GRPC server

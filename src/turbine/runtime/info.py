@@ -1,9 +1,10 @@
-import typing as t
 import json
+import typing as t
 
 from .types import AppConfig
-from .types import Record, Resource
+from .types import Record
 from .types import Records
+from .types import Resource
 from .types import Runtime
 
 
@@ -19,7 +20,7 @@ class InfoResource(Resource):
         self.collection = collection
         self.destination = self.destination
 
-    async def write(self, rr: Records, collection: str, config: dict[str, str] = {}):
+    async def write(self, rr: Records, collection: str, config: dict[str, str] = None):
 
         self.destination = True
         self.source = self.source
