@@ -24,7 +24,7 @@ The benefits of using Turbine include:
 
 ## Getting Started
 
-To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to back to your terminal and initialize a new project:
+To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to go back to your terminal and initialize a new project:
 
 ```bash
 $ meroxa apps init testapp --lang py

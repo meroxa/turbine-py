@@ -7,7 +7,5 @@ Publishing a new version requires the following actions be taken in order:
    $ git tag v1.1.0 
    $ git push origin tag v1.1.0
    ```
-   
-3. Once the tag has been pushed, [create a new release](https://github.com/meroxa/turbine-py/releases/new) with a newly pushed tag 
-   - `Generate Release Notes` will create an annotated diff of changes since last release for the notes 
+3. New tags will trigger the [tagged-release](../.github/workflows/tagged-release.yml) workflow, creating a new release based on your new tag
 4. Once the release is published, GitHub Actions will package and publish a new version of turbine-py to [PyPI](https://pypi.org/project/turbine-py/)
