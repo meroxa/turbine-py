@@ -1,0 +1,17 @@
+# Uses the following GH Action: https://github.com/marketplace/actions/automatic-releases
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create_tagged_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+        id: "automatic_releases"
