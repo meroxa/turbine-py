@@ -1,11 +1,11 @@
-import pytest
 import time
 
+import pytest
+
+from ..utils.utils import read_fixture
 from turbine.runtime import Record
 from turbine.runtime import RecordList
 from turbine.runtime import Records
-
-from ..utils.utils import read_fixture
 
 
 @pytest.fixture

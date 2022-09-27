@@ -16,7 +16,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "requirements.txt:"
+      prefix: "requirements:"
 
   - package-ecosystem: "docker"
     directory: "/src/turbine/function-deploy"
