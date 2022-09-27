@@ -1,12 +1,10 @@
 import json
 import os
-import re
 import typing as t
 
 import meroxa
 from meroxa import Meroxa
 from meroxa.pipelines import PipelineIdentifiers
-from meroxa.types import ResourceType
 
 from .types import AppConfig
 from .types import RecordList
@@ -76,14 +74,6 @@ class PlatformResource(Resource):
         print(f"Checking if pipeline exists for application: {self.app_config.name}")
 
         try:
-            if config is None:
-                config = {}
-            if self.resource.type in (
-                ResourceType.KAFKA.value,
-                ResourceType.CONFLUENTCLOUD.value,
-            ):
-                config["conduit"] = "true"
-
             async with Meroxa(
                 auth=self.client_opts.auth, api_route=self.client_opts.url
             ) as m:
@@ -105,8 +95,7 @@ class PlatformResource(Resource):
 
             print(f"Creating SOURCE connector from resource: {self.resource.name}")
 
-            if config is None:
-                config = {}
+        
             config["input"] = collection
 
             connector_input = meroxa.CreateConnectorParams(
@@ -151,40 +140,15 @@ class PlatformResource(Resource):
         print(f"Creating DESTINATION connector from stream: {records.stream}")
 
         try:
-            # Connector config
-            # Move the non-shared logics to a separate function
             if config is None:
                 config = {}
             config["input"] = records.stream
-            if self.resource.type in (
-                ResourceType.REDSHIFT.value,
-                ResourceType.POSTGRES.value,
-                ResourceType.MYSQL.value,
-                ResourceType.SQLSERVER.value,
-            ):  # JDBC sink
-                config["table.name.format"] = str(collection).lower()
-            elif self.resource.type == ResourceType.MONGODB.value:
-                config["collection"] = str(collection).lower()
-            elif self.resource.type in (
-                ResourceType.KAFKA.value,
-                ResourceType.CONFLUENTCLOUD.value,
-            ):
-                config["conduit"] = "true"
-                config["topic"] = str(collection).lower()
-            elif self.resource.type == ResourceType.S3.value:
-                config["aws_s3_prefix"] = str(collection).lower() + "/"
-            elif self.resource.type == ResourceType.SNOWFLAKE.value:
-                result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
-                if result is None:
-                    raise ChildProcessError(
-                        f"'{str(collection)}' is an invalid Snowflake name - "
-                        f"must start with a letter and contain only letters, "
-                        f"numbers, and underscores"
-                    )
-                else:
-                    config[
-                        "snowflake.topic2table.map"
-                    ] = f"{records.stream}:{str(collection)}"
+
+            config.update({
+                "input": records.stream,
+                "collection": collection
+            })
+           
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
