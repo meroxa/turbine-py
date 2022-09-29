@@ -1,9 +1,9 @@
 import argparse
 import asyncio
-
 from importlib.metadata import distribution
 
-from .runner import generate_app, Runner
+from .runner import generate_app
+from .runner import Runner
 
 
 def app_run_test(app_name, path_to_data_app, **kwargs):

@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Set up Python 3.9
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Install pypa/build
@@ -31,6 +31,6 @@ jobs:
           --outdir dist/
           .
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.5.0
+        uses: pypa/gh-action-pypi-publish@v1.5.1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}

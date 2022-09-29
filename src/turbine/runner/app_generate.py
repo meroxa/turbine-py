@@ -1,6 +1,6 @@
+import json
 import os
 import shutil
-import json
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 

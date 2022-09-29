@@ -17,7 +17,7 @@ COPY ./function-app/requirements.txt requirements.txt
 RUN pip install --requirement requirements.txt
 COPY ./function-app .
 
-#Set user permissions to nonroot 
+#Set user permissions to nonroot
 USER nobody
 
 CMD [ "python", "function_server.py" ]

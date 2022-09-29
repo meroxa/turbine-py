@@ -1,10 +1,8 @@
-import typing as t
-
-from abc import ABC, abstractmethod
-
-from collections import UserList
-
 import logging
+import typing as t
+from abc import ABC
+from abc import abstractmethod
+from collections import UserList
 
 logging.basicConfig()
 

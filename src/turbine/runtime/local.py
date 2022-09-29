@@ -5,10 +5,11 @@ import typing as t
 from pprint import pprint
 
 from .types import AppConfig
-from .types import Record, Resource
-from .types import Records
-from .types import Runtime
+from .types import Record
 from .types import RecordList
+from .types import Records
+from .types import Resource
+from .types import Runtime
 
 
 async def read_fixtures(path: str, collection: str):
@@ -25,7 +26,7 @@ async def read_fixtures(path: str, collection: str):
                         )
                     )
     except FileNotFoundError:
-        print(
+        raise Exception(
             f"{path} not found: must specify fixtures path to data for"
             f" source resources in order to run locally"
         )
@@ -48,7 +49,7 @@ class LocalResource(Resource):
         )
 
     async def write(
-        self, rr: Records, collection: str, config: dict[str, str] = {}
+        self, rr: Records, collection: str, config: dict[str, str] = None
     ) -> None:
 
         pprint(f"===================to {self.name} resource===================")

@@ -1,7 +1,10 @@
 import json
 import os
 import sys
-from ..runtime import InfoRuntime, LocalRuntime, AppConfig
+
+from ..runtime import AppConfig
+from ..runtime import InfoRuntime
+from ..runtime import LocalRuntime
 
 
 class BaseRunner:

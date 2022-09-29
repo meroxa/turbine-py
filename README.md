@@ -212,5 +212,3 @@ Clone this repo and install this package using the following command
 
 
 Check out the [/docs/](./docs/) folder for more information on how to contribute.
-
-
