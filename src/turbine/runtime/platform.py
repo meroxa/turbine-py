@@ -95,8 +95,10 @@ class PlatformResource(Resource):
 
             print(f"Creating SOURCE connector from resource: {self.resource.name}")
 
-        
-            config["input"] = collection
+            if config is not None:
+                config["input"] = collection
+            else:
+                config = dict(input=collection)
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
@@ -144,11 +146,7 @@ class PlatformResource(Resource):
                 config = {}
             config["input"] = records.stream
 
-            config.update({
-                "input": records.stream,
-                "collection": collection
-            })
-           
+            config.update({"collection": collection})
 
             connector_input = meroxa.CreateConnectorParams(
                 resource_name=self.resource.name,
@@ -207,7 +205,6 @@ class PlatformRuntime(Runtime):
                 auth=self._client_opts.auth, api_route=self._client_opts.url
             ) as m:
                 resp = await m.resources.get(resource_name)
-
             if resp[0] is not None:
                 raise ChildProcessError(
                     "Error finding resource {} : {}".format(

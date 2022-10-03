@@ -41,9 +41,11 @@ class Runner(BaseRunner):
     async def run_app_platform(self, image_name, git_sha):
         parsed_url = None
         url = os.environ.get("MEROXA_API_URL")
+        is_local_dev = os.environ.get("USE_LOCAL_TURBINE")
         if url is not None:
             parsed_url = urlparse(url)
-            parsed_url = f"https://{parsed_url.netloc}"
+            protocol = "http" if is_local_dev else "https"
+            parsed_url = f"{protocol}://{parsed_url.netloc}"
 
         app_config = self.app_config
         app_config.git_sha = git_sha
