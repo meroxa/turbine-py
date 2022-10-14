@@ -79,6 +79,7 @@ class Runner(BaseRunner):
             client_options=ClientOptions(
                 auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
                 url=parsed_url,
+                meroxa_account_uuid=os.environ.get("MEROXA_ACCOUNT_UUID"),
             ),
             image_name=image_name,
             git_sha=git_sha,

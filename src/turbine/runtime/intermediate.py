@@ -2,9 +2,8 @@ import json
 import os
 import typing as t
 
-import meroxa
-
 from .types import AppConfig
+from .types import ClientOptions
 from .types import RecordList
 from .types import Records
 from .types import Runtime
@@ -86,7 +85,7 @@ class IntermediateRuntime(Runtime):
 
     def __init__(
         self,
-        client_options: meroxa.ClientOptions,
+        client_options: ClientOptions,
         image_name: str,
         git_sha: str,
         version: str,
