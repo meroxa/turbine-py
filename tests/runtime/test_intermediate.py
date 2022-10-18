@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from turbine.runtime import AppConfig
@@ -90,9 +88,8 @@ class TestIntermediateResource:
         resource = IntermediateResource(resource_name="database_UwU")
         await resource.write(records=None, collection="collection", config=test_config)
 
-        res = resource.__repr__()
         assert (
-            json.loads(res).items()
+            resource.serialize().items()
             <= {
                 "type": "destination",
                 "resource": "database_UwU",
@@ -111,10 +108,9 @@ class TestIntermediateFunction:
 
     def test_repr(self):
         func = IntermediateFunction("funcname", "1234567890", "coolimage")
-        res = func.__repr__()
 
         assert (
-            json.loads(res).items()
+            func.serialize().items()
             <= {"name": "funcname-12345678", "image": "coolimage"}.items()
         )
 
@@ -139,7 +135,6 @@ class TestIntermediateRuntime:
 
     @pytest.mark.asyncio
     async def test_resources(self, intermediate_runtime):
-
         res1 = await intermediate_runtime.resources("test_resource")
 
         assert len(intermediate_runtime._registered_resources) == 1
@@ -152,7 +147,6 @@ class TestIntermediateRuntime:
 
     @pytest.mark.asyncio
     async def test_functions(self, intermediate_runtime, record):
-
         await intermediate_runtime.process(
             records=record,
             fn=lambda x: x,

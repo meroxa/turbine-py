@@ -1,10 +1,8 @@
-import json
 import os
 import typing as t
 
-import meroxa
-
 from .types import AppConfig
+from .types import ClientOptions
 from .types import RecordList
 from .types import Records
 from .types import Runtime
@@ -51,15 +49,13 @@ class IntermediateResource:
 
         self._persist("destination", collection, config)
 
-    def __repr__(self):
-        return json.dumps(
-            {
-                "type": self.resource_type,
-                "resource": self._resource,
-                "collection": self.collection,
-                "config": self.config,
-            }
-        )
+    def serialize(self):
+        return {
+            "type": self.resource_type,
+            "resource": self._resource,
+            "collection": self.collection,
+            "config": self.config,
+        }
 
 
 class IntermediateFunction:
@@ -70,13 +66,11 @@ class IntermediateFunction:
         self.name = f"{name}-{commit_hash[:8]}"
         self.image = image
 
-    def __repr__(self):
-        return json.dumps(
-            {
-                "name": self.name,
-                "image": self.image,
-            }
-        )
+    def serialize(self):
+        return {
+            "name": self.name,
+            "image": self.image,
+        }
 
 
 class IntermediateRuntime(Runtime):
@@ -86,7 +80,7 @@ class IntermediateRuntime(Runtime):
 
     def __init__(
         self,
-        client_options: meroxa.ClientOptions,
+        client_options: ClientOptions,
         image_name: str,
         git_sha: str,
         version: str,
@@ -133,8 +127,12 @@ class IntermediateRuntime(Runtime):
 
     def serialize(self) -> dict:
         return {
-            "connectors": self._registered_resources,
+            "connectors": [
+                resource.serialize() for resource in self._registered_resources
+            ],
             "secrets": self._secrets,
-            "functions": self._registered_functions,
+            "functions": [
+                function.serialize() for function in self._registered_functions
+            ],
             "definition": self.definition(),
         }

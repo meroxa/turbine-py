@@ -16,7 +16,9 @@ def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
     spec = kwargs.get("spec")
     if spec:
         dist = distribution("turbine-py")
-        asyncio.run(r.run_app_platform_v2(image_name, git_sha, dist.version, spec))
+        asyncio.run(
+            r.run_app_platform_v2(image_name, git_sha.strip(), dist.version, spec)
+        )
     else:
         asyncio.run(r.run_app_platform(image_name, git_sha))
 
