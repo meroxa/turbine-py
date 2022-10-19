@@ -100,6 +100,7 @@ class AppConfig:
 
 
 class ClientOptions:
-    def __init__(self, auth: str, url: str) -> None:
+    def __init__(self, auth: str, url: str, meroxa_account_uuid: str) -> None:
         self.auth = auth
         self.url = url
+        self.meroxa_account_uuid = meroxa_account_uuid

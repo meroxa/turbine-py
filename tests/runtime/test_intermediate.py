@@ -14,7 +14,9 @@ from turbine.runtime.types import Records
 @pytest.fixture(scope="function")
 def intermediate_runtime():
     return IntermediateRuntime(
-        client_options=ClientOptions(auth="TOKEN", url="URL"),
+        client_options=ClientOptions(
+            auth="TOKEN", url="URL", meroxa_account_uuid="ACCT"
+        ),
         image_name="IMAGE",
         git_sha="SHASHASHA",
         version="1.3.0",
