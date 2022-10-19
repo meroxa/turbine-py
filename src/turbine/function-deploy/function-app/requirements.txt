@@ -6,4 +6,3 @@ grpcio-reflection>=1.44.0
 grpcio-health-checking>=1.44.0
 
 turbine-py
-meroxa-py==1.0.6
