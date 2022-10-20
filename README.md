@@ -27,7 +27,6 @@ The benefits of using Turbine include:
 To get started, you'll need to install the `turbine-py` dependency via `pip`:
 
 ```bash
-# For users of python 3+
 pip3 install turbine-py
 ```
 
