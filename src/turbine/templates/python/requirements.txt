@@ -1,1 +1,1 @@
-turbine-py==1.5.0
+turbine-py==1.5.1
