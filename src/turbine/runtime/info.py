@@ -44,10 +44,10 @@ class InfoRuntime(Runtime):
         return f"turbine-response: {bool(len(list(self.registeredFunctions)))}"
 
     def resources_list(self) -> str:
-
-        return json.dumps(
+        resp = json.dumps(
             list(resource.__dict__ for resource in self.registeredResources)
         )
+        return f"turbine-response: {resp}"
 
     async def resources(self, name: str):
         resource = InfoResource(name)

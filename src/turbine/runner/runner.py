@@ -50,7 +50,9 @@ class Runner(BaseRunner):
         app_config.git_sha = git_sha
         deployment_spec = PlatformRuntime(
             client_options=ClientOptions(
-                auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
+                url=parsed_url,
+                meroxa_account_uuid=os.environ.get("MEROXA_ACCOUNT_UUID"),
             ),
             image_name=image_name,
             git_sha=git_sha,
@@ -76,7 +78,9 @@ class Runner(BaseRunner):
 
         deployment_spec = IntermediateRuntime(
             client_options=ClientOptions(
-                auth=os.environ.get("MEROXA_ACCESS_TOKEN"), url=parsed_url
+                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
+                url=parsed_url,
+                meroxa_account_uuid=os.environ.get("MEROXA_ACCOUNT_UUID"),
             ),
             image_name=image_name,
             git_sha=git_sha,

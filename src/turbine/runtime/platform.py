@@ -9,6 +9,7 @@ from meroxa.pipelines import PipelineIdentifiers
 from meroxa.types import ResourceType
 
 from .types import AppConfig
+from .types import ClientOptions
 from .types import RecordList
 from .types import Records
 from .types import Resource
@@ -26,7 +27,7 @@ class PlatformResource(Resource):
     _pipeline_name = ""
 
     def __init__(
-        self, resource, client_options: meroxa.ClientOptions, app_config: AppConfig
+        self, resource, client_options: ClientOptions, app_config: AppConfig
     ) -> None:
         self.resource = resource
         self.app_config = app_config
@@ -42,7 +43,9 @@ class PlatformResource(Resource):
         )
 
         async with Meroxa(
-            auth=self.client_opts.auth, api_route=self.client_opts.url
+            auth=self.client_opts.auth,
+            api_route=self.client_opts.url,
+            meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
         ) as m:
             resp = await m.applications.create(app_input)
 
@@ -61,7 +64,9 @@ class PlatformResource(Resource):
             environment=self.app_config.environment,
         )
         async with Meroxa(
-            auth=self.client_opts.auth, api_route=self.client_opts.url
+            auth=self.client_opts.auth,
+            api_route=self.client_opts.url,
+            meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
         ) as m:
             resp = await m.pipelines.create(pipeline_input)
 
@@ -85,7 +90,9 @@ class PlatformResource(Resource):
                 config["conduit"] = "true"
 
             async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+                auth=self.client_opts.auth,
+                api_route=self.client_opts.url,
+                meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
             ) as m:
                 resp = await m.pipelines.get(self._pipeline_name)
 
@@ -119,7 +126,9 @@ class PlatformResource(Resource):
             )
 
             async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+                auth=self.client_opts.auth,
+                api_route=self.client_opts.url,
+                meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
             ) as m:
                 connector: meroxa.ConnectorsResponse
                 # Error Handling: Duplicate connector
@@ -196,7 +205,9 @@ class PlatformResource(Resource):
             )
 
             async with Meroxa(
-                auth=self.client_opts.auth, api_route=self.client_opts.url
+                auth=self.client_opts.auth,
+                api_route=self.client_opts.url,
+                meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
             ) as m:
                 resp = await m.connectors.create(connector_input)
             if resp[0] is not None:
@@ -225,7 +236,7 @@ class PlatformRuntime(Runtime):
 
     def __init__(
         self,
-        client_options: meroxa.ClientOptions,
+        client_options: ClientOptions,
         image_name: str,
         git_sha: str,
         config: AppConfig,
@@ -240,7 +251,9 @@ class PlatformRuntime(Runtime):
 
         try:
             async with Meroxa(
-                auth=self._client_opts.auth, api_route=self._client_opts.url
+                auth=self._client_opts.auth,
+                api_route=self._client_opts.url,
+                meroxa_account_uuid=self._client_opts.meroxa_account_uuid,
             ) as m:
                 resp = await m.resources.get(resource_name)
 
@@ -287,7 +300,9 @@ class PlatformRuntime(Runtime):
         print(f"Deploying Process: {getattr(fn, '__name__', 'Unknown')}")
 
         async with Meroxa(
-            auth=self._client_opts.auth, api_route=self._client_opts.url
+            auth=self._client_opts.auth,
+            api_route=self._client_opts.url,
+            meroxa_account_uuid=self._client_opts.meroxa_account_uuid,
         ) as m:
             resp = await m.functions.create(create_func_params)
         try:
