@@ -105,7 +105,7 @@ class TestIntermediateFunction:
     def test_init(self):
         func = IntermediateFunction("funcname", "1234567890", "coolimage")
 
-        assert func.name == "funcname-12345678"
+        assert func.name == "funcname"
         assert func.image == "coolimage"
 
     def test_repr(self):
@@ -113,7 +113,7 @@ class TestIntermediateFunction:
 
         assert (
             func.serialize().items()
-            <= {"name": "funcname-12345678", "image": "coolimage"}.items()
+            <= {"name": "funcname", "image": "coolimage"}.items()
         )
 
 
@@ -156,7 +156,7 @@ class TestIntermediateRuntime:
 
         rf = intermediate_runtime._registered_functions[0]
         assert len(intermediate_runtime._registered_functions) == 1
-        assert rf.name == "<lambda>-SHASHASH"
+        assert rf.name == "<lambda>"
 
     def test_register_secrets(self, intermediate_runtime, monkeypatch):
         monkeypatch.setenv("TEST", "testvalue")

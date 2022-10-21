@@ -63,7 +63,7 @@ class IntermediateFunction:
     image: str
 
     def __init__(self, name: str, commit_hash: str, image: str):
-        self.name = f"{name}-{commit_hash[:8]}"
+        self.name = name
         self.image = image
 
     def serialize(self):

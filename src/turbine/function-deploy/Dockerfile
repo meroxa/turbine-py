@@ -20,4 +20,4 @@ COPY ./function-app .
 #Set user permissions to nonroot
 USER nobody
 
-CMD [ "python", "function_server.py" ]
+ENTRYPOINT [ "python", "function_server.py" ]
