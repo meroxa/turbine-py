@@ -1,5 +1,5 @@
 # Build Data App
-FROM python:slim-buster as DATA_APP_BUILDER
+FROM python:3.9-slim as DATA_APP_BUILDER
 
 RUN pip install --upgrade pip
 
