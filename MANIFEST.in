@@ -4,5 +4,3 @@ include src/turbine/function-deploy/Dockerfile
 
 global-exclude *.py[co]
 global-exclude __pycache__
-
-include VERSION.txt
