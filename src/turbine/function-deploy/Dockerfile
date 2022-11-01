@@ -1,5 +1,5 @@
 # Build Data App
-FROM python:3.11-slim as DATA_APP_BUILDER
+FROM python:3.11.0-slim as DATA_APP_BUILDER
 
 RUN pip install --upgrade pip
 
