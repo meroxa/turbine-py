@@ -18,11 +18,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {name: Linux, python: '3.9', os: ubuntu-latest, tox: py39}
-          - {name: Windows, python: '3.9', os: windows-latest, tox: py39}
-          - {name: Mac, python: '3.9', os: macos-latest, tox: py39}
-          - {name: '3.11', python: '3.11', os: ubuntu-latest, tox: py311}
-          - {name: '3.10', python: '3.10', os: ubuntu-latest, tox: py310}
+          - {name: Linux39, python: '3.9', os: ubuntu-latest, tox: py39}
+          - {name: Windows39, python: '3.9', os: windows-latest, tox: py39}
+          - {name: Mac39, python: '3.9', os: macos-latest, tox: py39}
+          - { name: Linux310, python: '3.10', os: ubuntu-latest, tox: py310 }
+          - { name: Windows310, python: '3.10', os: windows-latest, tox: py310 }
+          - { name: Mac310, python: '3.10', os: macos-latest, tox: py310 }
+          - { name: Linux311, python: '3.11', os: ubuntu-latest, tox: py311 }
+          - { name: Windows311, python: '3.11', os: windows-latest, tox: py311 }
+          - { name: Mac311, python: '3.11', os: macos-latest, tox: py311 }
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
