@@ -25,20 +25,6 @@ class TestCli:
 
     @patch("turbine.cli.Runner")
     @patch("turbine.cli.asyncio")
-    def test_app_run_platform(self, mock_async, mock_runner):
-        parser = build_parser()
-        args = parser.parse_args(
-            ["clideploy", PATH_TO_APP, IMAGE_NAME, APP_NAME, GIT_SHA]
-        )
-        args.func(**vars(args))
-
-        mock_runner.assert_called_with(PATH_TO_APP, APP_NAME)
-        mock_async.run.assert_called_with(
-            mock_runner().run_app_platform(IMAGE_NAME, GIT_SHA)
-        )
-
-    @patch("turbine.cli.Runner")
-    @patch("turbine.cli.asyncio")
     def test_app_run_platform_v2(self, mock_async, mock_runner):
         parser = build_parser()
         args = parser.parse_args(

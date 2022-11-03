@@ -11,16 +11,10 @@ def app_run_test(app_name, path_to_data_app, **kwargs):
     asyncio.run(r.run_app_local())
 
 
-def app_run_platform(app_name, path_to_data_app, image_name, git_sha, **kwargs):
+def app_run_platform(app_name, path_to_data_app, image_name, git_sha, spec, **kwargs):
     r = Runner(path_to_data_app, app_name)
-    spec = kwargs.get("spec")
-    if spec:
-        dist = distribution("turbine-py")
-        asyncio.run(
-            r.run_app_platform_v2(image_name, git_sha.strip(), dist.version, spec)
-        )
-    else:
-        asyncio.run(r.run_app_platform(image_name, git_sha))
+    dist = distribution("turbine-py")
+    asyncio.run(r.run_app_platform_v2(image_name, git_sha.strip(), dist.version, spec))
 
 
 def app_list_resources(path_to_data_app, **kwargs):

@@ -5,7 +5,6 @@ from .intermediate import IntermediateRuntime
 from .local import LocalResource
 from .local import LocalRuntime
 from .local import read_fixtures
-from .platform import PlatformRuntime
 from .types import AppConfig
 from .types import ClientOptions
 from .types import Record
@@ -22,7 +21,6 @@ __all__ = [
     "IntermediateFunction",
     "LocalResource",
     "LocalRuntime",
-    "PlatformRuntime",
     "Record",
     "RecordList",
     "Records",

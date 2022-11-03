@@ -2,18 +2,76 @@ import json
 import os
 import pprint
 import shutil
+import sys
 import tempfile
 from urllib.parse import urlparse
 
+from ..runtime import AppConfig
 from ..runtime import ClientOptions
+from ..runtime import InfoRuntime
 from ..runtime import IntermediateRuntime
-from ..runtime import PlatformRuntime
-from .baserunner import BaseRunner
+from ..runtime import LocalRuntime
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
-class Runner(BaseRunner):
+class Runner:
+    path_to_data_app: str
+    info_runtime = None
+    local_runtime = None
+    app_name = None
+
+    def __init__(self, path_to_data_app: str, name: str = None):
+        self.path_to_data_app = path_to_data_app
+        self.app_name = name
+        self.info_runtime = InfoRuntime(self.app_config, self.path_to_data_app)
+        self.local_runtime = LocalRuntime(self.app_config, self.path_to_data_app)
+
+    @property
+    def app_config(self):
+        config = {}
+        try:
+            with open(os.path.abspath(f"{self.path_to_data_app}") + "/app.json") as fd:
+                config = AppConfig(**json.load(fd))
+                if self.app_name != "":
+                    config.name = self.app_name
+        except OSError as e:
+            print(f"Unable to locate app config: {e}", file=sys.stderr)
+        return config
+
+    @property
+    def data_app(self):
+        # Append the user's data application to the execution path
+        # for the runners
+        sys.path.append(self.path_to_data_app)
+        from main import App
+
+        return App
+
+    async def run_app_local(self):
+        await self.data_app.run(self.local_runtime)
+
+    async def list_functions(self):
+        try:
+            await self.data_app.run(self.info_runtime)
+            return self.info_runtime.functions_list()
+        except Exception as e:
+            print(f"something went wrong: {e}")
+
+    async def has_functions(self):
+        try:
+            await self.data_app.run(self.info_runtime)
+            return str(self.info_runtime.has_functions()).lower()
+        except Exception as e:
+            print(f"something went wrong: {e}")
+
+    async def list_resources(self):
+        try:
+            await self.data_app.run(self.info_runtime)
+            return self.info_runtime.resources_list()
+        except Exception as e:
+            print(f"something went wrong: {e}")
+
     async def build_function(self):
         temp_dir = tempfile.gettempdir()
         temp_dir_turbine_path = os.path.join(temp_dir + "/turbine")
@@ -38,33 +96,6 @@ class Runner(BaseRunner):
     @staticmethod
     def clean_temp_directory(tmp_dir):
         shutil.rmtree(tmp_dir, ignore_errors=True)
-
-    async def run_app_platform(self, image_name, git_sha):
-        parsed_url = None
-        url = os.environ.get("MEROXA_API_URL")
-        if url is not None:
-            parsed_url = urlparse(url)
-            parsed_url = f"https://{parsed_url.netloc}"
-
-        app_config = self.app_config
-        app_config.git_sha = git_sha
-        deployment_spec = PlatformRuntime(
-            client_options=ClientOptions(
-                auth=os.environ.get("MEROXA_ACCESS_TOKEN"),
-                url=parsed_url,
-                meroxa_account_uuid=os.environ.get("MEROXA_ACCOUNT_UUID"),
-            ),
-            image_name=image_name,
-            git_sha=git_sha,
-            config=app_config,
-        )
-
-        try:
-            await self.data_app.run(deployment_spec)
-            return
-        except Exception as e:
-            print(f"{e}")
-            return
 
     async def run_app_platform_v2(self, image_name, git_sha, version, spec):
         parsed_url = None

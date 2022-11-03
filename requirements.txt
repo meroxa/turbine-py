@@ -1,3 +1,2 @@
 aiohttp==3.8.3
 grpcio==1.50.0
-meroxa-py==1.1.2
