@@ -25,9 +25,9 @@ async def read_fixtures(path: str, collection: str):
                             key=rec["key"], value=rec["value"], timestamp=time.time()
                         )
                     )
-    except FileNotFoundError:
+    except (FileNotFoundError, TypeError):
         raise Exception(
-            f"{path} not found: must specify fixtures path to data for"
+            f'Path "{path}" not found: must specify fixtures path to data for'
             f" source resources in order to run locally"
         )
 
@@ -76,6 +76,7 @@ class LocalRuntime(Runtime):
         resources = self.app_config.resources
 
         fixtures_path = resources.get(name)
+
         if fixtures_path:
             resourced_fixture_path = f"{self.path_to_app}/{fixtures_path}"
 

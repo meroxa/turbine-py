@@ -59,43 +59,36 @@ This configuration file is where you begin your Turbine journey. Any time a Turb
 ```python
 # Dependencies of the example data app
 import hashlib
-import json
+import logging
 import sys
-import typing as t
 
-from turbine.runtime import Record, Runtime as Turbine
+from turbine.runtime import RecordList, Runtime
+
+logging.basicConfig(level=logging.INFO)
 
 
-def anonymize(records: t.List[Record]) -> t.List[Record]:
-    updated = []
+def anonymize(records: RecordList) -> RecordList:
+    logging.info(f"processing {len(records)} record(s)")
     for record in records:
+        logging.info(f"input: {record}")
         try:
-            record_value_from_json = json.loads(record.value)
-            hashed_email = hashlib.sha256(
-                record_value_from_json["payload"]["customer_email"].encode("utf-8")
+            payload = record.value["payload"]
+
+            # Hash the email
+            payload["customer_email"] = hashlib.sha256(
+                payload["customer_email"].encode("utf-8")
             ).hexdigest()
-            record_value_from_json["payload"]["customer_email"] = hashed_email
-            updated.append(
-                Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
-            )
+
+            logging.info(f"output: {record}")
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
-            updated.append(
-                Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
-            )
-    return updated
+            logging.info(f"output: {record}")
+    return records
+
 
 class App:
     @staticmethod
-    async def run(turbine: Turbine):
+    async def run(turbine: Runtime):
       try:
         source = await turbine.resources("source_name")
 
@@ -113,7 +106,7 @@ class App:
 Let's talk about the important parts of this code. Turbine apps have five functions that comprise the entire DSL. Outside of these functions, you can write whatever code you want to accomplish your tasks:
 
 ```python
-async def run(turbine: Turbine):
+async def run(turbine: Runtime):
 ```
 
 `run` is the main entry point for the application. This is where you can initialize the Turbine framework. This is also the place where, when you deploy your Turbine app to Meroxa, Meroxa will use this as the place to boot up the application.
