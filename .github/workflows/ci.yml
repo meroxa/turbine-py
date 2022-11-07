@@ -12,13 +12,27 @@ jobs:
         with:
           options: "--color --check --verbose"
   tests:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+    runs-on:  ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux39, python: '3.9', os: ubuntu-latest, tox: py39 }
+          - { name: Windows39, python: '3.9', os: windows-latest, tox: py39 }
+          - { name: Mac39, python: '3.9', os: macos-latest, tox: py39 }
+          - { name: Linux310, python: '3.10', os: ubuntu-latest, tox: py310 }
+          - { name: Windows310, python: '3.10', os: windows-latest, tox: py310 }
+          - { name: Mac310, python: '3.10', os: macos-latest, tox: py310 }
+          - { name: Linux311, python: '3.11', os: ubuntu-latest, tox: py311 }
+          - { name: Windows311, python: '3.11', os: windows-latest, tox: py311 }
+          - { name: Mac311, python: '3.11', os: macos-latest, tox: py311 }
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: ${{ matrix.python }}
           cache: 'pip'
           cache-dependency-path: '*.txt'
       - name: update pip
@@ -27,4 +41,4 @@ jobs:
           pip install -U setuptools
           python -m pip install -U pip
       - run: pip install tox
-      - run: tox -e py39
+      - run: tox -e ${{ matrix.tox }}

@@ -1,10 +1,10 @@
 # Build Data App
-FROM python:3.9-slim as DATA_APP_BUILDER
+FROM python:3.11.0-slim as DATA_APP_BUILDER
 
 RUN pip install --upgrade pip
 
 RUN apt-get -y update
-RUN apt-get -y install git
+RUN apt-get -y install git gcc
 
 WORKDIR /app/data-app
 COPY ./data-app/requirements.txt requirements.txt
