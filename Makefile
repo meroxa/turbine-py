@@ -12,11 +12,11 @@ funtime: ./src/turbine/function-deploy/function-app/requirements.txt
 run-hooks:
 	pre-commit run --all-files
 
-install-hooks: install-dev
+install-hooks:
 	pre-commit install
 
 test:
-	pytest
+	tox
 
 .PHONY: lint
 lint:
