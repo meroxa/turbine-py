@@ -202,19 +202,8 @@ The most comprehensive documentation for Turbine and how to work with Turbine ap
 
 ## Contributing
 
+For information on how to contribute to Turbine-py, checkout our contribution guide [HERE](CONTRIBUTING.md)
+
 ### Example apps
 
 [See what a sample python data app looks like using our framework](https://github.com/meroxa/turbine-py-examples)
-
-### Installation
-
-Clone this repo and install this package using the following command
-
-`make setup` - install dependencies to run turbine-py
-
-`make dev` - install dev dependencies as well as dependencies required to run
-
-`make funtime` - install dependencies for [gRPC application](src/turbine/function-deploy/function-app/)
-
-
-Check out the [/docs/](./docs/) folder for more information on how to contribute.

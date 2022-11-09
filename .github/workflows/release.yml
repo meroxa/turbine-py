@@ -18,14 +18,12 @@ jobs:
       - name: Checkout repository
       - uses: actions/checkout@master
         with:
+          token: ${{ secrets.SEMANTIC_RELEASE }}
           fetch-depth: 0
       # packaging and dep management
-      - name: Install Python Semantic Release
-        run: python3 -m pip install python-semantic-release
-      - name: Prep release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          semantic-release publish
+      - name: Python Semantic Release
+          uses: relekang/python-semantic-release@master
+          with:
+            github_token: ${{ secrets.SEMANTIC_RELEASE }}
+            repository_username: __token__
+            repository_password: ${{ secrets.PYPI_API_TOKEN }}
