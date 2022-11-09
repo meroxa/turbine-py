@@ -1,0 +1,24 @@
+name: Semantic Release
+
+on:
+  push:
+    branches: [main]
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@master
+        with:
+          token: ${{ secrets.MEROXA_MACHINE }}
+          fetch-depth: 0
+      # packaging and dep management
+      - name: Python Semantic Release
+          uses: relekang/python-semantic-release@master
+          with:
+            github_token: ${{ secrets.MEROXA_MACHINE }}
+            repository_username: __token__
+            repository_password: ${{ secrets.PYPI_API_TOKEN }}
