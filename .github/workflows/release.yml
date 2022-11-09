@@ -7,14 +7,9 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
-    concurrency: push
-    if: github.repository == 'meroxa/turbine-py'
+    concurrency: release
 
     steps:
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
       - name: Checkout repository
       - uses: actions/checkout@master
         with:
