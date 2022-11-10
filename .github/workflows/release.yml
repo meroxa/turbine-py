@@ -22,7 +22,7 @@ jobs:
       - name: Install pypa/build
         run: python -m pip install build --user
       - name: Python Semantic Release
-      - uses: relekang/python-semantic-release@master
+        uses: relekang/python-semantic-release@master
         with:
           github_token: ${{ secrets.MEROXA_MACHINE }}
           repository_username: __token__
