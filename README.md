@@ -59,39 +59,24 @@ This configuration file is where you begin your Turbine journey. Any time a Turb
 ```python
 # Dependencies of the example data app
 import hashlib
-import json
 import sys
-import typing as t
 
-from turbine.runtime import Record, Runtime as Turbine
+from turbine.runtime import RecordList, Runtime as Turbine
 
-
-def anonymize(records: t.List[Record]) -> t.List[Record]:
-    updated = []
+def anonymize(records: RecordList) -> RecordList:
     for record in records:
         try:
-            record_value_from_json = json.loads(record.value)
-            hashed_email = hashlib.sha256(
-                record_value_from_json["payload"]["customer_email"].encode("utf-8")
+            payload = record.value["payload"]
+
+            # Hash the email
+            payload["customer_email"] = hashlib.sha256(
+                payload["customer_email"].encode("utf-8")
             ).hexdigest()
-            record_value_from_json["payload"]["customer_email"] = hashed_email
-            updated.append(
-                Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
-            )
+
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
-            updated.append(
-                Record(
-                    key=record.key,
-                    value=record_value_from_json,
-                    timestamp=record.timestamp,
-                )
-            )
-    return updated
+    return records
+
 
 class App:
     @staticmethod
