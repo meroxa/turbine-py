@@ -49,7 +49,7 @@ def app_clean_up(path_to_temp, **kwargs):
 
 def app_return_version(**kwargs):
     dist = distribution("turbine-py")
-    print(dist.version)
+    print(f"turbine-response: {dist.version}")
 
 
 def build_parser():
