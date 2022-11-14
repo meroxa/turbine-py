@@ -105,4 +105,4 @@ class TestCli:
         args.func(**vars(args))
 
         output = capsys.readouterr()
-        assert output.out.strip("\n") == VERSION
+        assert output.out.strip("\n") == f"turbine-response: {VERSION}"
