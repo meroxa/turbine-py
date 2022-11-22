@@ -101,7 +101,7 @@ class TestCli:
 
     def test_return_version(self, capsys):
         parser = build_parser()
-        args = parser.parse_args(["version"])
+        args = parser.parse_args(["version", PATH_TO_TEMP])
         args.func(**vars(args))
 
         output = capsys.readouterr()
