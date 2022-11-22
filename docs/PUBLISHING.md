@@ -8,6 +8,8 @@ New versions of Turbine-py are handled by [Python Semantic Release](https://pyth
 
 Python Semantic Release will detect what the next version of the project should be based on the commits. Commits will need to follow [Angular Commit Guidelines](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
 
+For additional help on commit message format, see the [semantic release document](https://github.com/semantic-release/semantic-release#commit-message-format).
+
 ## Manual Publishing
 In order to publish a new version manually, follow the below steps.
 
