@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.6.4 (2022-11-28)
+### Fix
+* Update template reqs; require newest version of meroxa-py ([#147](https://github.com/meroxa/turbine-py/issues/147)) ([`8e2704f`](https://github.com/meroxa/turbine-py/commit/8e2704ffb7bcd48b83422715129409f6eb04d427))
+
 ## v1.6.3 (2022-11-22)
 ### Fix
 * Add more documentation for semantic release ([#146](https://github.com/meroxa/turbine-py/issues/146)) ([`608457e`](https://github.com/meroxa/turbine-py/commit/608457ed65318e2ca3cf7967c3381cf5a9131429))
