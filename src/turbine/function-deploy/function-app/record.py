@@ -8,7 +8,9 @@ from turbine.runtime import Record
 def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
     return [
         Record(
-            key=record.key, value=decode_record(record.value), timestamp=record.timestamp
+            key=record.key,
+            value=decode_record(record.value),
+            timestamp=record.timestamp,
         )
         for record in p_record
     ]
@@ -17,7 +19,9 @@ def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
 def turbine_records_to_proto_records(t_record: list[Record]):
     return [
         ProtoRecord(
-            key=record.key, value=encode_record(record.value), timestamp=record.timestamp
+            key=record.key,
+            value=encode_record(record.value),
+            timestamp=record.timestamp,
         )
         for record in t_record
     ]

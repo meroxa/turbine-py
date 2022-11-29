@@ -1,4 +1,4 @@
-exclude: "src/turbine/function-deploy/function-app"
+exclude: "src/turbine/function-deploy/function-app/service_pb2*"
 repos:
   - repo: https://github.com/asottile/reorder_python_imports
     rev: v3.1.0
