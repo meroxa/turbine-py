@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.6.5 (2022-12-01)
+### Fix
+* Handle encode/decode errors for bytestrings ([#149](https://github.com/meroxa/turbine-py/issues/149)) ([`89a3312`](https://github.com/meroxa/turbine-py/commit/89a33127dcfab07355f70182d8f6707663028736))
+
 ## v1.6.4 (2022-11-28)
 ### Fix
 * Update template reqs; require newest version of meroxa-py ([#147](https://github.com/meroxa/turbine-py/issues/147)) ([`8e2704f`](https://github.com/meroxa/turbine-py/commit/8e2704ffb7bcd48b83422715129409f6eb04d427))
