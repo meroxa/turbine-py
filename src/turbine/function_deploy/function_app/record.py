@@ -1,10 +1,15 @@
 import json
 
-from .service_pb2 import Record as ProtoRecord
+# KTLO: https://github.com/meroxa/turbine-py/issues/151
+try:
+    import service_pb2
+except ModuleNotFoundError:
+    from . import service_pb2
+
 from turbine.runtime import Record
 
 
-def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
+def proto_records_to_turbine_records(p_record: list[service_pb2.Record]):
     return [
         Record(
             key=record.key,
@@ -17,7 +22,7 @@ def proto_records_to_turbine_records(p_record: list[ProtoRecord]):
 
 def turbine_records_to_proto_records(t_record: list[Record]):
     return [
-        ProtoRecord(
+        service_pb2.Record(
             key=record.key,
             value=encode_record(record),
             timestamp=record.timestamp,

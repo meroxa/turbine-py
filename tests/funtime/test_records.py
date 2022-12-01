@@ -1,14 +1,14 @@
 import json
 
+from turbine.function_deploy.function_app import service_pb2
 from turbine.function_deploy.function_app.record import proto_records_to_turbine_records
 from turbine.function_deploy.function_app.record import turbine_records_to_proto_records
-from turbine.function_deploy.function_app.service_pb2 import Record as ProtoRecord
 from turbine.runtime import Record as TurbineRecord
 
 
 class TestDecodeRecord:
     def test_proto_records_to_turbine_records_decode_json(self):
-        in_record = ProtoRecord(key="key", value=json.dumps("{}"), timestamp=0)
+        in_record = service_pb2.Record(key="key", value=json.dumps("{}"), timestamp=0)
 
         out_record = proto_records_to_turbine_records(p_record=[in_record])
 
@@ -20,7 +20,7 @@ class TestDecodeRecord:
     def test_proto_records_to_turbine_records_decode_bytestring(self):
 
         test_string = "this is a test"
-        in_record = ProtoRecord(key="key", value=test_string, timestamp=0)
+        in_record = service_pb2.Record(key="key", value=test_string, timestamp=0)
 
         out_record = proto_records_to_turbine_records(p_record=[in_record])
 
@@ -45,7 +45,7 @@ class TestEncodeRecords:
     def test_turbine_records_to_proto_record_decode_bytestring(self):
 
         test_string = "test stuff"
-        in_record = ProtoRecord(key="key", value=test_string, timestamp=0)
+        in_record = service_pb2.Record(key="key", value=test_string, timestamp=0)
 
         out_record = turbine_records_to_proto_records(t_record=[in_record])
 
