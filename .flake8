@@ -1,4 +1,4 @@
 [flake8]
 max-line-length = 88
 extend-ignore = E203
-exclude = src/turbine/function-deploy/function-app/*_pb2*
+exclude = src/turbine/function_deploy/function_app/*_pb2*

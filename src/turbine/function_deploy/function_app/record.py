@@ -1,7 +1,6 @@
 import json
 
-from service_pb2 import Record as ProtoRecord
-
+from .service_pb2 import Record as ProtoRecord
 from turbine.runtime import Record
 
 

@@ -6,16 +6,16 @@ RUN pip install --upgrade pip
 RUN apt-get -y update
 RUN apt-get -y install git gcc
 
-WORKDIR /app/data-app
-COPY ./data-app/requirements.txt requirements.txt
+WORKDIR /app/data_app
+COPY ./data_app/requirements.txt requirements.txt
 RUN pip install --requirement requirements.txt
-COPY ./data-app .
+COPY ./data_app .
 
 # Build Function App
-WORKDIR /app/function-app
-COPY ./function-app/requirements.txt requirements.txt
+WORKDIR /app/function_app
+COPY ./function_app/requirements.txt requirements.txt
 RUN pip install --requirement requirements.txt
-COPY ./function-app .
+COPY ./function_app .
 
 #Set user permissions to nonroot
 USER nobody

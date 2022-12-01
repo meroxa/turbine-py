@@ -19,7 +19,7 @@ Process function given to GRPC server
 
 FUNCTION_NAME = sys.argv[1]
 FUNCTION_ADDRESS = os.getenv("MEROXA_FUNCTION_ADDR")
-PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data-app/")
+PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data_app/")
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []

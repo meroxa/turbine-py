@@ -3,11 +3,11 @@ SHELL=/bin/bash -o pipefail
 install: requirements.txt
 	pip install -r requirements.txt
 
-install-dev: requirements-dev.txt
+install-dev: requirements-dev.txt funtime
 	pip install -r requirements-dev.txt
 
-funtime: ./src/turbine/function-deploy/function-app/requirements.txt
-	pip install -r ./src/turbine/function-deploy/function-app/requirements.txt
+funtime: ./src/turbine/function_deploy/function_app/requirements.txt
+	pip install -r ./src/turbine/function_deploy/function_app/requirements.txt
 
 run-hooks:
 	pre-commit run --all-files
