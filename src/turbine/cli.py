@@ -48,7 +48,6 @@ def app_clean_up(path_to_temp, **kwargs):
 
 
 def app_return_version(path_to_data_app, **kwargs):
-    r = Runner(path_to_data_app)
     dist = distribution("turbine-py")
     print(f"turbine-response: {dist.version}")
 

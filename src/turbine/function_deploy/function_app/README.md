@@ -14,7 +14,7 @@ This application is an implementation of an RPC contract. Given that, we are not
 The following code is an example client that uses `grpc.io` and the generated code to transmit values to the server.
 
 ##### Prereqs
-- A turbine data app copied into `../data-app`
+- A turbine data app copied into `../data_app`
 - The below client example colocated with `/protos`
 - A fixtures file
 
