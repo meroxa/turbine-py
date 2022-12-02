@@ -47,7 +47,7 @@ def app_clean_up(path_to_temp, **kwargs):
     Runner.clean_temp_directory(path_to_temp)
 
 
-def app_return_version(**kwargs):
+def app_return_version(path_to_data_app, **kwargs):
     dist = distribution("turbine-py")
     print(f"turbine-response: {dist.version}")
 
@@ -124,6 +124,7 @@ def build_parser():
 
     # return the current version of turbine-py
     lib_version = subparser.add_parser("version")
+    lib_version.add_argument("path_to_data_app", help="path to app ", nargs="?")
     lib_version.set_defaults(func=app_return_version)
 
     return parser
