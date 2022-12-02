@@ -259,8 +259,7 @@ class PlatformRuntime(Runtime):
 
             if resp[0] is not None:
                 raise ChildProcessError(
-                    f"Error finding resource "
-                    f"{resource_name} : {resp[0].__repr__()}"
+                    f"Error finding resource " f"{resource_name} : {resp[0].__repr__()}"
                 )
             else:
                 return PlatformResource(
