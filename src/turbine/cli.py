@@ -124,7 +124,7 @@ def build_parser():
 
     # return the current version of turbine-py
     lib_version = subparser.add_parser("version")
-    lib_version.add_argument("path_to_data_app", help="path to app ")
+    lib_version.add_argument("path_to_data_app", help="path to app ", nargs="?")
     lib_version.set_defaults(func=app_return_version)
 
     return parser
