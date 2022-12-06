@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.7.0 (2022-12-06)
+### Feature
+* Display Updated Error Details ([#154](https://github.com/meroxa/turbine-py/issues/154)) ([`6405ac6`](https://github.com/meroxa/turbine-py/commit/6405ac6c12f734d37cf037d1d1ea0226838e2296))
+
 ## v1.6.6 (2022-12-02)
 ### Fix
 * Version command ([#153](https://github.com/meroxa/turbine-py/issues/153)) ([`f905488`](https://github.com/meroxa/turbine-py/commit/f90548879cda2d8649e64986c158e63c1b56b936))
