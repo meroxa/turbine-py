@@ -52,7 +52,7 @@ class PlatformResource(Resource):
         if resp[0] is not None:
             raise ChildProcessError(
                 f"Error creating Application "
-                f"{self.app_config.name} : {resp[0].message}"
+                f"{self.app_config.name} : {resp[0].__repr__()}"
             )
 
         return resp[1].uuid
@@ -73,7 +73,7 @@ class PlatformResource(Resource):
         if resp[0] is not None:
             raise ChildProcessError(
                 f"Error creating a pipeline for "
-                f"application {self.app_config.name} : {resp[0].message}"
+                f"application {self.app_config.name} : {resp[0].__repr__()}"
             )
         return resp[1].uuid
 
@@ -107,7 +107,7 @@ class PlatformResource(Resource):
                 else:
                     raise ChildProcessError(
                         f"Error looking up the application - "
-                        f"{self.resource.name} : {resp[0].message}"
+                        f"{self.resource.name} : {resp[0].__repr__()}"
                     )
 
             print(f"Creating SOURCE connector from resource: {self.resource.name}")
@@ -137,7 +137,7 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 raise ChildProcessError(
                     f"Error creating source connector from resource"
-                    f" {self.resource.name} : {resp[0].message}"
+                    f" {self.resource.name} : {resp[0].__repr__()}"
                 )
             else:
                 connector = resp[1]
@@ -213,7 +213,7 @@ class PlatformResource(Resource):
             if resp[0] is not None:
                 raise ChildProcessError(
                     f"Error creating destination connector "
-                    f"from stream {records.stream} : {resp[0].message}"
+                    f"from stream {records.stream} : {resp[0].__repr__()}"
                 )
             else:
                 print(f"Successfully created {resp[1].name} connector")
@@ -259,9 +259,7 @@ class PlatformRuntime(Runtime):
 
             if resp[0] is not None:
                 raise ChildProcessError(
-                    "Error finding resource {} : {}".format(
-                        resource_name, resp[0].message
-                    )
+                    f"Error finding resource {resource_name} : {resp[0].__repr__()}"
                 )
             else:
                 return PlatformResource(
@@ -309,7 +307,7 @@ class PlatformRuntime(Runtime):
             if resp[0] is not None:
                 raise ChildProcessError(
                     f"Error deploying Process "
-                    f"{getattr(fn, '__name__', 'Unknown')} : {resp[0].message}"
+                    f"{getattr(fn, '__name__', 'Unknown')} : {resp[0].__repr__()}"
                 )
             else:
                 func = resp[1]
