@@ -4,7 +4,7 @@ flake8>=4.0.1
 black==22.10.0
 pytest==7.2.0
 pytest-asyncio==0.20.2
-tox==3.27.1
+tox==4.0.8
 
 pre-commit==2.20.0
 
