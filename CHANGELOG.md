@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.7.1 (2022-12-16)
+### Fix
+* Properly parse function deploy responses ([#162](https://github.com/meroxa/turbine-py/issues/162)) ([`149d948`](https://github.com/meroxa/turbine-py/commit/149d948e0b5a47b6f7a680185957b362901ee683))
+
 ## v1.7.0 (2022-12-06)
 ### Feature
 * Display Updated Error Details ([#154](https://github.com/meroxa/turbine-py/issues/154)) ([`6405ac6`](https://github.com/meroxa/turbine-py/commit/6405ac6c12f734d37cf037d1d1ea0226838e2296))
