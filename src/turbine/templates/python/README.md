@@ -26,19 +26,12 @@ This configuration file is where you begin your Turbine journey. Any time a Turb
 ```python
 # Dependencies of the example data app
 import hashlib
-import logging
 import sys
-import typing as t
 
-from turbine.runtime import Record, Runtime
+from turbine.runtime import RecordList, Runtime as Turbine
 
-logging.basicConfig(level=logging.INFO)
-
-
-def anonymize(records: t.List[Record]) -> t.List[Record]:
-    logging.info(f"processing {len(records)} record(s)")
+def anonymize(records: RecordList) -> RecordList:
     for record in records:
-        logging.info(f"input: {record}")
         try:
             payload = record.value["payload"]
 
@@ -47,10 +40,8 @@ def anonymize(records: t.List[Record]) -> t.List[Record]:
                 payload["customer_email"].encode("utf-8")
             ).hexdigest()
 
-            logging.info(f"output: {record}")
         except Exception as e:
             print("Error occurred while parsing records: " + str(e))
-            logging.info(f"output: {record}")
     return records
 
 
