@@ -18,6 +18,10 @@ from .types import Runtime
 global __application_uuid
 
 
+def is_error_response(resp: dict) -> bool:
+    return set(["code", "message"]) == set(resp.keys())
+
+
 class PlatformResponse(object):
     def __init__(self, resp: str):
         self.__dict__ = json.loads(resp)
@@ -49,13 +53,12 @@ class PlatformResource(Resource):
         ) as m:
             resp = await m.applications.create(app_input)
 
-        if resp[0] is not None:
+        if is_error_response(resp):
             raise ChildProcessError(
-                f"Error creating Application "
-                f"{self.app_config.name} : {resp[0].__repr__()}"
+                f"Error creating Application : {self.app_config.name} : {resp}"
             )
 
-        return resp[1].uuid
+        return resp.get("uuid")
 
     async def _create_pipeline(self):
         pipeline_input = meroxa.CreatePipelineParams(
@@ -70,12 +73,12 @@ class PlatformResource(Resource):
         ) as m:
             resp = await m.pipelines.create(pipeline_input)
 
-        if resp[0] is not None:
+        if is_error_response(resp):
             raise ChildProcessError(
                 f"Error creating a pipeline for "
-                f"application {self.app_config.name} : {resp[0].__repr__()}"
+                f"application {self.app_config.name} : {resp}"
             )
-        return resp[1].uuid
+        return resp.get("uuid")
 
     async def records(self, collection: str, config: dict[str, str] = None) -> Records:
         print(f"Checking if pipeline exists for application: {self.app_config.name}")
@@ -83,7 +86,7 @@ class PlatformResource(Resource):
         try:
             if config is None:
                 config = {}
-            if self.resource.type in (
+            if self.resource.get("type") in (
                 ResourceType.KAFKA.value,
                 ResourceType.CONFLUENTCLOUD.value,
             ):
@@ -96,8 +99,8 @@ class PlatformResource(Resource):
             ) as m:
                 resp = await m.pipelines.get(self._pipeline_name)
 
-            if resp[0] is not None:
-                if resp[0].code == "not_found":
+            if is_error_response(resp):
+                if resp.get("code") == "not_found":
                     print(
                         f"No pipeline found, creating a new pipeline: "
                         f"{self._pipeline_name}"
@@ -107,17 +110,19 @@ class PlatformResource(Resource):
                 else:
                     raise ChildProcessError(
                         f"Error looking up the application - "
-                        f"{self.resource.name} : {resp[0].__repr__()}"
+                        f"{self.resource.get('name')} : {resp}"
                     )
 
-            print(f"Creating SOURCE connector from resource: {self.resource.name}")
+            print(
+                f"Creating SOURCE connector from resource: {self.resource.get('name')}"
+            )
 
             if config is None:
                 config = {}
             config["input"] = collection
 
             connector_input = meroxa.CreateConnectorParams(
-                resource_name=self.resource.name,
+                resource_name=self.resource.get("name"),
                 pipeline_name=self._pipeline_name,
                 config=config,
                 metadata={
@@ -130,23 +135,22 @@ class PlatformResource(Resource):
                 api_route=self.client_opts.url,
                 meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
             ) as m:
-                connector: meroxa.ConnectorsResponse
                 # Error Handling: Duplicate connector
                 # Check for `bad_request`
                 resp = await m.connectors.create(connector_input)
-            if resp[0] is not None:
+            if is_error_response(resp):
                 raise ChildProcessError(
                     f"Error creating source connector from resource"
-                    f" {self.resource.name} : {resp[0].__repr__()}"
+                    f" {self.resource.get('name')} : {resp}"
                 )
             else:
-                connector = resp[1]
-                output = connector.streams["output"]
+                connector = resp
+                output = connector.get("streams").get("output")
                 if isinstance(output, list):
                     stream = output[0]
                 else:
                     stream = output
-                print(f"Successfully created {connector.name} connector")
+                print(f"Successfully created {connector.get('name')} connector")
 
                 return Records(records=RecordList(), stream=stream)
         except ChildProcessError as cpe:
@@ -165,24 +169,25 @@ class PlatformResource(Resource):
             if config is None:
                 config = {}
             config["input"] = records.stream
-            if self.resource.type in (
+            resource_type = self.resource.get("type")
+            if resource_type in (
                 ResourceType.REDSHIFT.value,
                 ResourceType.POSTGRES.value,
                 ResourceType.MYSQL.value,
                 ResourceType.SQLSERVER.value,
             ):  # JDBC sink
                 config["table.name.format"] = str(collection).lower()
-            elif self.resource.type == ResourceType.MONGODB.value:
+            elif resource_type == ResourceType.MONGODB.value:
                 config["collection"] = str(collection).lower()
-            elif self.resource.type in (
+            elif resource_type in (
                 ResourceType.KAFKA.value,
                 ResourceType.CONFLUENTCLOUD.value,
             ):
                 config["conduit"] = "true"
                 config["topic"] = str(collection).lower()
-            elif self.resource.type == ResourceType.S3.value:
+            elif resource_type == ResourceType.S3.value:
                 config["aws_s3_prefix"] = str(collection).lower() + "/"
-            elif self.resource.type == ResourceType.SNOWFLAKE.value:
+            elif resource_type == ResourceType.SNOWFLAKE.value:
                 result = re.match("^[a-zA-Z]{1}[a-zA-Z0-9_]*$", str(collection))
                 if result is None:
                     raise ChildProcessError(
@@ -196,7 +201,7 @@ class PlatformResource(Resource):
                     ] = f"{records.stream}:{str(collection)}"
 
             connector_input = meroxa.CreateConnectorParams(
-                resource_name=self.resource.name,
+                resource_name=self.resource.get("name"),
                 pipeline_name=self._pipeline_name,
                 config=config,
                 metadata={
@@ -210,13 +215,14 @@ class PlatformResource(Resource):
                 meroxa_account_uuid=self.client_opts.meroxa_account_uuid,
             ) as m:
                 resp = await m.connectors.create(connector_input)
-            if resp[0] is not None:
+
+            if is_error_response(resp):
                 raise ChildProcessError(
                     f"Error creating destination connector "
-                    f"from stream {records.stream} : {resp[0].__repr__()}"
+                    f"from stream {records.stream} : {resp}"
                 )
             else:
-                print(f"Successfully created {resp[1].name} connector")
+                print(f"Successfully created {resp.get('name')} connector")
 
             if not globals().get("__application_uuid"):
                 print(f"Creating application: {self.app_config.name}")
@@ -257,13 +263,13 @@ class PlatformRuntime(Runtime):
             ) as m:
                 resp = await m.resources.get(resource_name)
 
-            if resp[0] is not None:
+            if is_error_response(resp):
                 raise ChildProcessError(
-                    f"Error finding resource {resource_name} : {resp[0].__repr__()}"
+                    f"Error finding resource {resource_name} : {resp}"
                 )
             else:
                 return PlatformResource(
-                    resource=resp[1],
+                    resource=resp,
                     client_options=self._client_opts,
                     app_config=self._app_config,
                 )
@@ -304,13 +310,13 @@ class PlatformRuntime(Runtime):
         ) as m:
             resp = await m.functions.create(create_func_params)
         try:
-            if resp[0] is not None:
+            if is_error_response(resp):
                 raise ChildProcessError(
                     f"Error deploying Process "
                     f"{getattr(fn, '__name__', 'Unknown')} : {resp[0].__repr__()}"
                 )
             else:
-                func = resp[1]
+                func = resp
                 records.stream = func.output_stream
                 return records
         except ChildProcessError as cpe:
