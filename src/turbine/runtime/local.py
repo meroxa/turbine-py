@@ -51,7 +51,6 @@ class LocalResource(Resource):
     async def write(
         self, rr: Records, collection: str, config: dict[str, str] = None
     ) -> None:
-
         pprint(f"===================to {self.name} resource===================")
 
         if rr.records:
@@ -88,7 +87,6 @@ class LocalRuntime(Runtime):
         return Records(records=RecordList(fn(records.records)), stream="")
 
     def register_secrets(self, name: str) -> None:
-
         sec = os.getenv(name)
         if not sec:
             raise Exception(f"Secret invalid or unset: {name}")

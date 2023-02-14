@@ -281,7 +281,6 @@ class PlatformRuntime(Runtime):
     async def process(
         self, records: Records, fn: t.Callable[[RecordList], RecordList]
     ) -> Records:
-
         pipeline_id = PipelineIdentifiers(
             name=f"turbine-pipeline-{self._app_config.name}"
         )
@@ -325,7 +324,6 @@ class PlatformRuntime(Runtime):
             raise Exception(e)
 
     def register_secrets(self, name: str) -> None:
-
         sec = os.getenv(name)
         if not sec:
             raise Exception(f"Secret invalid or unset: {name}")

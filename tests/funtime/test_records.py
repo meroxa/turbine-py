@@ -18,7 +18,6 @@ class TestDecodeRecord:
         assert out_record[0].timestamp == 0
 
     def test_proto_records_to_turbine_records_decode_bytestring(self):
-
         test_string = "this is a test"
         in_record = service_pb2.Record(key="key", value=test_string, timestamp=0)
 
@@ -43,7 +42,6 @@ class TestEncodeRecords:
         assert out_record[0].timestamp == 0
 
     def test_turbine_records_to_proto_record_decode_bytestring(self):
-
         test_string = "test stuff"
         in_record = service_pb2.Record(key="key", value=test_string, timestamp=0)
 
