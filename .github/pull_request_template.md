@@ -21,6 +21,13 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Manual Tests
 - [ ] Deployed to staging
 
+## Demo
+
+<!-- Provide examples of how the feature looked before and after this change in the table below -->
+| before | after |
+|--------|-------|
+|<!-- Replace this with a screenshot/gif -->|<!-- Replace this with a screenshot/gif -->|
+
 # Additional references
 
 *Any additional links (if appropriate)*
