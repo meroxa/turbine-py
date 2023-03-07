@@ -56,7 +56,6 @@ _sym_db.RegisterMessage(Record)
 
 _FUNCTION = DESCRIPTOR.services_by_name["Function"]
 if _descriptor._USE_C_DESCRIPTORS == False:
-
     DESCRIPTOR._options = None
     DESCRIPTOR._serialized_options = b"Z\037github.com/meroxa/funtime/proto"
     _PROCESSRECORDREQUEST._serialized_start = 36

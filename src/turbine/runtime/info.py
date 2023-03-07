@@ -21,7 +21,6 @@ class InfoResource(Resource):
         self.destination = self.destination
 
     async def write(self, rr: Records, collection: str, config: dict[str, str] = None):
-
         self.destination = True
         self.source = self.source
         self.collection = collection
