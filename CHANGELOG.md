@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.7.2 (2023-03-14)
+### Fix
+* Updated linting rules causing builds to fail ([#185](https://github.com/meroxa/turbine-py/issues/185)) ([`71126fc`](https://github.com/meroxa/turbine-py/commit/71126fc8554f77964eae8ecb8fc1c50c98244bd6))
+
 ## v1.7.1 (2022-12-16)
 ### Fix
 * Properly parse function deploy responses ([#162](https://github.com/meroxa/turbine-py/issues/162)) ([`149d948`](https://github.com/meroxa/turbine-py/commit/149d948e0b5a47b6f7a680185957b362901ee683))
