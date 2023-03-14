@@ -64,7 +64,6 @@ class TestRecordList:
 
 class TestRecords:
     def test_unwrap(self, record_list):
-
         recs = Records(records=record_list, stream="")
         recs.unwrap()
 

@@ -37,7 +37,7 @@ class Record:
                 del after_field["field"]
                 after_field["name"] = self.value["schema"]["name"]
                 self.value["schema"] = after_field
-            except (StopIteration or KeyError) as e:
+            except StopIteration or KeyError as e:
                 logging.error(f"CDC envelope is malformed: {e}")
 
             self.value["payload"] = payload["after"]
