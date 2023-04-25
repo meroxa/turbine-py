@@ -22,3 +22,33 @@ test:
 lint:
 	black src
 	flake8 src
+
+.PHONY: core_proto
+core_proto:
+	python3 -m grpc_tools.protoc \
+     --proto_path=$(CURDIR)/pkg/turbine/proto/ \
+     --python_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/  \
+     --grpc_python_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/ \
+	 --pyi_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/  \
+     turbine.proto 
+
+.PHONY: validate_proto
+validate_proto:
+	python3 -m grpc_tools.protoc \
+     --proto_path=$(CURDIR)/pkg/turbine/proto/ \
+     --python_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/  \
+     --grpc_python_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/ \
+	 --pyi_out=$(CURDIR)/pkg/turbine/src/turbine_app/proto_gen/  \
+     validate.proto 
+
+
+.PHONY: service_proto
+service_proto:
+	python3 -m grpc_tools.protoc  \
+     --proto_path=$(CURDIR)/pkg/turbine/proto/ \
+     --python_out=$(CURDIR)/pkg/turbine/src/function_app/proto_gen/  \
+     --grpc_python_out=$(CURDIR)/pkg/turbine/src/function_app/proto_gen/ \
+	 --pyi_out=$(CURDIR)/pkg/turbine/src/function_app/proto_gen/  \
+     service.proto 
+
+
