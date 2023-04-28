@@ -1,6 +1,7 @@
 from .app import TurbineApp
-from .resource import TurbineResource
 from .client import TurbineClient
-from .types import Record, RecordList
+from .resource import TurbineResource
+from .types import Record
+from .types import RecordList
 
-__all__ = ["TurbineResource", "RecordList", "Record", "TurbineClient","TurbineApp"]
+__all__ = ["TurbineResource", "RecordList", "Record", "TurbineClient", "TurbineApp"]

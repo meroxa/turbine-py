@@ -1,21 +1,24 @@
-
 import argparse
 import asyncio
-from importlib.metadata import distribution
+
 from .src.turbine_app import TurbineClient
+
+# from importlib.metadata import distribution
 
 
 def app_record(git_sha, **kwargs):
     t = TurbineClient()
-    asyncio.run(t.record(git_sha))  
-    
-def app_build(path_to_data_app,**kwargs):
+    asyncio.run(t.record(git_sha))
+
+
+def app_build(path_to_data_app, **kwargs):
     pass
-    
+
+
 def app_run(git_sha, **kwargs):
     t = TurbineClient()
     asyncio.run(t.run(git_sha))
-     
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
@@ -25,31 +28,30 @@ def build_parser():
 
     subparser = parser.add_subparsers(dest="command")
 
-    #execute record command
+    # execute record command
     record = subparser.add_parser("record")
     record.add_argument(
         "git_sha",
         help="The SHA of the current git commit of the app",
     )
     record.set_defaults(func=app_record)
-    
-    #execute build command
+
+    # execute build command
     build = subparser.add_parser("build")
     build.add_argument(
         "git_sha",
         help="The SHA of the current git commit of the app",
     )
     build.set_defaults(func=app_build)
-    
-    
-    #execute run command
+
+    # execute run command
     run = subparser.add_parser("run")
     run.add_argument(
         "git_sha",
         help="The SHA of the current git commit of the app",
     )
     run.set_defaults(func=app_run)
-    
+
     return parser
 
 
@@ -61,4 +63,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

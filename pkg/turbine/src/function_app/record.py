@@ -1,8 +1,17 @@
 import json
-from collections import UserList
-import logging
+
+from ..turbine_app import Record
+
+# from ..turbine_app import RecordList
+
+# import logging
+# from collections import UserList
+#
+# from ..turbine_app import Record
+# from ..turbine_app import RecordList
 # KTLO: https://github.com/meroxa/turbine-py/issues/151
-from ..turbine_app import Record, RecordList
+
+
 def proto_records_to_turbine_records(p_record: list[Record]):
     return [
         Record(

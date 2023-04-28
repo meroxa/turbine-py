@@ -1,17 +1,21 @@
 import asyncio
-from importlib.resources import path
 import logging
 import os
 import sys
 
 import grpc.aio
-from proto_gen import FunctionServicer, ProcessRecordRequest, ProcessRecordResponse, add_FunctionServicer_to_server
 from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
+from proto_gen import add_FunctionServicer_to_server
+from proto_gen import FunctionServicer
+from proto_gen import ProcessRecordRequest
+from proto_gen import ProcessRecordResponse
 from record import proto_records_to_turbine_records
 from record import turbine_records_to_proto_records
+
+# from importlib.resources import path
 
 """
 Process function given to GRPC server
@@ -24,6 +28,7 @@ PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data_app/")
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []
+
 
 class FunctionServer(FunctionServicer):
     @staticmethod
@@ -85,6 +90,7 @@ async def serve() -> None:
 
     _cleanup_coroutines.append(shutdown())
     await server.wait_for_termination()
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
