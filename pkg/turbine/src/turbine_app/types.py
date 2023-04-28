@@ -1,8 +1,8 @@
 import logging
-import logging
 from collections import UserList
 
 logging.basicConfig()
+
 
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
