@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package turbine_core;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "validate.proto";
+
+option go_package = "github.com/meroxa/turbine/core";
+
+service TurbineService {
+  rpc Init(InitRequest) returns (google.protobuf.Empty);
+  rpc GetResource(GetResourceRequest) returns (Resource);
+  rpc ReadCollection(ReadCollectionRequest) returns (Collection);
+  rpc WriteCollectionToResource(WriteCollectionRequest) returns (google.protobuf.Empty);
+  rpc AddProcessToCollection(ProcessCollectionRequest) returns (Collection);
+  rpc RegisterSecret(Secret) returns (google.protobuf.Empty);
+  rpc HasFunctions(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc ListResources(google.protobuf.Empty) returns (ListResourcesResponse);
+  rpc GetSpec(GetSpecRequest) returns (GetSpecResponse);
+}
+
+enum Language {
+  GOLANG = 0;
+  PYTHON = 1;
+  JAVASCRIPT = 2;
+  RUBY = 3;
+}
+
+message InitRequest {
+  string appName = 1 [(validate.rules).string.min_len = 1];
+  string configFilePath = 2 [(validate.rules).string.min_len = 1];;
+  Language language = 3 [(validate.rules).enum.defined_only = true];
+  string gitSHA = 4;
+  string turbineVersion = 5;
+}
+
+message GetResourceRequest {
+  string name = 1 [(validate.rules).string.min_len = 1];
+}
+
+message Resource {
+  string name = 1 [(validate.rules).string.min_len = 1];
+  bool source = 2;
+  bool destination = 3;
+  string collection = 4;
+}
+
+message Collection {
+  string name = 1 [(validate.rules).string.min_len = 1];
+  string stream = 2;
+  repeated Record records = 3;
+}
+
+message Record {
+  string key = 1 [(validate.rules).string.min_len = 1];;
+  bytes value = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+message ReadCollectionRequest {
+  Resource resource = 1 [(validate.rules).message.required = true];
+  string collection = 2 [(validate.rules).string.min_len = 1];
+  Configs configs = 3;
+}
+
+message WriteCollectionRequest {
+  Resource resource = 1 [(validate.rules).message.required = true];
+  Collection sourceCollection = 2 [(validate.rules).message.required = true];
+  string targetCollection = 3 [(validate.rules).string.min_len = 1];
+  Configs configs = 4;
+}
+
+message Configs {
+  repeated Config config = 1;
+}
+
+message Config {
+  string field = 1;
+  string value = 2;
+}
+
+message ProcessCollectionRequest {
+  message Process {
+    string name = 1;
+  }
+
+  Process process = 1 [(validate.rules).message.required = true];
+  Collection collection = 2 [(validate.rules).message.required = true];
+}
+
+message Secret {
+  string name = 1 [(validate.rules).string.min_len = 1];
+  string value = 2 [(validate.rules).string.min_len = 1];
+}
+
+message ListResourcesResponse {
+  repeated Resource resources = 1;
+}
+
+message GetSpecRequest {
+  string image = 1;
+}
+
+message GetSpecResponse {
+  bytes spec = 1;
+}
