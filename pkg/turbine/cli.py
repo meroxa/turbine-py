@@ -1,9 +1,6 @@
 import argparse
 import asyncio
-
 from .src.turbine_app import TurbineClient
-
-# from importlib.metadata import distribution
 
 
 def app_record(git_sha, **kwargs):

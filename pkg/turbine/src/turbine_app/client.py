@@ -4,7 +4,6 @@ import shutil
 import sys
 import tempfile
 from pathlib import Path
-
 import grpc
 
 from .app import TurbineApp
