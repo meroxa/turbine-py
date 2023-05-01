@@ -19,11 +19,7 @@ async def read_fixtures(path: str, collection: str):
             fc = json.load(content)
 
             if collection == "":
-                fixtures.append(
-                    Record(
-                        key="", value=fc, timestamp=time.time()
-                    )
-                )
+                fixtures.append(Record(key="", value=fc, timestamp=time.time()))
 
             if collection in fc:
                 for rec in fc[collection]:
