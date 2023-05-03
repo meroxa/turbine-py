@@ -29,6 +29,6 @@ class TurbineApp:
         )
         return self.core_server.AddProcessToCollection(request=req)
 
-    async def register_secrets(self, secret) -> None:
-        req = Secret(name=secret, value=os.getEnv(secret))
+    def register_secrets(self, secret) -> None:
+        req = Secret(name=secret, value=os.getenv(secret))
         self.core_server.RegisterSecret(request=req)

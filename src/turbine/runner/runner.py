@@ -17,7 +17,7 @@ class Runner(BaseRunner):
     async def build_function(self):
         temp_dir = tempfile.gettempdir()
         temp_dir_turbine_path = os.path.join(temp_dir + "/turbine")
-        deploy_dir = os.path.join(_ROOT, "../function_deploy")
+        deploy_dir = os.path.join(_ROOT, "..", "function_deploy")
 
         shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
         os.mkdir(os.path.join(temp_dir_turbine_path))
