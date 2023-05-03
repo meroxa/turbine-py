@@ -1,5 +1,10 @@
 <!--next-version-placeholder-->
 
+## v1.8.0 (2023-05-02)
+### Feature
+* Turbine-core implementation for Turbine-PY ([#214](https://github.com/meroxa/turbine-py/issues/214)) ([`11468fc`](https://github.com/meroxa/turbine-py/commit/11468fc659a3ba19e9ebf417f883810eb23f343c))
+* If the collection is not required, pass the whole fixtures to the fun… ([#217](https://github.com/meroxa/turbine-py/issues/217)) ([`e0995c4`](https://github.com/meroxa/turbine-py/commit/e0995c49c558a83bfc8de4a64bfe61cad3393c5b))
+
 ## v1.7.2 (2023-03-14)
 ### Fix
 * Updated linting rules causing builds to fail ([#185](https://github.com/meroxa/turbine-py/issues/185)) ([`71126fc`](https://github.com/meroxa/turbine-py/commit/71126fc8554f77964eae8ecb8fc1c50c98244bd6))
