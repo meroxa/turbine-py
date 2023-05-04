@@ -2,7 +2,6 @@
 max-line-length = 88
 extend-ignore = E203
 exclude =
-    src/turbine/function_deploy/function_app/*_pb2*
     pkg/turbine/src/turbine_app/proto_gen
-    pkg/turbine/src/function_app/proto_gen
-    pkg/turbine/proto
+    pkg/turbine/src/function_deploy/function_app/proto_gen
+    pkg/turbine/src/turbine_app/proto_gen

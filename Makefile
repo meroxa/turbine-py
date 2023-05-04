@@ -6,8 +6,8 @@ install: requirements.txt
 install-dev: requirements-dev.txt funtime
 	pip install -r requirements-dev.txt
 
-funtime: ./src/turbine/function_deploy/function_app/requirements.txt
-	pip install -r ./src/turbine/function_deploy/function_app/requirements.txt
+funtime: ./pkg/turbine/src/function_deploy/requirements.txt
+	pip install -r ./pkg/turbine/src/function_deploy/requirements.txt
 
 run-hooks:
 	pre-commit run --all-files
