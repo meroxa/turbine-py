@@ -7,12 +7,12 @@ from importlib.metadata import distribution
 
 def app_record(path_to_data_app, git_sha, **kwargs):
     t = TurbineClient(path_to_data_app)
-    print(asyncio.run(t.records(git_sha)))
+    asyncio.run(t.records(git_sha))
 
 
 def app_build(path_to_data_app, **kwargs):
     t = TurbineClient(path_to_data_app)
-    print(asyncio.run(t.build_function()))
+    asyncio.run(t.build_function())
 
 
 def app_serve(function_name, **kwargs):
@@ -21,7 +21,7 @@ def app_serve(function_name, **kwargs):
 
 def app_run(path_to_data_app, **kwargs):
     t = TurbineClient(path_to_data_app)
-    print(asyncio.run(t.run()))
+    asyncio.run(t.run())
 
 
 def app_version(path_to_data_app, **kwargs):
