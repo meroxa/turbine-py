@@ -12,7 +12,7 @@ def generate_app(name: str, pathname: str, **kwargs):
 
     app_location = os.path.join(pathname, app_name)
 
-    template_directory = os.path.join(_ROOT, "../", "templates/python")
+    template_directory = os.path.join(_ROOT, "..", "templates", "python")
 
     try:
         shutil.copytree(
