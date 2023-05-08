@@ -55,16 +55,16 @@ class TurbineClient:
 
     async def build_function(self):
         temp_dir = tempfile.gettempdir()
-        temp_dir_turbine_path = os.path.join(temp_dir + "/turbine")
-        deploy_dir = os.path.join(_ROOT, "../function_deploy")
+        temp_dir_turbine_path = os.path.join(temp_dir, "turbine")
+        deploy_dir = os.path.join(_ROOT, "..", "function_deploy")
 
         shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
-        os.mkdir(os.path.join(temp_dir_turbine_path))
+        os.mkdir(temp_dir_turbine_path)
         try:
             shutil.copytree(deploy_dir, temp_dir_turbine_path, dirs_exist_ok=True)
             shutil.copytree(
                 self.path_to_data_app,
-                temp_dir_turbine_path + "/data_app",
+                os.path.join(temp_dir_turbine_path, "data_app"),
                 dirs_exist_ok=True,
             )
             return f"turbine-response: {temp_dir_turbine_path}"

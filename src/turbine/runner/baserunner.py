@@ -24,7 +24,7 @@ class BaseRunner:
         config = {}
         try:
             with open(
-                os.path.abspath(os.path.join(self.path_to_data_app, " app.json"))
+                os.path.abspath(os.path.join(self.path_to_data_app, "app.json"))
             ) as fd:
                 config = AppConfig(**json.load(fd))
                 if self.app_name != "":
