@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.8.1 (2023-05-08)
+### Fix
+* Make sure path is converted for windows ([#221](https://github.com/meroxa/turbine-py/issues/221)) ([`76f5893`](https://github.com/meroxa/turbine-py/commit/76f58937956ce61d7ee0e480b00cf3af776d6795))
+
 ## v1.8.0 (2023-05-02)
 ### Feature
 * Turbine-core implementation for Turbine-PY ([#214](https://github.com/meroxa/turbine-py/issues/214)) ([`11468fc`](https://github.com/meroxa/turbine-py/commit/11468fc659a3ba19e9ebf417f883810eb23f343c))
