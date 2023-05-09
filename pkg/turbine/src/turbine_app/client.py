@@ -54,7 +54,7 @@ class TurbineClient:
         await self.data_app().run(turbine)
 
     async def build_function(self):
-        temp_dir = tempfile.gettempdir()
+        temp_dir = tempfile.mkdtemp()
         temp_dir_turbine_path = os.path.join(temp_dir, "turbine")
         deploy_dir = os.path.join(_ROOT, "..", "function_deploy")
 
