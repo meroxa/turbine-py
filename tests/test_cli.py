@@ -12,7 +12,8 @@ GIT_SHA = "d1342f0915946464fb04f29fa246308f7e664c13"
 SPEC = "latest"
 VERSION = distribution("turbine-py").version
 
-from turbine.src.function_deploy import serve
+# from turbine.src.function_deploy import serve
+
 
 class TestCli:
     @patch("turbine.cli.TurbineClient")
@@ -34,8 +35,7 @@ class TestCli:
 
         mock_runner.assert_called_with(PATH_TO_APP)
         mock_async.run.assert_called_with(mock_runner().records())
- 
-    
+
     @patch("turbine.cli.TurbineClient")
     @patch("turbine.cli.asyncio")
     def test_app_build_test(self, mock_async, mock_runner):
@@ -53,6 +53,3 @@ class TestCli:
 
         output = capsys.readouterr()
         assert output.out.strip("\n") == f"turbine-response: {VERSION}"
-
-
- 
