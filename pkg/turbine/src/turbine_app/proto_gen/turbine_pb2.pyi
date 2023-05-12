@@ -22,7 +22,7 @@ class Collection(_message.Message):
     name: str
     records: _containers.RepeatedCompositeFieldContainer[Record]
     stream: str
-    def __init__(self, name: _Optional[str] = ..., stream: _Optional[str] = ..., records: _Optional[_Iterable[_Union[Record, _Mapping]]] = ...) -> None: ...
+    def __init__(self, stream: _Optional[str] = ..., records: _Optional[_Iterable[_Union[Record, _Mapping]]] = ..., name: _Optional[str] = ...) -> None: ...
 
 class Config(_message.Message):
     __slots__ = ["field", "value"]
@@ -97,7 +97,7 @@ class ReadCollectionRequest(_message.Message):
     collection: str
     configs: Configs
     resource: Resource
-    def __init__(self, resource: _Optional[_Union[Resource, _Mapping]] = ..., collection: _Optional[str] = ..., configs: _Optional[_Union[Configs, _Mapping]] = ...) -> None: ...
+    def __init__(self, resource: _Optional[_Union[Resource, _Mapping]] = ..., configs: _Optional[_Union[Configs, _Mapping]] = ..., collection: _Optional[str] = ...) -> None: ...
 
 class Record(_message.Message):
     __slots__ = ["key", "timestamp", "value"]

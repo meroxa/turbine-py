@@ -48,9 +48,9 @@ message Resource {
 }
 
 message Collection {
-  string name = 1 [(validate.rules).string.min_len = 1];
   string stream = 2;
   repeated Record records = 3;
+  string name = 4;
 }
 
 message Record {
@@ -61,8 +61,8 @@ message Record {
 
 message ReadCollectionRequest {
   Resource resource = 1 [(validate.rules).message.required = true];
-  string collection = 2 [(validate.rules).string.min_len = 1];
   Configs configs = 3;
+  string collection = 4;
 }
 
 message WriteCollectionRequest {
