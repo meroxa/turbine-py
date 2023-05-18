@@ -4,4 +4,5 @@ extend-ignore = E203
 exclude =
     pkg/turbine/src/turbine_app/proto_gen
     pkg/turbine/src/function_deploy/function_app/proto_gen
-    pkg/turbine/src/turbine_app/proto_gen
+    pkg/turbine/src/function_deploy/function_app/proto_gen/
+    pkg/turbine/src/turbine_app/proto_gen/
