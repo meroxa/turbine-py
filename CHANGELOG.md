@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v1.10.0 (2023-05-18)
+### Feature
+* Turbine core 2.0.0 ([#228](https://github.com/meroxa/turbine-py/issues/228)) ([`a637dae`](https://github.com/meroxa/turbine-py/commit/a637dae5fadaf30f1f86ee064b29083d695c7673))
+
 ## v1.9.0 (2023-05-18)
 ### Feature
 * Release turbine core ([#227](https://github.com/meroxa/turbine-py/issues/227)) ([`d73ac09`](https://github.com/meroxa/turbine-py/commit/d73ac091f00dfc732dfcbe3c3bb36f2e9b48af68))
