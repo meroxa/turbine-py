@@ -20,7 +20,7 @@ class TestCli:
     @patch("turbine.cli.asyncio")
     def test_app_run_test(self, mock_async, mock_runner):
         parser = build_parser()
-        args = parser.parse_args(["run", PATH_TO_APP])
+        args = parser.parse_args(["run", PATH_TO_APP, GIT_SHA])
         args.func(**vars(args))
 
         mock_runner.assert_called_with(PATH_TO_APP)
