@@ -19,9 +19,9 @@ def app_serve(function_name, **kwargs):
     asyncio.run(serve(function_name=function_name))
 
 
-def app_run(path_to_data_app, **kwargs):
+def app_run(path_to_data_app, git_sha, **kwargs):
     t = TurbineClient(path_to_data_app)
-    asyncio.run(t.run())
+    asyncio.run(t.run(git_sha))
 
 
 def app_version(path_to_data_app, **kwargs):
@@ -54,6 +54,10 @@ def build_parser():
     # execute run command
     run = subparser.add_parser("run")
     run.add_argument("path_to_data_app", help="path to app")
+    run.add_argument(
+        "git_sha",
+        help="The SHA of the current git commit of the app",
+    )
     run.set_defaults(func=app_run)
 
     version = subparser.add_parser("version")

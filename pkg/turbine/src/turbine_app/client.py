@@ -28,12 +28,9 @@ class TurbineClient:
         return App
 
     async def init_core_server(self, git_sha: str = None) -> TurbineApp:
-        channel = grpc.insecure_channel(
-            TURBINE_CORE_SERVER, options=(("grpc.enable_http_proxy", 0),)
-        )
+        channel = grpc.insecure_channel(TURBINE_CORE_SERVER)
         core_server = TurbineServiceStub(channel)
         config_file_path = self.app_path
-        print(config_file_path)
         with open(Path(config_file_path, "app.json"), "r") as myfile:
             data = myfile.read()
         app_config = json.loads(data)
@@ -48,8 +45,8 @@ class TurbineClient:
         core_server.Init(request)
         return TurbineApp(core_server)
 
-    async def run(self):
-        turbine = await self.init_core_server()
+    async def run(self, git_sha: str):
+        turbine = await self.init_core_server(git_sha=git_sha)
         await self.data_app().run(turbine)
 
     async def records(self, git_sha: str):

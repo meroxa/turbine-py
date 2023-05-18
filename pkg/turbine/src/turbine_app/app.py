@@ -1,10 +1,8 @@
 import os
-import typing
-
-from .proto_gen import Collection
 from .proto_gen import GetResourceRequest
 from .proto_gen import ProcessCollectionRequest
-from .proto_gen import Record
+from .types import RecordList, Records
+from .utils import collection_to_record, record_to_collection
 from .proto_gen import Secret
 from .proto_gen import TurbineService
 from .resource import TurbineResource
@@ -19,15 +17,16 @@ class TurbineApp:
         ret = self.core_server.GetResource(request=req)
         return TurbineResource(ret, self)
 
-    async def process(
-        self, records: Collection, fn: typing.Callable[[Record], Record]
-    ) -> Collection:
-        records.stream
+    async def process(self, process_records: Records, fn: RecordList) -> Records:
+        process_collection = record_to_collection(records=process_records)
         req = ProcessCollectionRequest(
             process=ProcessCollectionRequest.Process(name=fn.__name__),
-            collection=records,
+            collection=process_collection,
         )
-        return self.core_server.AddProcessToCollection(request=req)
+        col = self.core_server.AddProcessToCollection(request=req)
+        records_output = collection_to_record(collection=col)
+        records_output.records = fn(records_output.records)
+        return records_output
 
     def register_secrets(self, secret) -> None:
         req = Secret(name=secret, value=os.getenv(secret))
