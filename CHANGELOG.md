@@ -1,5 +1,12 @@
 <!--next-version-placeholder-->
 
+## v2.0.0 (2023-05-18)
+### Feature
+* Release protos ([#230](https://github.com/meroxa/turbine-py/issues/230)) ([`2e24cbd`](https://github.com/meroxa/turbine-py/commit/2e24cbdc407178b80384b29474552289ee657bc1))
+
+### Breaking
+* This implements new grpc protos ([`2e24cbd`](https://github.com/meroxa/turbine-py/commit/2e24cbdc407178b80384b29474552289ee657bc1))
+
 ## v1.10.0 (2023-05-18)
 ### Feature
 * Turbine core 2.0.0 ([#228](https://github.com/meroxa/turbine-py/issues/228)) ([`a637dae`](https://github.com/meroxa/turbine-py/commit/a637dae5fadaf30f1f86ee064b29083d695c7673))
