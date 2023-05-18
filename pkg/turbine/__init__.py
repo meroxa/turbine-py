@@ -1,4 +1,5 @@
 """
-Semantic release checks and updates version variable
+Semantic release checks and updates version variable. This is not
+meant to be updated by hand.
 """
-__version__ = "1.8.4"
+__version__ = "1.8.3"
