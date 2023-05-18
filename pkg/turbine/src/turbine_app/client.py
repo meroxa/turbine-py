@@ -2,45 +2,45 @@ import json
 import os
 import shutil
 import sys
-import tempfile
 from pathlib import Path
 import grpc
-
+from importlib.metadata import distribution
 from .app import TurbineApp
 from .proto_gen import InitRequest
 from .proto_gen import TurbineServiceStub
 
 TURBINE_CORE_SERVER = os.getenv("TURBINE_CORE_SERVER")
 LANGUAGE = "PYTHON"
-_ROOT = os.path.abspath(os.path.dirname(__file__))
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 
 class TurbineClient:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, app_path: str = None) -> None:
+        self.app_path = app_path
 
     @property
     def data_app(self):
         # Append the user's data application to the execution path
         # for the runners
-        sys.path.append(os.getcwd())
+        sys.path.append(self.app_path)
         from main import App
 
         return App
 
-    async def init_core_server(self, git_sha: str) -> TurbineApp:
+    async def init_core_server(self, git_sha: str = None) -> TurbineApp:
         channel = grpc.insecure_channel(TURBINE_CORE_SERVER)
         core_server = TurbineServiceStub(channel)
-        config_file_path = os.getcwd()
+        config_file_path = self.app_path
         with open(Path(config_file_path, "app.json"), "r") as myfile:
             data = myfile.read()
         app_config = json.loads(data)
-
+        dist = distribution("turbine-py")
         request = InitRequest(
             appName=app_config["name"],
             language=LANGUAGE,
             configFilePath=config_file_path,
             gitSHA=git_sha,
+            turbineVersion=dist.version,
         )
         core_server.Init(request)
         return TurbineApp(core_server)
@@ -50,26 +50,16 @@ class TurbineClient:
         await self.data_app().run(turbine)
 
     async def records(self, git_sha: str):
-        turbine = self.init_core_server(git_sha=git_sha)
+        turbine = await self.init_core_server(git_sha=git_sha)
         await self.data_app().run(turbine)
 
     async def build_function(self):
-        temp_dir = tempfile.mkdtemp()
-        temp_dir_turbine_path = os.path.join(temp_dir, "turbine")
-        deploy_dir = os.path.join(_ROOT, "..", "function_deploy")
-
-        shutil.rmtree(temp_dir_turbine_path, ignore_errors=True)
-        os.mkdir(temp_dir_turbine_path)
+        docker_file = os.path.join(_ROOT, "function_deploy", "Dockerfile")
         try:
-            shutil.copytree(deploy_dir, temp_dir_turbine_path, dirs_exist_ok=True)
-            shutil.copytree(
-                self.path_to_data_app,
-                os.path.join(temp_dir_turbine_path, "data_app"),
-                dirs_exist_ok=True,
-            )
-            return f"turbine-response: {temp_dir_turbine_path}"
+            shutil.copyfile(docker_file, Path(self.app_path, "Dockerfile"))
+            return f"turbine-response: {self.app_path}"
         except Exception as e:
-            self.clean_temp_directory(temp_dir_turbine_path)
+            self.clean_temp_directory(self.app_path)
             print(f"build failed: {e}")
         except FileExistsError as err:
             print(f"unable to build: {err}")

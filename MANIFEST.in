@@ -1,6 +1,5 @@
-graft src/turbine/templates
-graft src/turbine/function_deploy
-include src/turbine/function_deploy/Dockerfile
+graft pkg/turbine/src/function_deploy/
+include pkg/turbine/src/function_deploy/Dockerfile
 
 global-exclude *.py[co]
 global-exclude __pycache__

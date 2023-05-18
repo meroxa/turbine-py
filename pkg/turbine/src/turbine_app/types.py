@@ -1,4 +1,5 @@
 import logging
+import json
 from collections import UserList
 
 logging.basicConfig()
@@ -7,13 +8,20 @@ logging.basicConfig()
 class Record:
     def __init__(self, key: str, value: ..., timestamp: float):
         self.key = key
-        self.value = value
+        try:
+            self.value = json.loads(str(value, encoding="utf-8"))
+        except Exception:
+            self.value = value
+
         self.timestamp = timestamp
 
     def __repr__(self):
         from pprint import pformat
 
         return pformat(vars(self), indent=4, width=1)
+
+    def __getitem__(self, key):
+        return self.value
 
     @property
     def is_json_schema(self):
@@ -43,3 +51,27 @@ class Record:
 class RecordList(UserList):
     def unwrap(self):
         [rec.unwrap() for rec in self.data]
+
+    def add_record(self, record):
+        self.data.append(
+            Record(key=record.key, value=record.value, timestamp=record.timestamp)
+        )
+
+
+class Records:
+    records: RecordList = None
+    stream = ""
+    name = ""
+
+    def __init__(self, records: RecordList, stream: str, name: str):
+        self.records = records
+        self.stream = stream
+        self.name = name
+
+    def __repr__(self):
+        from pprint import pformat
+
+        return pformat(vars(self), indent=4, width=1)
+
+    def unwrap(self):
+        [rec.unwrap() for rec in self.records.data]

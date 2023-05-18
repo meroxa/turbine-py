@@ -1,8 +1,9 @@
 import json
-from ..turbine_app import Record
+from ...turbine_app import Record
+from .proto_gen import service_pb2
 
 
-def proto_records_to_turbine_records(p_record: list[Record]):
+def proto_records_to_turbine_records(p_record: list[service_pb2.Record]):
     return [
         Record(
             key=record.key,
@@ -15,7 +16,7 @@ def proto_records_to_turbine_records(p_record: list[Record]):
 
 def turbine_records_to_proto_records(t_record: list[Record]):
     return [
-        Record(
+        service_pb2.Record(
             key=record.key,
             value=encode_record(record),
             timestamp=record.timestamp,

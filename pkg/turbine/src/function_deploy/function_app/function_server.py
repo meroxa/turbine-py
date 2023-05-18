@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import sys
@@ -8,12 +7,12 @@ from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
-from proto_gen import add_FunctionServicer_to_server
-from proto_gen import FunctionServicer
-from proto_gen import ProcessRecordRequest
-from proto_gen import ProcessRecordResponse
-from record import proto_records_to_turbine_records
-from record import turbine_records_to_proto_records
+from .proto_gen import add_FunctionServicer_to_server
+from .proto_gen import FunctionServicer
+from .proto_gen import ProcessRecordRequest
+from .proto_gen import ProcessRecordResponse
+from .record import proto_records_to_turbine_records
+from .record import turbine_records_to_proto_records
 
 # from importlib.resources import path
 
@@ -21,16 +20,18 @@ from record import turbine_records_to_proto_records
 Process function given to GRPC server
 """
 
-
-FUNCTION_NAME = sys.argv[1]
 FUNCTION_ADDRESS = os.getenv("MEROXA_FUNCTION_ADDR")
-PATH_TO_DATA_APP = os.path.normpath(os.path.dirname(__file__) + "/../data_app/")
+PATH_TO_DATA_APP = os.getcwd()
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []
 
 
 class FunctionServer(FunctionServicer):
+    def __init__(self, function_name) -> None:
+        self.function_name = function_name
+        super().__init__()
+
     @staticmethod
     def _obtain_client_data_app_function(path_to_data_app: str, function_name: str):
         sys.path.append(path_to_data_app)
@@ -38,7 +39,7 @@ class FunctionServer(FunctionServicer):
 
         return main.__getattribute__(function_name)
 
-    def Process(
+    async def Process(
         self,
         request: ProcessRecordRequest,
         context: grpc.aio.ServicerContext,
@@ -48,7 +49,7 @@ class FunctionServer(FunctionServicer):
 
         # Get the data app function
         data_app_function = self._obtain_client_data_app_function(
-            path_to_data_app=PATH_TO_DATA_APP, function_name=FUNCTION_NAME
+            path_to_data_app=PATH_TO_DATA_APP, function_name=self.function_name
         )
 
         # Generate output
@@ -60,9 +61,9 @@ class FunctionServer(FunctionServicer):
         return ProcessRecordResponse(records=grpc_records)
 
 
-async def serve() -> None:
+async def serve(function_name) -> None:
     server = grpc.aio.server()
-    add_FunctionServicer_to_server(FunctionServer, server)
+    add_FunctionServicer_to_server(FunctionServer(function_name), server)
 
     # Create a health check servicer. We use the non-blocking implementation
     # to avoid thread starvation.
@@ -90,16 +91,3 @@ async def serve() -> None:
 
     _cleanup_coroutines.append(shutdown())
     await server.wait_for_termination()
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    try:
-        loop.run_until_complete(serve())
-    finally:
-        loop.run_until_complete(*_cleanup_coroutines)
-        loop.close()

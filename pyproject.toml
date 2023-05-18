@@ -16,5 +16,6 @@ exclude='''
   | pkg/turbine/proto
   | pkg/turbine/src/function_app/proto_gen
   | pkg/turbine/src/turbine_app/proto_gen
+  | pkg/turbine/src/function_deploy/proto_gen
 )/
 '''
