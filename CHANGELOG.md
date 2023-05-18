@@ -1,5 +1,10 @@
 <!--next-version-placeholder-->
 
+## v1.9.0 (2023-05-18)
+### Feature
+* Release turbine core ([#227](https://github.com/meroxa/turbine-py/issues/227)) ([`d73ac09`](https://github.com/meroxa/turbine-py/commit/d73ac091f00dfc732dfcbe3c3bb36f2e9b48af68))
+* Turbine core + py deploy implementation ([#219](https://github.com/meroxa/turbine-py/issues/219)) ([`abec6c4`](https://github.com/meroxa/turbine-py/commit/abec6c48a4df5c1385928c6f226ad52ee3706c6a))
+
 ## v1.8.3 (2023-05-09)
 ### Fix
 * Ensure clarity around release & release 1.8.3 ([#224](https://github.com/meroxa/turbine-py/issues/224)) ([`aec9634`](https://github.com/meroxa/turbine-py/commit/aec9634c28c581b175cd6329188f1732fe6d685e))
