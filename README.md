@@ -61,7 +61,7 @@ This configuration file is where you begin your Turbine journey. Any time a Turb
 import hashlib
 import sys
 
-from turbine.runtime import RecordList, Runtime as Turbine
+from turbine.src.turbine_app import RecordList, TurbineApp
 
 def anonymize(records: RecordList) -> RecordList:
     for record in records:
@@ -80,7 +80,7 @@ def anonymize(records: RecordList) -> RecordList:
 
 class App:
     @staticmethod
-    async def run(turbine: Turbine):
+    async def run(turbine: TurbineApp):
       try:
         source = await turbine.resources("source_name")
 
@@ -98,7 +98,7 @@ class App:
 Let's talk about the important parts of this code. Turbine apps have five functions that comprise the entire DSL. Outside of these functions, you can write whatever code you want to accomplish your tasks:
 
 ```python
-async def run(turbine: Turbine):
+async def run(turbine: TurbineApp):
 ```
 
 `run` is the main entry point for the application. This is where you can initialize the Turbine framework. This is also the place where, when you deploy your Turbine app to Meroxa, Meroxa will use this as the place to boot up the application.
