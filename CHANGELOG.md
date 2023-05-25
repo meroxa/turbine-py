@@ -1,5 +1,9 @@
 <!--next-version-placeholder-->
 
+## v2.1.0 (2023-05-25)
+### Feature
+* Cleanup old turbine-py implementation ([#234](https://github.com/meroxa/turbine-py/issues/234)) ([`9e1d470`](https://github.com/meroxa/turbine-py/commit/9e1d47090d43c5f66aa0d48058a7b078337f047a))
+
 ## v2.0.0 (2023-05-18)
 ### Feature
 * Release protos ([#230](https://github.com/meroxa/turbine-py/issues/230)) ([`2e24cbd`](https://github.com/meroxa/turbine-py/commit/2e24cbdc407178b80384b29474552289ee657bc1))
