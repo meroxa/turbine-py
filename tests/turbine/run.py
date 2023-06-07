@@ -17,7 +17,7 @@ def turibine_client():
     )
 
 
-FIXTURES_PATH = "tests/utils/template-records.json"
+FIXTURES_PATH = os.path.join("tests", "utils", "template-records.json")
 
 
 class TestLocalResource:
