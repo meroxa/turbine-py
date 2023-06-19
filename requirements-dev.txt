@@ -6,6 +6,6 @@ pytest==7.3.2
 pytest-asyncio==0.21.0
 tox==4.6.0
 
-pre-commit==3.3.2
+pre-commit==3.3.3
 
 -e .
