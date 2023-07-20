@@ -1,4 +1,4 @@
-aiohttp==3.8.4
+aiohttp==3.8.5
 grpcio==1.56.0
 google==3.0.0
 google-api-python-client>=2.86.0
