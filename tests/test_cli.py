@@ -12,8 +12,6 @@ GIT_SHA = "d1342f0915946464fb04f29fa246308f7e664c13"
 SPEC = "latest"
 VERSION = distribution("turbine-py").version
 
-# from turbine.src.function_deploy import serve
-
 
 class TestCli:
     @patch("turbine.cli.TurbineClient")

@@ -3,7 +3,8 @@ from .proto_gen import ReadCollectionRequest
 from .proto_gen import Resource
 from .proto_gen import WriteCollectionRequest
 from .types import Records
-from .utils import collection_to_record, record_to_collection
+from .utils import collection_to_record
+from .utils import record_to_collection
 
 
 class TurbineResource:
@@ -17,7 +18,7 @@ class TurbineResource:
         req = ReadCollectionRequest(resource=self.resource, collection=read_collection)
         if connector_config:
             map_config = [
-                Config(field=key, value=item) for key, item in connector_config.items
+                Config(field=key, value=item) for key, item in connector_config.items()
             ]
             req.configs = map_config
         ret_collection = self.app.core_server.ReadCollection(request=req)
