@@ -2,6 +2,34 @@
 
 
 
+## v2.1.2 (2023-08-15)
+
+### Fix
+
+* fix: semantic release config update (#260) ([`3dc9113`](https://github.com/meroxa/turbine-py/commit/3dc9113d14d29bc0d6aab2164d736d0ecf427448))
+
+* fix: Publish artifacts for newest version of turbine-py (#258) ([`977131f`](https://github.com/meroxa/turbine-py/commit/977131f6a9021f76c594fe86b27c8d0581095586))
+
+### Unknown
+
+* .github: Bump python-semantic-release/python-semantic-release (#259)
+
+Bumps [python-semantic-release/python-semantic-release](https://github.com/python-semantic-release/python-semantic-release) from 8.0.0 to 8.0.6.
+- [Release notes](https://github.com/python-semantic-release/python-semantic-release/releases)
+- [Changelog](https://github.com/python-semantic-release/python-semantic-release/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/python-semantic-release/python-semantic-release/compare/v8.0.0...v8.0.6)
+
+---
+updated-dependencies:
+- dependency-name: python-semantic-release/python-semantic-release
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`86d2500`](https://github.com/meroxa/turbine-py/commit/86d25003f62b768b82577575abe55db142d91c26))
+
+
 ## v2.1.1 (2023-08-14)
 
 ### Fix
