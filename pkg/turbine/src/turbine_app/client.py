@@ -27,7 +27,9 @@ class TurbineClient:
 
         return App
 
-    async def init_core_server(self, git_sha: str = None) -> TurbineApp:
+    async def init_core_server(
+        self, git_sha: str = None, run_process: bool = False
+    ) -> TurbineApp:
         channel = grpc.insecure_channel(TURBINE_CORE_SERVER)
         core_server = TurbineServiceStub(channel)
         config_file_path = self.app_path
@@ -43,14 +45,14 @@ class TurbineClient:
             turbineVersion=dist.version,
         )
         core_server.Init(request)
-        return TurbineApp(core_server)
+        return TurbineApp(core_server, run_process)
 
     async def run(self, git_sha: str):
-        turbine = await self.init_core_server(git_sha=git_sha)
+        turbine = await self.init_core_server(git_sha=git_sha, run_process=True)
         await self.data_app().run(turbine)
 
     async def records(self, git_sha: str):
-        turbine = await self.init_core_server(git_sha=git_sha)
+        turbine = await self.init_core_server(git_sha=git_sha, run_process=False)
         await self.data_app().run(turbine)
 
     async def build_function(self):

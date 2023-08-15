@@ -9,8 +9,9 @@ from .resource import TurbineResource
 
 
 class TurbineApp:
-    def __init__(self, core_server: TurbineService) -> None:
+    def __init__(self, core_server: TurbineService, run_process: bool) -> None:
         self.core_server = core_server
+        self.run_process = run_process
 
     async def resources(self, resouce_name) -> TurbineResource:
         req = GetResourceRequest(name=resouce_name)
@@ -25,7 +26,8 @@ class TurbineApp:
         )
         col = self.core_server.AddProcessToCollection(request=req)
         records_output = collection_to_record(collection=col)
-        records_output.records = fn(records_output.records)
+        if self.run_process:
+            records_output.records = fn(records_output.records)
         return records_output
 
     def register_secrets(self, secret) -> None:
