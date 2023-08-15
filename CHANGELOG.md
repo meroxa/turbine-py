@@ -2,6 +2,13 @@
 
 
 
+## v2.1.3 (2023-08-15)
+
+### Fix
+
+* fix: release artifacts (#261) ([`55aee60`](https://github.com/meroxa/turbine-py/commit/55aee60bd87464ae11856435aa38975ced500845))
+
+
 ## v2.1.2 (2023-08-15)
 
 ### Fix
