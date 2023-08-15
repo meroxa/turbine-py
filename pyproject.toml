@@ -21,7 +21,7 @@ exclude='''
 '''
 
 [tool.semantic_release]
-version_variables = [
+version_variable = [
   "pkg/turbine/__init__.py:__version__"
 ]
 build_command = "pip install build --user && python -m build"
@@ -32,7 +32,7 @@ changelog_file = "CHANGELOG.md"
 exclude_commit_patterns = []
 
 [tool.semantic_release.commit_parser_options]
-allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test"]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test", "patch"]
 minor_tags = ["feat"]
 patch_tags = ["fix", "perf", "patch"]
 
