@@ -21,7 +21,7 @@ exclude='''
 '''
 
 [tool.semantic_release]
-version_variable = [
+version_variables = [
   "pkg/turbine/__init__.py:__version__"
 ]
 build_command = "pip install build --user && python -m build"
