@@ -19,3 +19,13 @@ exclude='''
   | pkg/turbine/src/function_deploy/proto_gen
 )/
 '''
+
+[tool.semantic_release]
+version_variable = [
+  "pkg/turbine/__init__.py:__version__"
+]
+build_command = "pip install build --user && python -m build"
+
+
+[tool.semantic_release.branches.main]
+match = "(main|master)"
