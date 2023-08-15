@@ -2,6 +2,13 @@
 
 
 
+## v2.1.4 (2023-08-15)
+
+### Fix
+
+* fix: function always getting executed for turbine py (#262) ([`ce38a36`](https://github.com/meroxa/turbine-py/commit/ce38a36ef5d0a79331ca9bcf46791776e699f3bc))
+
+
 ## v2.1.3 (2023-08-15)
 
 ### Fix
